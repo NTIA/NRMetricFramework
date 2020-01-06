@@ -1,8 +1,8 @@
-function [NRpars] = calculate_features(nr_dataset, base_dir, parallel_mode, feature_function) 
-% CALCULATE_FEATURES
+function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, feature_function) 
+% CALCULATE_NRPARS
 %   Support tool to calculate a NR feature on all videos or images in a dataset.
 % SYNTAX
-%   [NRpars] = calculate_features(nr_dataset, ...
+%   [NRpars] = calculate_NRpars(nr_dataset, ...
 %       base_dir, parallel_mode, feature_function); 
 % SEMANTICS
 %   This function provides all support tools needed to calculate 
@@ -107,7 +107,7 @@ function [NRpars] = calculate_features(nr_dataset, base_dir, parallel_mode, feat
     % if given multiple datasets, process them one after another
     if length(nr_dataset) > 1
         for cnt=1:length(nr_dataset)
-            NRpars(cnt) = calculate_features(nr_dataset(cnt), base_dir, parallel_mode, feature_function);
+            NRpars(cnt) = calculate_NRpars(nr_dataset(cnt), base_dir, parallel_mode, feature_function);
         end
         return;
     end
@@ -168,7 +168,7 @@ function [NRpars] = calculate_features(nr_dataset, base_dir, parallel_mode, feat
         parallel_stimuli = true;
         parallel_tslices = true;
     else
-        tmp = sprintf('Error ''calculate_features'':\n');
+        tmp = sprintf('Error ''calculate_NRpars'':\n');
         tmp = [tmp sprintf('- parallel processing mode %s not recognized\n', parallel_mode)];
         tmp = [tmp sprintf('- expected ''all'', ''stimuli'', ''tslice'', or ''none''')];
 
@@ -217,7 +217,7 @@ function [NRpars] = calculate_features(nr_dataset, base_dir, parallel_mode, feat
             values = compute_one_clip(nr_dataset, clip_num, subdir, ...
                 parallel_tslices, feature_function, parfile);
             if iscell(values)
-                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_features'':\n');
+                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
                 tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
                 tmp = [tmp sprintf('- mode ''pars'' returned a cell array; it must return numeric values\n')];
         
@@ -226,7 +226,7 @@ function [NRpars] = calculate_features(nr_dataset, base_dir, parallel_mode, feat
 
                 error(tmp);
             elseif ~isnumeric(values)
-                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_features'':\n');
+                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
                 tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
                 tmp = [tmp sprintf('- mode ''pars'' must return numeric values\n')];
         
@@ -235,7 +235,7 @@ function [NRpars] = calculate_features(nr_dataset, base_dir, parallel_mode, feat
 
                 error(tmp);
             elseif length(values) ~= length(feature_function('parameter_names'))
-                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_features'':\n');
+                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
                 tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
                 tmp = [tmp sprintf('- mode ''pars'' returned %d values, but mode ''pixels'' returns %d parameter names\n', ...
                     length(values), length(feature_function('parameter_names')))];
@@ -245,7 +245,7 @@ function [NRpars] = calculate_features(nr_dataset, base_dir, parallel_mode, feat
 
                 error(tmp);
             elseif numel(values) ~= length(feature_function('parameter_names'))
-                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_features'':\n');
+                tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
                 tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
                 tmp = [tmp sprintf('- mode ''pars'' must return a vector of numbers: one value for each parameter\n')];
         
@@ -319,12 +319,12 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
     tslice_mode = feature_function('read_mode');
     if ~ischar(tslice_mode) || (~strcmp(tslice_mode,'all') && ~strcmp(tslice_mode,'si') && ~strcmp(tslice_mode,'ti'))
                 
-        tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_features'':\n');
+        tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
         tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
         tmp = [tmp sprintf('- feature_function for ''%s'' called with ''read_mode''\n', feature_function('group'))];
         tmp = [tmp sprintf('- returned value not recognized; ''all'', ''si'', or ''ti'' expected\n\n')];
 
-        tmp = [tmp sprintf('Function ''calculate_features'' was calculating features for the following media:\n') ];
+        tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
         tmp = [tmp sprintf('- dataset %s, media number %d\n', nr_dataset.test, media_num)];
         tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
         tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
@@ -422,7 +422,7 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
                     tmp = sprintf('Error detected in a dataset''s structure\n');
                     tmp = [tmp sprintf('- Media marked as an interlaced image; this is impossible\n\n')];
                     
-                    tmp = [tmp sprintf('Function ''calculate_features'' was calculating features for the following media:\n') ];
+                    tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
                     tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
                     tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                     tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
@@ -441,18 +441,18 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
 
                 % error checking
                 if ~iscell(this_frame)
-                    tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_features'':\n');
+                    tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
                     tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
                     tmp = [tmp sprintf('- mode ''pixels'' must return a cell array, with one cell for each feature name\n')];
                     
                     error(tmp)
                 end
                 if length(this_frame) ~= length(feature_function('feature_names'))
-                    tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_features'':\n', feature_function('group'));
+                    tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_NRpars'':\n', feature_function('group'));
                     tmp = [tmp sprintf('- ''pixel'' mode returns %d features, but ''feature_names'' mode specifies %d features\n\n', ...
                         length(this_frame), length(feature_function('feature_names')))];
 
-                    tmp = [tmp sprintf('Function ''calculate_features'' was calculating features for the following media:\n') ];
+                    tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
                     tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
                     tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                     tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
@@ -469,20 +469,20 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
                         [~,s1A,s2A] = size(feature_data{pcnt});
                         [s1B,s2B,s3B] = size(this_frame{pcnt});
                         if s1A ~= s1B || s2A ~= s2B
-                            tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_features'':\n', feature_function('group'));
+                            tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_NRpars'':\n', feature_function('group'));
                             tmp = [tmp sprintf('- feature %d changes in size from one frame to the next. Check frame %d.\n\n', pcnt, cnt)];
 
-                            tmp = [tmp sprintf('Function ''calculate_features'' was calculating features for the following media:\n') ];
+                            tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
                             tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
                             tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                             tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
 
                             error(tmp);
                         elseif s3B > 1
-                            tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_features'':\n', feature_function('group'));
+                            tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_NRpars'':\n', feature_function('group'));
                             tmp = [tmp sprintf('- feature %d contains three (3) or more dimensions; it must have no more than two dimensions\n\n', pcnt)];
 
-                            tmp = [tmp sprintf('Function ''calculate_features'' was calculating features for the following media:\n') ];
+                            tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
                             tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
                             tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                             tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
@@ -512,7 +512,7 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
                     end
                 catch
                     tmp = sprintf('Error reported by ''read_media'' function:\n\n%s\n\n', lasterr);
-                    tmp = [tmp sprintf('Error occured when ''calculate_features'' tried to read:\n') ];
+                    tmp = [tmp sprintf('Error occured when ''calculate_NRpars'' tried to read:\n') ];
                     tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
                     tmp = [tmp sprintf('- frames %d to %d\n', start(cnt), stop(cnt))];
                     tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
@@ -545,14 +545,14 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
 
                     % error checking
                     if ~iscell(this_frame)
-                        tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_features'':\n');
+                        tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
                         tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
                         tmp = [tmp sprintf('- mode ''pixels'' must return a cell array, with one cell for each feature name\n')];
 
                         error(tmp)
                     end
                     if length(this_frame) ~= length(feature_function('feature_names'))
-                        tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_features'':\n', feature_function('group'));
+                        tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_NRpars'':\n', feature_function('group'));
                         tmp = [tmp sprintf('- ''pixel'' mode returns %d features, but ''feature_names'' mode specifies %d features\n\n', ...
                             length(this_frame), length(feature_function('feature_names')))];
                         tmp = [tmp '- run without parallel processing (''none'' mode) for more information\n'];
@@ -584,7 +584,7 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
         
     else
         
-        tmp = sprintf('parallel_mode parsing failure. Function ''calculate_features'' trying to run a non-existant mode\n');
+        tmp = sprintf('parallel_mode parsing failure. Function ''calculate_NRpars'' trying to run a non-existant mode\n');
 
         error(tmp);
     end
@@ -597,11 +597,11 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
 
     % error check number of parameters
     if length(feature_function('parameter_names')) ~= length(par_data)
-        tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_features'':\n', feature_function('group'));
+        tmp = sprintf('Error within ''feature_function'' for group ''%s'', which is an input argument of ''calculate_NRpars'':\n', feature_function('group'));
         tmp = [tmp sprintf('- %d parameter names specified\n', length(feature_function('parameter_names')))];
         tmp = [tmp sprintf('- %d parameters returned by ''pars'' mode\n\n', length(par_data))];
         
-        tmp = [tmp sprintf('Function ''calculate_features'' was calculating features for the following media:\n') ];
+        tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
         tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
         tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
         tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
@@ -630,7 +630,7 @@ function data = load_data(base_dir, feature, nr_dataset, media_num)
     name = sprintf('%sfeatures\\%s\\%s.mat', ...
         base_dir, feature, nr_dataset.media(media_num).name);
     if ~exist(name,'file')
-        tmp = sprintf('Error in ''calculate_features'':\n');
+        tmp = sprintf('Error in ''calculate_NRpars'':\n');
         tmp = [tmp sprintf('- reading feature %s\n', feature)];
         tmp = [tmp sprintf('- dataset %s\n', nr_dataset.test)];
         tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
