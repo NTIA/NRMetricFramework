@@ -22,8 +22,6 @@ function display_color_xyt(y_xyt, cb_xyt,cr_xyt, varargin)
 %       image display and beeping.
 %   'subplot' don't open a new figure. Assume a figure is already open, and
 %       display the image or video with no axes. 
-%  #,   where # is an integer greater than 1, requests that the image sequence 
-%       be played repeatedly, # times.
 % REMARKS
 %  Routine tested.
 %  Cb and Cr must contain values centered around zero (i.e., -128 to 127)
@@ -49,8 +47,6 @@ if nargin > 3
             is_slowmo = 1;
         elseif strcmp(varargin{cnt-3},'subplot') == 1
             is_subplot = 1;
-        elseif isnumeric(varargin{cnt-3})
-            is_repeat = varargin{cnt-3};
         else
             error('display_color_xyt Flag not recognized');
         end

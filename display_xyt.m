@@ -2,7 +2,7 @@ function display_xyt(y_xyt, varargin)
 % DISPLAY_XYT
 %  Display a sequence of grayscale images from memory to the screen.  
 %  Image coordinates are x (horizontal), y (vertical), and t (time).  
-%  Options for interlaced playback, zoom, slow motion, and looping. 
+%  Options for interlaced playback, slow motion, and looping. 
 % SYNTAX
 %  display_xyt(y)
 %  display_xyt(...,'Flag', ...)
@@ -21,14 +21,6 @@ function display_xyt(y_xyt, varargin)
 %       image display and beeping.
 %   'subplot' don't open a new figure. Assume a figure is already open, and
 %       display the image or video with no axes. 
-%  #,   where # is an integer greater than 1, requests that the time-slice 
-%       be played repeatedly # times.
-%  'zoom2' indicates that the image should be upsampled by 2.
-%  'zoom4' indicates that the image should be upsampled by 4.
-%  'zoom8' indicates that the image should be upsampled by 8.
-%  'zoom16' indicates that the image should be upsampled by 16.
-%  'zoom32' indicates that the image should be upsampled by 32.
-%           All zooms done by nearest neighbor.
 % REMARKS
 %  Routine tested.
 
@@ -37,8 +29,6 @@ is_interlace = 0;
 is_slowmo = 0;
 is_subplot = 0;
 is_repeat = 1;
-is_zoom = 0;
-zoom_r = 1;
 
 if nargin > 1
     for cnt = 2:nargin
@@ -54,23 +44,6 @@ if nargin > 1
             is_slowmo = 1;
         elseif strcmp(varargin{cnt-1},'subplot') == 1
             is_subplot = 1;
-        elseif isnumeric(varargin{cnt-1})
-            is_repeat = varargin{cnt-1};
-        elseif strcmp(varargin{cnt-1},'zoom2') == 1
-            is_zoom = 1;
-            zoom_r = 2;
-        elseif strcmp(varargin{cnt-1},'zoom4') == 1
-            is_zoom = 2;
-            zoom_r = 4;
-        elseif strcmp(varargin{cnt-1},'zoom8') == 1
-            is_zoom = 3;
-            zoom_r = 8;
-        elseif strcmp(varargin{cnt-1},'zoom16') == 1
-            is_zoom = 4;
-            zoom_r = 16;
-        elseif strcmp(varargin{cnt-1},'zoom32') == 1
-            is_zoom = 5;
-            zoom_r = 32;
         else
             error('display_xyt Flag not recognized');
         end
@@ -114,7 +87,7 @@ end
 [num_rows, num_cols,num_frames] = size(y_xyt);
 
 if ~is_subplot
-    figure('Units', 'pixels', 'Position', [100 100 num_cols*zoom_r num_rows*zoom_r],...
+    figure('Units', 'pixels', 'Position', [100 100 num_cols num_rows],...
         'Name','Display Greyscale XYT');
     set(gca, 'Position', [0 0 1 1]);
 end
@@ -134,10 +107,6 @@ for loop = 1:is_repeat
         % convert to RGB computer, same algorithm as ycbcr2rgb_double
         y = (y_xyt(:,:,cnt)-16)*1.164384;
         y = max(0, min(y,255))/255;
-        
-        if is_zoom
-            y = interp2(y,is_zoom,'nearest');
-        end
         
         if cnt == 1
             % display first frame
