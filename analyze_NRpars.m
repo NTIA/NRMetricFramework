@@ -13,7 +13,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
 %   nr_dataset          Data struction. Each describes an entire dataset (name, file location, ...)
 %   base_dir    Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
-%                       adhere to the interface specified in calculate_features.
+%                       adhere to the interface specified in calculate_NRpars.
 %
 %   Optional parameters. Some options contradict others.
 %
@@ -169,7 +169,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
     % load the parameters. This will calculate them, if not yet computed. 
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
     for dcnt = 1:length(nr_dataset)
-        NRpars(dcnt) = calculate_features(nr_dataset(dcnt), base_dir, 'none', feature_function);
+        NRpars(dcnt) = calculate_NRpars(nr_dataset(dcnt), base_dir, 'none', feature_function);
         
         if do_square
             NRpars(dcnt).data = (NRpars(dcnt).data).^2;
