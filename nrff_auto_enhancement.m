@@ -18,11 +18,10 @@ if strcmp(mode, 'group')
 elseif strcmp(mode, 'feature_names') 
 
     data{1} = 'white level';
-    data{2} = 'black level';
     
-    data{3} = 'r_block_std';
-    data{4} = 'g_block_std';
-    data{5} = 'b_block_std';
+    data{2} = 'r_block_std';
+    data{3} = 'g_block_std';
+    data{4} = 'b_block_std';
 
     
 
@@ -31,9 +30,8 @@ elseif strcmp(mode, 'feature_names')
 elseif strcmp(mode, 'parameter_names')
 
     data{1} = 'white level'; % 98% white level, clipped at 150 maximum, ignore black border.
-    data{2} = 'black level'; % 2% white level, ignore black border.
     
-    data{3} = 'rgb_block_std';
+    data{2} = 'rgb_block_std';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % color space
@@ -99,9 +97,6 @@ elseif strcmp(mode, 'pixels')
 
         offset_98 = floor(pixels*0.98); 
         data{1} = y_vector( offset_98 );
-
-        offset_2 = floor(pixels*0.02); 
-        data{2} = y_vector( offset_2 );
     end
     
     %
@@ -119,13 +114,13 @@ elseif strcmp(mode, 'pixels')
 
     for loop = 1:length(blocks)
         this_block = red(blocks(loop).top:blocks(loop).bottom,blocks(loop).left:blocks(loop).right);
-        data{3}(loop) = st_statistic('std', this_block);
+        data{2}(loop) = st_statistic('std', this_block);
         
         this_block = green(blocks(loop).top:blocks(loop).bottom,blocks(loop).left:blocks(loop).right);
-        data{4}(loop) = st_statistic('std', this_block);
+        data{3}(loop) = st_statistic('std', this_block);
         
         this_block = blue(blocks(loop).top:blocks(loop).bottom,blocks(loop).left:blocks(loop).right);
-        data{5}(loop) = st_statistic('std', this_block);
+        data{4}(loop) = st_statistic('std', this_block);
     end
     
 
@@ -143,15 +138,10 @@ elseif strcmp(mode, 'pars')
         data(1) = 235;
     end
 
-    data(2) = nanmean(squeeze(feature_data{2}));
-    if isnan(data(2))
-        data(1) = 16;
-    end
-    
     % clip white level at 150 maximum
     data(1) = min(data(1), 150);
-    
-    data(3) = ( st_statistic('mean', feature_data{2}) + ...
+
+    data(2) = ( st_statistic('mean', feature_data{2}) + ...
             st_statistic('mean', feature_data{3}) + st_statistic('mean', feature_data{4}) );
     
     
