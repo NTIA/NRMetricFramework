@@ -283,7 +283,7 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             for loop = 1:floor(nr_dataset.media(media_num).fps/2):nr_dataset.media(media_num).stop
                 y = read_media ('frames', nr_dataset, media_num, loop, loop);
                 [top, left, bottom, right] = valid_region_search_nosafety (y, top, left, bottom, right);
-                comp_vec = [top,left,bottom,right];
+                comp_vec = [top, left, bottom, right];
                 %Take the largest possible valid region
                 for index = 1:4
                     if(maxwindow_vec(index) < comp_vec(index))
@@ -336,7 +336,7 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             % Check for frame. Noted duration may be wrong. Also, function
             % "hasFrame" says "yes" when it should say "no" on the last
             % frame, when looping by +1 frame (read twice). 
-            maxwindow_vec = zeros(4,1);
+            maxwindow_vec = ones(4,1);
             while hasFrame(v) && v.CurrentTime + 1/v.FrameRate < v.Duration
                 rgb = readFrame(v);
                 stop = stop + 1;
