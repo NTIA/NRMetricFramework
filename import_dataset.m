@@ -278,20 +278,25 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             nr_dataset.media(media_num).fps = info.FramesPerSecond;
             
             % read every a frame each 1/2 second, to compute valid region
+            %Caculate Maximum Top, Left, Bottom, Right
+            maxwindow_vec = zeros(4,1);
             for loop = 1:floor(nr_dataset.media(media_num).fps/2):nr_dataset.media(media_num).stop
                 y = read_media ('frames', nr_dataset, media_num, loop, loop);
                 [top, left, bottom, right] = valid_region_search_nosafety (y, top, left, bottom, right);
+                comp_vec = [top,left,bottom,right];
+                %Take the largest possible valid region
+                for index = 1:4
+                    if(maxwindow_vec(index) < comp_vec(index))
+                        maxwindow_vec(index) = comp_vec(index);
+                    end
+                end
             end
-            %Get the Luma frame and run through
-            %valid_region_search_nosafety
-            y = read_avi('YCbCr', [directory '\' file_list(cnt).name], 'frames', nr_dataset.media(media_num).stop, nr_dataset.media(media_num).stop);
-            [top, left, bottom, right] = valid_region_search_nosafety (y, top, left, bottom, right);
 
             % record valid region 
-            nr_dataset.media(media_num).valid_top = top;
-            nr_dataset.media(media_num).valid_left = left;
-            nr_dataset.media(media_num).valid_bottom = bottom;
-            nr_dataset.media(media_num).valid_right = right;
+            nr_dataset.media(media_num).valid_top = maxwindow_vec(1);
+            nr_dataset.media(media_num).valid_left = maxwindow_vec(2);
+            nr_dataset.media(media_num).valid_bottom = maxwindow_vec(3);
+            nr_dataset.media(media_num).valid_right = maxwindow_vec(4);
 
             % print results
             fprintf('media %d) uncompressed AVI file %s valid region (%d,%d) (%d,%d)\n', ...
@@ -331,6 +336,7 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             % Check for frame. Noted duration may be wrong. Also, function
             % "hasFrame" says "yes" when it should say "no" on the last
             % frame, when looping by +1 frame (read twice). 
+            maxwindow_vec = zeros(4,1);
             while hasFrame(v) && v.CurrentTime + 1/v.FrameRate < v.Duration
                 rgb = readFrame(v);
                 stop = stop + 1;
@@ -349,6 +355,13 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
                 [y] = rgb2ycbcr_double(single(rgb), '128', 'y_cb_cr');
                 y  = image_scale(y, nr_dataset.media(media_num).image_rows, nr_dataset.media(media_num).image_cols, false);
                 [top, left, bottom, right] =valid_region_search_nosafety (y, top, left, bottom, right);
+                comp_vec = [top,left,bottom,right];
+                %Take the largest possible valid region
+                for index = 1:4
+                    if(maxwindow_vec(index) < comp_vec(index))
+                        maxwindow_vec(index) = comp_vec(index);
+                    end
+                end
             end
             if ~is_valid
                 warning('File %s cannot be read; discarding', file_list(cnt).name);
@@ -364,10 +377,10 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             nr_dataset.media(media_num).fps = v.FrameRate;
 
             % record valid region 
-            nr_dataset.media(media_num).valid_top = top;
-            nr_dataset.media(media_num).valid_left = left;
-            nr_dataset.media(media_num).valid_bottom = bottom;
-            nr_dataset.media(media_num).valid_right = right;
+            nr_dataset.media(media_num).valid_top = maxwindow_vec(1);
+            nr_dataset.media(media_num).valid_left = maxwindow_vec(2);
+            nr_dataset.media(media_num).valid_bottom = maxwindow_vec(3);
+            nr_dataset.media(media_num).valid_right = maxwindow_vec(4);
 
             % make sure can read the first and last image, using this
             % structure
