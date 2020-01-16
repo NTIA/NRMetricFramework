@@ -2,7 +2,7 @@ function [data] = metric_sawatch(mode, varargin)
 % No-Reference Feature Function (NRFF)
 %  Implement NR metric "sawatch" version 1.
 % SYNTAX & SEMANTICS
-%   mode 'group' and 'parameter_names' as per 'calculate_features' interface specifications.
+%   mode 'group' and 'parameter_names' as per 'calculate_NRpars' interface specifications.
 %   mode 'compose' called as:
 %       metric_sawatch('compose', nr_datasets, base_dir);
 %   calculate and save as a parameter.
@@ -40,7 +40,7 @@ function [data] = metric_sawatch(mode, varargin)
         mkdir(base_dir,'group_sawatch');
         
         for dcnt = 1:length(nr_datasets)
-            tmp = calculate_features(nr_datasets(dcnt), base_dir, 'none', @nrff_auto_enhancement);
+            tmp = calculate_NRpars(nr_datasets(dcnt), base_dir, 'none', @nrff_auto_enhancement);
             NRpars = tmp; % media names, computed
             NRpars.par_name = par_name;
             NRpars.data = nan(length(par_name),length(NRpars.media_name));
@@ -48,11 +48,11 @@ function [data] = metric_sawatch(mode, varargin)
             % linear model, trained against MOS scaled on [0..1] where 0 = worst 
             NRpars.data(1,:) = 1 - (tmp.data(1,:) - 10) / 140; % * -0.0018092;
             
-            tmp1 = calculate_features(nr_datasets(dcnt), base_dir, 'none', @nrff_blur);            
+            tmp1 = calculate_NRpars(nr_datasets(dcnt), base_dir, 'none', @nrff_blur);            
             NRpars.data(2,:) = 1 - ( (tmp1.data(1,:) - 0) / 4 + ...
             	 (tmp1.data(2,:) - 1.0) / 8.0) / 2; 
 
-            tmp = calculate_features(nr_datasets(dcnt), base_dir, 'none', @nrff_panIPS);
+            tmp = calculate_NRpars(nr_datasets(dcnt), base_dir, 'none', @nrff_panIPS);
             NRpars.data(3,:) = 1 - (tmp.data(7,:) - 1) / 4; % * -0.20264; % take weight from its4s4 dataset
             
             NRpars.data(4,:) = 0.198 + ...
