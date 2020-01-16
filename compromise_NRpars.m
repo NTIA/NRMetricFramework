@@ -16,7 +16,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
 %   The remaqining input parameters are specified in triples, as follows:
 %   "feature_function" = Function call to compute the feature. This no-reference 
 %       feature function (NRFF) must adhere to the interface specified in 
-%       calculate_features.m.
+%       calculate_NRpars.m.
 %   "parameter1" = Number (offset) of the parameter to be examined.
 %   "ispos" = true if the parameter is positively correlated to MOS,
 %       meaning larger values indicate higher quality. "ispos" is false if 
@@ -84,7 +84,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         % load parameter data for all datasets
         for cntD = 1:length(data)
             % load all parameters for this dataset
-            NRpars = calculate_features(nr_dataset(cntD), base_dir, 'none', parinfo(cntP).feature_function);
+            NRpars = calculate_NRpars(nr_dataset(cntD), base_dir, 'none', parinfo(cntP).feature_function);
             
             % figure parameter offset 
             if parinfo(cntP).parnum < 1 || parinfo(cntP).parnum > length(NRpars.par_name)
