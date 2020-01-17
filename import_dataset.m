@@ -280,7 +280,7 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             % read every a frame each 1/2 second, to compute valid region
             %Caculate Maximum Top, Left, Bottom, Right
             maxwindow_vec = zeros(4,1);
-            for loop = 1:floor(nr_dataset.media(media_num).fps/2):nr_dataset.media(media_num).stop
+            for loop = 1:max(1, floor(nr_dataset.media(media_num).fps/2)):nr_dataset.media(media_num).stop
                 y = read_media ('frames', nr_dataset, media_num, loop, loop);
                 [top, left, bottom, right] = valid_region_search_nosafety (y, top, left, bottom, right);
                 comp_vec = [top, left, bottom, right];

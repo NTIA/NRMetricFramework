@@ -1,11 +1,11 @@
-function [Xtrain, Xtest, ytrain, ytest] = export_NRpars(datasets, param_structs, param_list, format, fname)
+function [Xtrain, Xverify, ytrain, yverify] = export_NRpars(datasets, param_structs, param_list, format, fname)
 % EXPORT_NRPARS
 %
 %   Write NR parameters or NR metrics and MOSs to a spreadsheet or matrix
 %
 % SYNTAX
 %
-% [Xtrain, Xtest, ytrain, ytest] = paramToMatrix(dataset, param_structs,
+% [Xtrain, Xverify, ytrain, yverify] = export_NRpars(dataset, param_structs,
 %           param_list, format, fname);
 % 
 % SEMANTICS
@@ -20,6 +20,7 @@ function [Xtrain, Xtest, ytrain, ytest] = export_NRpars(datasets, param_structs,
 % Arguments
 %
 %   dataset: The dataset from which all param_structs are computed from.
+%   The current program currently only works with one dataset. 
 %
 %   param_structs: one or more parameter structures (a vector).
 %
@@ -38,38 +39,48 @@ function [Xtrain, Xtest, ytrain, ytest] = export_NRpars(datasets, param_structs,
 %Output
 %
 %  Xtrain: The feature matrix for training
-%  Xtest: The feature matrix for testing
+%  Xverify: The feature matrix for verification
 %  ytrain: The MOS vector for training
-%  ytest: The MOS vector for testing
+%  ytest: The MOS vector for verification
 %   
 % Examples:
 %
 % % return all parameters from NR_pars1 as MATLAB variables
-% [Xtrain, Xtest, ytrain, ytest] = paramToMatrix(Example_Dataset, NR_pars1, ...
+% [Xtrain, Xverify, ytrain, yverify] = export_NRpars(Example_Dataset, NR_pars1, ...
 %       [], "none", "none")
 %
 % % save five parametes from three different parameter structs to a CSV file
 % % and return the same data to MATLAB variables.
-% [Xtrain, Xtest, ytrain, ytest] = paramToMatrix(Example_Dataset, ...
+% [Xtrain, Xverify, ytrain, yverify] = export_NRpars(Example_Dataset, ...
 %       [NR_pars1, NR_pars2, NR_pars3], [Parm1, Param2, Param3, Param4, Param5], "csv", "test.csv")
 %
 % % save one parameter to an Excel spreadsheet
-% paramToMatrix(Example_Dataset, NR_pars1, Parm1, "excel", "test.xls")
+% export_NRpars(Example_Dataset, NR_pars1, Parm1, "excel", "test.xls")
 %
 %--------------------------------------------------------------------------
 
     %Aggregate MOS scores
     MOS_cell_array = [];
+    %Aggregate Media Names and Media Files
+    media_name = [];
+    media_file = [];
     %Get Training Testing Split
     training_bool_array = [];
     media_to_index = containers.Map;
     index = 1;
+    
+    if(length(datasets) > 1)
+        error("Currently this code only accepts one dataset as an input argument");
+    end
+    
     for i = 1:length(datasets)
         current_dataset = datasets(i);
         %Note that current_data_set.media is a struct array and returns the mos
         %as a csv, therefore you need to enclose the whole thing in square
         %brackets to cast it to an array
         MOS_cell_array = [MOS_cell_array, [current_dataset.media(:).mos]];    
+        media_name = [media_name, {current_dataset.media(:).name}];
+        media_file = [media_file, {current_dataset.media(:).file}];
         training_bool_array = [training_bool_array; get_training_validation(current_dataset)];
         for media_index = 1:length(current_dataset.media)
             current_media = current_dataset.media(media_index);
@@ -105,11 +116,11 @@ function [Xtrain, Xtest, ytrain, ytest] = export_NRpars(datasets, param_structs,
         for k = 1:length(param_structs)
             current_struct = param_structs(k);
             field_names = [current_struct.par_name];
-            media_names = [current_struct.media_name];
-            order_vector = zeros(length(media_names), 1);
+            file_names = [current_struct.media_name];
+            order_vector = zeros(length(file_names), 1);
             %Get Media Names and set permutation order
-            for i = 1:length(media_names)
-                order_vector(i) = media_to_index(media_names{i});
+            for i = 1:length(file_names)
+                order_vector(i) = media_to_index(file_names{i});
             end
             %Look through struct names
             [lia, locb] = ismember(searching_for, field_names);
@@ -129,13 +140,32 @@ function [Xtrain, Xtest, ytrain, ytest] = export_NRpars(datasets, param_structs,
         %Append Row to the Matrix as a Column
         X = [X, X_col];
     end
-    [Xtrain, Xtest, ytrain, ytest] = training_testing_split(X, y, logical(training_bool_array)); 
+    
+    %Convert Into Column Vectors
+    media_name = media_name';
+    media_file = media_file';
+    
+    [Xtrain, Xverify, ytrain, yverify] = training_testing_split(X, y, logical(training_bool_array)); 
     %This function additionally exports the matrix to the desired format
     column_names = matlab.lang.makeValidName(["mos", parameter_names]);
     training_data = array2table([ytrain, Xtrain]);
-    testing_data = array2table([ytest, Xtest]);
+    testing_data = array2table([yverify, Xverify]);
     testing_data.Properties.VariableNames = column_names;
     training_data.Properties.VariableNames = column_names;
+    
+    
+    %Add Media Names and Media Files to Testing Data
+    testing_data = addvars(testing_data, media_name(~logical(training_bool_array)), 'Before', 'mos');
+    testing_data = addvars(testing_data, media_file(~logical(training_bool_array)), 'Before', 'mos');
+    testing_data.Properties.VariableNames{'Var1'} = 'MediaName';
+    testing_data.Properties.VariableNames{'Var2'} = 'MediaFile';
+    
+    %Add Media Names and Media Files to Training Data 
+    training_data = addvars(training_data, media_name(logical(training_bool_array)), 'Before', 'mos');
+    training_data = addvars(training_data, media_file(logical(training_bool_array)), 'Before', 'mos');
+    training_data.Properties.VariableNames{'Var1'} = 'MediaName';
+    training_data.Properties.VariableNames{'Var2'} = 'MediaFile';
+    
     export_format(training_data, testing_data, fname, format); 
 end
 

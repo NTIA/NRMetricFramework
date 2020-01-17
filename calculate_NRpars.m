@@ -1,6 +1,8 @@
 function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, feature_function) 
 % CALCULATE_NRPARS
 %   Support tool to calculate a NR feature on all videos or images in a dataset.
+%   NOTE: The use of this function requires the parallel processing
+%   toolbox.
 % SYNTAX
 %   [NRpars] = calculate_NRpars(nr_dataset, ...
 %       base_dir, parallel_mode, feature_function); 
@@ -193,7 +195,8 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
     end
     
     % start default parallel pool, if needed and doesn't exist
-    poolobj = gcp('nocreate'); % If no pool, do not create new one.
+    %poolobj = gcp('nocreate'); % If no pool, do not create new one.
+    poolobj = [];
     if isempty(poolobj) && (parallel_stimuli || parallel_tslices)
         parpool;
     end
