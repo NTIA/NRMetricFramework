@@ -44,7 +44,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %   [feature_names]     = feature_function('feature_names')
 %   [parameter_names]   = feature_function('parameter_names')
 %   [bool]              = feature_function('luma_only')
-%   [duration]          = feature_function('read_mode')
+%   [read_mode]         = feature_function('read_mode')
 %   [feature_data]      = feature_function('pixels', fps, y)
 %   [feature1_data]     = feature_function('pixels', fps, y, cb, cr)
 %   [par_data]          = feature_function('pars', feature_data, fps, image_size);
@@ -75,6 +75,10 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %                   calculate temporal information. If interlaced, de-interlace  
 %                   and group pairs of fields of the same type.
 %       'all'       The entire stimuli 
+%
+%       'metric'    Indicates this function is not an NRFF but rather an 
+%                   NR metric, which is calculated from other NRFF.
+%                   See metric_sawatch.m.
 %
 % 'pixels' mode calculates these features on one tslice
 %   Input:
@@ -109,6 +113,16 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         for cnt=1:length(nr_dataset)
             NRpars(cnt) = calculate_NRpars(nr_dataset(cnt), base_dir, parallel_mode, feature_function);
         end
+        return;
+    end
+    
+    % Check whether this is an NR metric instead of an NR parameter.
+    % If so, call its calculate function ('compose' mode) and return.
+    tslice_mode = feature_function('read_mode');
+    if strcmp(tslice_mode,'metric')
+        % this is a metric instead of an NR parameter. Calculate as follows
+        % and return
+        NRpars = feature_function('compose', nr_dataset, base_dir);
         return;
     end
 
