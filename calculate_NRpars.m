@@ -1,8 +1,6 @@
 function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, feature_function) 
 % CALCULATE_NRPARS
 %   Support tool to calculate a NR feature on all videos or images in a dataset.
-%   NOTE: The use of this function requires the parallel processing
-%   toolbox.
 % SYNTAX
 %   [NRpars] = calculate_NRpars(nr_dataset, ...
 %       base_dir, parallel_mode, feature_function); 
