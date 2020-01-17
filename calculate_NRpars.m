@@ -46,7 +46,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %   [feature_names]     = feature_function('feature_names')
 %   [parameter_names]   = feature_function('parameter_names')
 %   [bool]              = feature_function('luma_only')
-%   [duration]          = feature_function('read_mode')
+%   [read_mode]         = feature_function('read_mode')
 %   [feature_data]      = feature_function('pixels', fps, y)
 %   [feature1_data]     = feature_function('pixels', fps, y, cb, cr)
 %   [par_data]          = feature_function('pars', feature_data, fps, image_size);
@@ -105,12 +105,54 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %   Output:
 %       [par_data] = array, containing the value for each NR parameter
 %
+% -------------------------------------------------------------------------
+% FEATURE_FUNCTION for NR Metrics
+%   The following variant feature_function is used to combine already 
+%   calculated data from several other feature_functions into a single NR
+%   metric.
+% STANDARD SYNTAX
+%   [feature_group]     = feature_function('group')
+%   [parameter_names]   = feature_function('parameter_names')
+%   [read_mode]         = feature_function('read_mode')
+%   [par_data]          = feature_function('compose', nr_dataset, base_dir);
+% SEMANTICS
+%   Where NRFF takes as input images or videos and outputs NR features and  
+%   NR parameters, this NR metric takes as input NR parameters and outputs
+%   NR metrics. 
+%
+% 'feature_group' mode returns the feature names
+%   Output
+%       feature_group = char array (short) uniquely identifying this group
+%           of features and parameters. 
+%
+% 'parameter_names' mode returns the parameter names
+%   Output
+%       parameter_names = cell array with parameter names
+%
+% 'read_mode' = 'metric'
+%`      Function calculate_NRpars.m uses this value ('metric') to select
+%       the alternate execution path.
+%
+% 'compose' mode  calculates the NR metric.
+%   Output:
+%       [par_data] = array, containing the value for each NR parameter or
+%                    NR metric
 
     % if given multiple datasets, process them one after another
     if length(nr_dataset) > 1
         for cnt=1:length(nr_dataset)
             NRpars(cnt) = calculate_NRpars(nr_dataset(cnt), base_dir, parallel_mode, feature_function);
         end
+        return;
+    end
+    
+    % Check whether this is an NR metric instead of an NR parameter.
+    % If so, call its calculate function ('compose' mode) and return.
+    tslice_mode = feature_function('read_mode');
+    if strcmp(tslice_mode,'metric')
+        % this is a metric instead of an NR parameter. Calculate as follows
+        % and return
+        NRpars = feature_function('compose', nr_dataset, base_dir);
         return;
     end
 
@@ -194,9 +236,13 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         return;
     end
     
-    % start default parallel pool, if needed and doesn't exist
-    %poolobj = gcp('nocreate'); % If no pool, do not create new one.
-    poolobj = [];
+    if parallel_stimuli == false || parallel_tslices == false
+        poolobj = [];
+    else
+        % start default parallel pool, if needed and doesn't exist
+        poolobj = gcp('nocreate'); % If no pool, do not create new one.
+    end
+
     if isempty(poolobj) && (parallel_stimuli || parallel_tslices)
         parpool;
     end
