@@ -76,10 +76,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %                   and group pairs of fields of the same type.
 %       'all'       The entire stimuli 
 %
-%       'metric'    Indicates this function is not an NRFF but rather an 
-%                   NR metric, which is calculated from other NRFF.
-%                   See metric_sawatch.m.
-%
 % 'pixels' mode calculates these features on one tslice
 %   Input:
 %       fps = frames per second; NaN for images
@@ -107,6 +103,38 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %   Output:
 %       [par_data] = array, containing the value for each NR parameter
 %
+% -------------------------------------------------------------------------
+% FEATURE_FUNCTION for NR Metrics
+%   The following variant feature_function is used to combine already 
+%   calculated data from several other feature_functions into a single NR
+%   metric.
+% STANDARD SYNTAX
+%   [feature_group]     = feature_function('group')
+%   [parameter_names]   = feature_function('parameter_names')
+%   [read_mode]         = feature_function('read_mode')
+%   [par_data]          = feature_function('compose', nr_dataset, base_dir);
+% SEMANTICS
+%   Where NRFF takes as input images or videos and outputs NR features and  
+%   NR parameters, this NR metric takes as input NR parameters and outputs
+%   NR metrics. 
+%
+% 'feature_group' mode returns the feature names
+%   Output
+%       feature_group = char array (short) uniquely identifying this group
+%           of features and parameters. 
+%
+% 'parameter_names' mode returns the parameter names
+%   Output
+%       parameter_names = cell array with parameter names
+%
+% 'read_mode' = 'metric'
+%`      Function calculate_NRpars.m uses this value ('metric') to select
+%       the alternate execution path.
+%
+% 'compose' mode  calculates the NR metric.
+%   Output:
+%       [par_data] = array, containing the value for each NR parameter or
+%                    NR metric
 
     % if given multiple datasets, process them one after another
     if length(nr_dataset) > 1
