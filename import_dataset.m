@@ -90,7 +90,7 @@ function nr_dataset = make_empty_dataset(dataset_name, display_rows, display_col
     category_name{2} = 'Training vs verification';
 
     % category 3 is camera list.
-    category_list{3} = categorical({'av1','avc','hevc','mpeg2','mpeg4','video','jpeg','png'});
+    category_list{3} = categorical({'av1','avc','hevc','mpeg2','mpeg4','video','jpeg','png','bmp'});
     category_name{3} = 'Codec';
 
     % cateogry 4 is monitor resolution; choose closest resolution 
@@ -233,11 +233,12 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             if strcmpi(file_list(cnt).name(len-3:len),'.jpg') || strcmpi(file_list(cnt).name(len-4:len),'.jpeg')
                 nr_dataset.media(media_num).category3 = categorical({'jpeg'}); 
                 nr_dataset.media(media_num).codec = 'jpeg';
-            end
-            
-            if strcmpi(file_list(cnt).name(len-3:len),'.png')
+            elseif strcmpi(file_list(cnt).name(len-3:len),'.png')
                 nr_dataset.media(media_num).category3 = categorical({'png'}); 
                 nr_dataset.media(media_num).codec = 'png';
+            elseif strcmpi(file_list(cnt).name(len-3:len),'.bmp')
+                nr_dataset.media(media_num).category3 = categorical({'bmp'}); 
+                nr_dataset.media(media_num).codec = 'bmp';
             end
             
             % print results

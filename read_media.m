@@ -144,7 +144,7 @@ function [y, cb, cr] = read_media (mode, nr_dataset, media_num, varargin)
             % scale to destination monitor
             all_y = image_scale(all_y, image_rows, image_cols, false);
         end
-    elseif (strcmpi(hold_suffix,'jpg') || strcmpi(hold_suffix, 'png') || strcmpi(hold_suffix, 'jpeg'))
+    elseif strcmpi(hold_suffix,'jpg') || strcmpi(hold_suffix, 'png') || strcmpi(hold_suffix, 'jpeg') || strcmpi(hold_suffix, 'bmp')
 
         % read
         img1 = imread([nr_dataset.path nr_dataset.media(media_num).file]);
