@@ -239,10 +239,9 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
     else
         % start default parallel pool, if needed and doesn't exist
         poolobj = gcp('nocreate'); % If no pool, do not create new one.
-    end
-
-    if isempty(poolobj) && (parallel_stimuli || parallel_tslices)
-        parpool;
+        if isempty(poolobj) && (parallel_stimuli || parallel_tslices)
+            parpool;
+        end
     end
 
     % keep track of progress
