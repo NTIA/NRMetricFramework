@@ -13,7 +13,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
 %   "do_scaling" = boolean. usually true, select false if parameters are
 %   already on a [0..1] scale. 
 %
-%   The remaqining input parameters are specified in triples, as follows:
+%   The remaining input parameters are specified in triples, as follows:
 %   "feature_function" = Function call to compute the feature. This no-reference 
 %       feature function (NRFF) must adhere to the interface specified in 
 %       calculate_NRpars.m.
@@ -40,7 +40,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     num_pars = varargin_len / 3;
     
     if mod(varargin_len,3)
-        error('input arguments must specify function + parameter number + ispos tripples');
+        error('input arguments must specify function + parameter number + ispos triples');
     end
 
 
@@ -232,7 +232,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     warning('on','MATLAB:rankDeficientMatrix');
     
     if num_pars ~= 2
-        fprintf('\nSkipping weighted compromose; this analysis requires exactly two parameters\n');
+        fprintf('\nSkipping weighted compromise; this analysis requires exactly two parameters\n');
     else
         
         fprintf('\nSee figure 1 for weighted compromise\n');

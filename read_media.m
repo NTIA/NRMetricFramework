@@ -30,8 +30,8 @@ function [y, cb, cr] = read_media (mode, nr_dataset, media_num, varargin)
 %                       Requested spatial region of interest, overriding
 %                       the media's specified valid region. 
 %  'interlace'          If the media is an interlaced video, return the raw pixels. 
-%                       By default, interlaced videos are deinterlaced by 
-%                       spliting into fields, and up-sampling each field to a full frame.
+%                       By default, interlaced videos are de-interlaced by 
+%                       splitting into fields, and up-sampling each field to a full frame.
 %                    
 % EXAMPLE
 %  [y] = read_media( 'all', nr_dataset, 57, 'region', 21, 21, 468, 700); % read entire video or image 
@@ -42,7 +42,7 @@ function [y, cb, cr] = read_media (mode, nr_dataset, media_num, varargin)
 % Color planes will be upsampled with pixel replication where necessary, so
 % that Y, Cb, and Cr planes are all the same size. 
 %
-% Can read the folloowing formats:
+% Can read the following formats:
 %   - uncompressed AVI files (UYVY or RGB) with 'avi' suffix
 %   - any video format supported by MATLAB function 'VideoReader'
 %   - any image format supported by MATLAB function 'imread'
@@ -187,7 +187,7 @@ function [y, cb, cr] = read_media (mode, nr_dataset, media_num, varargin)
     end
 
 
-    % cut out valid region. Also convert to double precitions. 
+    % cut out valid region. Also convert to double precision. 
     if ~isnan(valid_top) && ~isnan(valid_bottom) && ~isnan(valid_left) && ~isnan(valid_right)
         rows = valid_top:valid_bottom;
         cols = valid_left:valid_right;
@@ -205,7 +205,7 @@ function [y, cb, cr] = read_media (mode, nr_dataset, media_num, varargin)
         end
     end
     
-    % deinterlace, if necessary and requested
+    % de-interlace, if necessary and requested
     if is_deinterlace
         if strcmp(nr_dataset.media(media_num).video_standard,'interlace_lower_field_first') == 1 || ...
             strcmp(nr_dataset.media(media_num).video_standard,'interlace_upper_field_first') == 1
@@ -318,15 +318,3 @@ function [one, two] = split_into_fields(y, type)
 
 
 end
-
-
-
-
-
-
-
-
-
-
-
-

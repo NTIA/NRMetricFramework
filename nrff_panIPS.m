@@ -3,9 +3,9 @@ function [data] = nrff_panIPS(type, varargin)
 %   Calculates the quality of camera pans in images per second (IPS).
 %   IPS is the percentage of the image traveled in one second.
 %
-%   Returns the caluclated IPS value associated with the horizontal pan
+%   Returns the calculated IPS value associated with the horizontal pan
 %   motion and the vertical pan motion. For example given a 1920 by 1080 picture
-%   if the image travels all the way accross the 1920 pixels it will have a
+%   if the image travels all the way across the 1920 pixels it will have a
 %   horizontal IPS value of 1.
 %
 %   Parameter #7, PanSpeed, is the most robust estimation of pan quality.
@@ -208,7 +208,7 @@ elseif strcmp(type, 'pars')
     HorizMedian = transpose(nanmedian(horiz));
     VertMedian = transpose(nanmedian(vert));
 
-    %Calculate the derevitives of the stats
+    %Calculate the derivatives of the stats
     Dhoriz = diff(horiz);
     Dvert = diff(vert);
     
@@ -226,7 +226,7 @@ elseif strcmp(type, 'pars')
 
     SecondaryMean = acalc(HorizMean,VertMean);
     
-    %Nessecary Parameters
+    %Necessary Parameters
     data(1,1) = PrimaryMean;
     data(1,2) = SecondaryMean;
     data(1,3) = PrimaryStD;

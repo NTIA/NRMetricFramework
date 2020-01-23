@@ -394,7 +394,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
             %32 Bit data with either integer or floating point numbers. Use
             %info.SubFormat to determine whether or not the audio data is
             %32 bit or 32 bit floating point.  Also, a check will still be
-            %in place below just incase this information does not exist or
+            %in place below just in case this information does not exist or
             %is something "weird".
             if(info.SubFormat == 1)
                 %PCM data is contained, meaning that the data is 32 bit,
@@ -405,7 +405,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                 %data is 32 bit floating point numbers.
                 dtype = 'float'; % floating point
             else
-                %The SubFormat is formatted in a way that isnt checked by
+                %The SubFormat is formatted in a way that isn't checked by
                 %this program, it will be assumed that 32 bit will be used.
                 dtype = 'bit32'; %signed 32-bit
                 warning('SubFormat not formatted in a way this program understands.  Audio may be incorrect.');
@@ -453,7 +453,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
             data = [];
             
             %Now grab all the data in the full chunk and chop off the not
-            %needed data in the begining.
+            %needed data in the beginning.
             fseek(file, info.audFrames(1, ind), -1);
             data = [data fread(file, [info.NumAudioChannels, ...
                 floor((info.audFrames(1,ind)+info.audFrames(2,ind)-ftell(file))...
@@ -468,7 +468,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
             try
                 fseek(file, info.audFrames(1, ind), -1);
             catch
-                %No more audio in the file, it was all read in.  Thats
+                %No more audio in the file, it was all read in.  That's
                 %fine, this will be taken care of down below.
             end
         end
@@ -498,7 +498,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
             data = [];
             
             %Now grab all the data in the full chunk and chop off the not
-            %needed data in the begining.
+            %needed data in the beginning.
             fseek(file, info.audFrames(1, ind), -1);
             data = [data fread(file, [info.NumAudioChannels, ...
                 floor((info.audFrames(1,ind)+info.audFrames(2,ind)-ftell(file))...
@@ -513,7 +513,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
             try
                 fseek(file, info.audFrames(1, ind), -1);
             catch
-                %No more audio in the file, it was all read in.  Thats
+                %No more audio in the file, it was all read in.  That's
                 %fine, this will be taken care of down below.
             end
         end
@@ -574,9 +574,9 @@ if audio_stop > 0 && isfield(info, 'audFrames')
     %be int32 (default) or if it should be float 32 bit.  While this can
     %be known from the aviinfo function (info.AudioFormat = 0x3) it is
     %unknown if the audio format is WAVE_FORMAT_EXTENSIBLE(0xfffe).
-    %Therefore, this needs to be checked, this function is resposible for
+    %Therefore, this needs to be checked, this function is responsible for
     %checking.  This also provides a "check" for info.SubFormat, just
-    %incase it was not formatted or not formatted correctly.
+    %in case it was not formatted or not formatted correctly.
     if(strcmpi(info.AudioFormat, 'Format # 0xFFFE') && (strcmpi(dtype,'bit32') || strcmpi(dtype,'float')))
         if(max(max(isnan(data))) == 1) %The assumed format was not correct.
             %32 bit float will be used
@@ -627,7 +627,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                     data = [];
                     
                     %Now grab all the data in the full chunk and chop off the not
-                    %needed data in the begining.
+                    %needed data in the beginning.
                     fseek(file, info.audFrames(1, ind), -1);
                     data = [data fread(file, [info.NumAudioChannels, ...
                         floor((info.audFrames(1,ind)+info.audFrames(2,ind)-ftell(file))...
@@ -642,7 +642,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                     try
                         fseek(file, info.audFrames(1, ind), -1);
                     catch
-                        %No more audio in the file, it was all read in.  Thats
+                        %No more audio in the file, it was all read in.  That's
                         %fine, this will be taken care of down below.
                     end
                 end
@@ -672,7 +672,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                     data = [];
                     
                     %Now grab all the data in the full chunk and chop off the not
-                    %needed data in the begining.
+                    %needed data in the beginning.
                     fseek(file, info.audFrames(1, ind), -1);
                     data = [data fread(file, [info.NumAudioChannels, ...
                         floor((info.audFrames(1,ind)+info.audFrames(2,ind)-ftell(file))...
@@ -687,7 +687,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                     try
                         fseek(file, info.audFrames(1, ind), -1);
                     catch
-                        %No more audio in the file, it was all read in.  Thats
+                        %No more audio in the file, it was all read in.  That's
                         %fine, this will be taken care of down below.
                     end
                 end
@@ -728,14 +728,14 @@ if audio_stop > 0 && isfield(info, 'audFrames')
             if(strcmpi(dtype,'bit32'))
                 data = data/(2^31); % [-1,1)
             end
-        else %Check the histogram of the audio output.  If gaussian in 
+        else %Check the histogram of the audio output.  If Gaussian in 
              %shape then everything is ok.  If two big peaks, the wrong
              %format was used.  32 bit float will be used.
             two_peaks = 0;
             peak_left = 0;
             peak_right = 0;
            
-            %Obtain the historgram
+            %Obtain the histogram
             max_chan = [0,0];
             for i = 1:info.NumAudioChannels
                 %Make sure the channel is not just all zeros
@@ -750,7 +750,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
             temp = histc(data(:,max_chan(1,2)),[min(min(data)):.01:max(max(data))]);
             
             %check if two peaks exist.
-            %Split the historgram into two parts (the peaks will be on
+            %Split the histogram into two parts (the peaks will be on
             %either end of the spectrum if the wrong format was used.
             temp1 = temp(1:round((size(temp,1))/4));
             temp2 = temp(round(size(temp,1)*(3/4)):size(temp));
@@ -829,7 +829,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                         data = [];
                         
                         %Now grab all the data in the full chunk and chop off the not
-                        %needed data in the begining.
+                        %needed data in the beginning.
                         fseek(file, info.audFrames(1, ind), -1);
                         data = [data fread(file, [info.NumAudioChannels, ...
                             floor((info.audFrames(1,ind)+info.audFrames(2,ind)-ftell(file))...
@@ -844,7 +844,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                         try
                             fseek(file, info.audFrames(1, ind), -1);
                         catch
-                            %No more audio in the file, it was all read in.  Thats
+                            %No more audio in the file, it was all read in.  That's
                             %fine, this will be taken care of down below.
                         end
                     end
@@ -874,7 +874,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                         data = [];
                         
                         %Now grab all the data in the full chunk and chop off the not
-                        %needed data in the begining.
+                        %needed data in the beginning.
                         fseek(file, info.audFrames(1, ind), -1);
                         data = [data fread(file, [info.NumAudioChannels, ...
                             floor((info.audFrames(1,ind)+info.audFrames(2,ind)-ftell(file))...
@@ -889,7 +889,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
                         try
                             fseek(file, info.audFrames(1, ind), -1);
                         catch
-                            %No more audio in the file, it was all read in.  Thats
+                            %No more audio in the file, it was all read in.  That's
                             %fine, this will be taken care of down below.
                         end
                     end
@@ -947,7 +947,7 @@ if audio_stop > 0 && isfield(info, 'audFrames')
     if(info.BitsPerSample == 32)
         %Need to let the AVI write function know whether the 32 bit audio
         %is floating point or not.  This information will be placed in o5
-        %which displays the audio rate.  This was choosen because it is the
+        %which displays the audio rate.  This was chosen because it is the
         %only returnable item that doesn't contain video or audio data.
         if(strcmpi(dtype,'bit32'))
             %Its 32 bit (not floating point)
@@ -1915,7 +1915,7 @@ function strf = readAudioFormat( data, fpos )
         %right now, only the first byte is important to use.  This will allow
         %us to tell if audio that is greater than 2 channels has 32 bit audio
         %or 32 bit floating point audio.  If the response is 1, then its just
-        %32 bit audio (Baiscally it just is PCM).  If the response is 3, then
+        %32 bit audio (Basically it just is PCM).  If the response is 3, then
         %its 32 bit floating point audio (IEEE floating point).  GUID,
         %SubFormat, is 16 bytes long.  This function is only taking the first
         %bit.  If needed at a later time, this can be modified to include all
