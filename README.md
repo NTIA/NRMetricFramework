@@ -2,21 +2,25 @@
 
 NRMetricFramework is an open software framework for collaborative development of No Reference (NR) metrics for Image Quality Analysis (IQA) and Video Quality Analysis (VQA). This framework includes the support tools necessary to begin research and avoid common mistakes. The vision is a series of NR-VQA metrics that build upon each other to industry requirements for scope, accuracy, and capability.
 
+## Help
+
+The documentation for the NRMetricFramework repository can be found in the GitHub repository wiki: https://github.com/NTIA/NRMetricFramework/wiki
+
 ## Acknowledgements
 
 If you use this repository in your research or product development, please reference this GitHub repository and the paper listed below:
 
-    Margaret H. Pinson, Philip J. Corriveau, Miko?aj Leszczuk, and Michael Colligan, "Open Software Framework for Collaborative Development of No Reference Image and Video Quality Metrics," Human Vision and Electronic Imaging (HVEI), Jan. 2020.
+Margaret H. Pinson, Philip J. Corriveau, Miko?aj Leszczuk, and Michael Colligan, "Open Software Framework for Collaborative Development of No Reference Image and Video Quality Metrics," Human Vision and Electronic Imaging (HVEI), Jan. 2020.
 
 The first version of the code in this repository was designed and made available by:
 
-    The Institute for Telecommunication Sciences (ITS), which is the research and engineering branch of the National Telecommunications and Information Administration (NTIA), an agency of the U.S. Department of Commerce (DOC)
-    The Public Safety Communications Research (PSCR) Division of the National Institute for Standards and Technology (NIST), an agency of the U.S. Department of Commerce (DOC)
+* The Institute for Telecommunication Sciences (ITS), which is the research and engineering branch of the National Telecommunications and Information Administration (NTIA), an agency of the U.S. Department of Commerce (DOC)
+
+* The Public Safety Communications Research (PSCR) Division of the National Institute for Standards and Technology (NIST), an agency of the U.S. Department of Commerce (DOC)
 
 This repository was inspired by discussions and work conducted in the Video Quality Experts Group (VQEG), especially the efforts of the No Reference Metrics (NORM) project and the Video and Image Models for consumer content Evaluation (VIME) project.
 
 ## License
-
 
 SOFTWARE DISCLAIMER / RELEASE
 
