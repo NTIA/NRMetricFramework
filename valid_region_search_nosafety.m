@@ -1,6 +1,6 @@
 function [top, left, bottom, right] = valid_region_search_nosafety (y, min_top, min_left, min_bottom, min_right)
 %VALID_REGION_SEARCH_NOSAFETY
-%   This is a function that calculates a valid region for one imamge.That 
+%   This is a function that calculates a valid region for one image. That 
 %   is, area that isn't a black border. Function aims to remove black
 %   borders from videos. This calculation has no safety margin at the edge, 
 %   and so will not work properly for old videos containing closed 
@@ -12,7 +12,7 @@ function [top, left, bottom, right] = valid_region_search_nosafety (y, min_top, 
 %
 %   y - the luma plane of the YCbCr frame or image.
 %   min_top - the min value we'd like the top y value to be
-%   min_left - the min value we'd like the top x vlaue to be
+%   min_left - the min value we'd like the top x value to be
 %   min_bottom - the min value we'd like the bottom y value to be
 %   min_right - the min value we'd like the bottom x value to be 
 %
@@ -118,6 +118,5 @@ function [top, left, bottom, right] = valid_region_search_nosafety (y, min_top, 
     if(abs((row - top) - bottom) > 50)
         bottom = row;
         top = 1;
-    end  
+    end
 end
-    

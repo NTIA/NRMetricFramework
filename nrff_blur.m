@@ -1,15 +1,15 @@
 function [data] = nrff_blur(mode, varargin)
 % No-Reference Feature Function (NRFF)
 %  Implement standard function calls to calculate features that estimate
-%  the sharpness or bluriness of an image. These algorithms emphasize
+%  the sharpness or blurriness of an image. These algorithms emphasize
 %  calculation speed and simplicity.
 %
 %  Two basic ideas are implemented. The first is based on the unsharp
 %  filter. 
 % 
-%  The second is based on the laplacian filter, as proposed by the 
+%  The second is based on the Laplacian filter, as proposed by the 
 %  VQEG Image Quality Evaluation Tool (VIQET, https://github.com/VIQET).
-%  NR parameter 'viqet-sharpness' is a modified exension of the VIQET
+%  NR parameter 'viqet-sharpness' is a modified extension of the VIQET
 %  sharpness3 parameter.
 % 
 % SYNTAX & SEMANTICS
@@ -62,7 +62,7 @@ elseif strcmp(mode, 'pixels')
     end
     
     % This filter code is inspired by MATLAB 2019A function imsharpen.m
-    % Input argument "amount" was reoved as unnecessary. Default radius
+    % Input argument "amount" was removed as unnecessary. Default radius
     % value is taken from imsharpen.m
     radius = 1;
     
@@ -102,11 +102,11 @@ elseif strcmp(mode, 'pixels')
         data{2}(loop) = range;
     end    
     
-    % Now calculate sharpness / bluriness with a modified version of the
+    % Now calculate sharpness / blurriness with a modified version of the
     % VIQET sharpness3 parameter.
 
     % scale values by resolution, to match 1920 * 1080 HD
-    % for example, 4K is roughtly 2x resolution
+    % for example, 4K is roughly 2x resolution
     [row,col] = size(y);
     if row < col
         scale_factor = row / 1080;
@@ -168,9 +168,9 @@ elseif strcmp(mode, 'pars')
 
     data(1) = st_statistic('above90%',feature_data{1} ./ sqrt(max(8, feature_data{2})));
 
-    % 4K is roughtly 2x resolution
+    % 4K is roughly 2x resolution
     % scale 4K and larger resolutions to match 1920 * 1080 HD
-    % don't scale smaller resolutions: those indicate perceptiable
+    % don't scale smaller resolutions: those indicate perceptible
     % differences
     row = image_size(1);
     col = image_size(2);
@@ -188,7 +188,7 @@ elseif strcmp(mode, 'pars')
     
     
     % VIQET sharpness. Scale laplacian edge strength by the spread of sobel
-    % values. Regions with soft edges are expected to be more blury.
+    % values. Regions with soft edges are expected to be more blurry.
     data(2) = nanmean(squeeze(feature_data{3})) ./ sqrt( max(1, nanmean(feature_data{4})));
     
     data(2) = sqrt( max(1, data(2)) );

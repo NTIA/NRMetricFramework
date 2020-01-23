@@ -29,7 +29,7 @@ function [blocks] = divide_100_blocks(rows, cols, extra)
     % Find number of pixels per side of a box that would divide image into 100 boxes 
     box_pixels = sqrt((rows * cols) / 100); 
     
-    % convert that into the number of boxes vertically & horiontally
+    % convert that into the number of boxes vertically & horizontally
     num_horiz = cols / box_pixels;
     num_vert = rows / box_pixels;
     

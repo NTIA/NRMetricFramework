@@ -10,7 +10,7 @@ function [data,names] = st_statistic(request, raw_data, option)
 %  results in 'data'. Return variable 'names" will have the name of the
 %  function calculated (typically the same as 'request').
 %
-%  The available precentile functions are as follows. The meanings are as 
+%  The available percentile functions are as follows. The meanings are as 
 %  defined in "Video Quality Measurement Techniques" NTIA Technical Report 02-392.
 %   'mean', 'std', 'rms', 'min', 'max', 'range' 'abs_mean'
 %   '10%', '25%', '50%', '75%', '90%', 
@@ -25,7 +25,7 @@ function [data,names] = st_statistic(request, raw_data, option)
 %   'below1%tail, 'below2%tail', 'below5%tail', 'below10%tail', 'below50%tail'
 %           [ These are as the 'above' but computed below the selected percentile]
 %   'between25%50%', 'between25%75%', 'between10%90%'
-%           [ The meanings of 'betweenX%Y%' is to averge values beteen the Xth and Yth percentile ]
+%           [ The meanings of 'betweenX%Y%' is to average values between the Xth and Yth percentile ]
 %   'minkowski(P,R)'
 %           [ minkowski = mean(abs(raw_data).^P).^(1/R) ]
 %           Where 'P' and 'R' are replaced with the actual values to be
@@ -47,7 +47,7 @@ function [data,names] = st_statistic(request, raw_data, option)
 %   'SpatialTemporal', or
 %   'ST',   Apply the requested function simultaneously to all dimensions,
 %           Spatial and Temporal (ST). Thus, convert all of the data into a 
-%           1D array and apply the colllapsing function to that 1D array. 
+%           1D array and apply the collapsing function to that 1D array. 
 %           This is the default behavior.
 %   'Spatial', Assume that 'raw_data' is formatted as (t,x,y) where 't' is
 %           time; 'x' and 'y' delineate any spatial indexes. Apply the 

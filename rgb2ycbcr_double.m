@@ -63,7 +63,7 @@ elseif num_images == 3
     blue = varargin{3};
     want_y_cb_cr = 1;
 else
-    error('unexpected number of image matrixes input to rgb2ycbcr_double');
+    error('unexpected number of image matrices input to rgb2ycbcr_double');
 end
 
 % parse flags
@@ -135,4 +135,3 @@ else
     
     varargout{1} = ycbcr;
 end
-

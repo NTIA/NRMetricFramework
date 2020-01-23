@@ -248,10 +248,15 @@ function export_dataset(nr_dataset, filename)
     
     % turn add sheet warning on
     warning('on', 'MATLAB:xlswrite:AddSheet');    
-    
+
     % remove blank excel "Sheet1"
+    filepath = which(filename);
+    if isempty(filepath)
+        filepath = filename;
+    end
+
     objExcel = actxserver('Excel.Application');
-    objExcel.Workbooks.Open(which(filename));
+    objExcel.Workbooks.Open(filepath);
     objExcel.ActiveWorkbook.Worksheets.Item(['Sheet1']).Delete;
 
     objExcel.ActiveWorkbook.Save;

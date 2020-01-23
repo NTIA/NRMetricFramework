@@ -10,7 +10,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %   - NR feature provides multiple values for each image or video. 
 %   - NR parameter provides one value for the entire video or image. 
 %   Other functions will combine NR features and/or NR parameters into NR
-%   metrics, to provide the user with an overall quality estimatino. 
+%   metrics, to provide the user with an overall quality estimation. 
 %
 % Input Parameters:
 %   nr_dataset = Data struction. Each describes an entire dataset (name, file location, ...)
@@ -69,7 +69,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %       bool = false if 'pixels' mode tales y, cb, and cr.
 %
 % 'read_mode' = Type of time-slice (tslice) that 'pixels' call takes as input
-%               and returns one of the folowing types:
+%               and returns one of the following types:
 %       'si'        1 frame, for spatial information (SI) features 
 %       'ti'        Overlapping series 2 frames (overlapping by 1F) to
 %                   calculate temporal information. If interlaced, de-interlace  
@@ -310,7 +310,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 
     else
 
-        % move NRpars data into standalone variables, to enable parfor
+        % move NRpars data into standalone variables, to enable parfor loop
         data = shiftdim(NRpars.data(:,clip_list),1);
         computed = NRpars.computed(clip_list);
         curr_clips = nr_dataset.media(clip_list);
@@ -478,7 +478,7 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
             end
                 
             for cnt = 1:total-overlap
-                % caclulate NR features
+                % calculate NR features
                 if feature_function('luma_only')
                     this_frame = feature_function('pixels', nr_dataset.media(media_num).fps, y(:,:,cnt:cnt+overlap));
                 else
@@ -573,7 +573,7 @@ function par_data = compute_one_clip(nr_dataset, media_num, ...
                 
                 for loop = 1:frames_per_read-overlap
                 
-                    % caclulate NR features. Depending on mode, pass in one
+                    % calculate NR features. Depending on mode, pass in one
                     % image or pair of images; luma-only or full color.
                     if is_overlap
                         if feature_function('luma_only')
@@ -700,7 +700,7 @@ function save_data(data, is_path, feature_name, media_name)
 %  Write out a feature stream ('data') to file into a sub-directory
 %  'feature_name', with the is_path & drive specified by 'is_path'.  
 %  'media_name' is the name of this media, from a dataset structure.
-%  The feature stream ('data') should encompas all or part of the features
+%  The feature stream ('data') should encompass all or part of the features
 %  for one media in nr_dataset.  Feature variables will have the name 'data', 
 %  to simplify the task of later routines automatically reading many such files. 
 %

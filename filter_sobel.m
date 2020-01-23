@@ -9,7 +9,7 @@ function [si] = filter_sobel(y)
 
 % DESCRIPTION
 %
-%  [SI] = filter_sobel(Y)  Perceptually fiters luminence image Y using 
+%  [SI] = filter_sobel(Y)  Perceptually filters luminence image Y using 
 %  the sobel filter.
 %
 %   SI is the same size as Y, and has a 1-wide border of pixels set to zero. 

@@ -126,7 +126,7 @@ for loop = 1:is_repeat
             set(h, 'CData', wrap_rgb)
             drawnow
             
-            % pause & beep if requesed.
+            % pause & beep if requested.
             if is_slowmo
                 beep;
                 pause(1.0);
@@ -153,7 +153,7 @@ for loop = 1:is_repeat
             if is_subplot
                 axis 'off'
             end
-            % pause & beep if requesed.
+            % pause & beep if requested.
             if is_slowmo
                 beep;
                 pause(1.0);
@@ -170,7 +170,7 @@ for loop = 1:is_repeat
 	set(h, 'CData', wrap_rgb)
 	drawnow
     
-    % pause & beep if requesed.
+    % pause & beep if requested.
     if is_slowmo
         beep;
         pause(1.0);

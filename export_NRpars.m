@@ -13,9 +13,9 @@ function [Xtrain, Xverify, ytrain, yverify] = export_NRpars(datasets, param_stru
 %  The dataset structures and NR parameter structures are complex.
 %   
 %  This function exports just the data needed to train or test a parameter
-%  or metric. Data are formatted into matrixes and exported.
-%  Four matricies are returned (Xtrain, Xtest, ytrain, and ytest) to
-%  facilitate proper seperation of training and verification data.
+%  or metric. Data are formatted into matrices and exported.
+%  Four matrices are returned (Xtrain, Xtest, ytrain, and ytest) to
+%  facilitate proper separation of training and verification data.
 %
 % Arguments
 %
@@ -30,7 +30,7 @@ function [Xtrain, Xverify, ytrain, yverify] = export_NRpars(datasets, param_stru
 %
 %   format: The format the user would like to export the matrices as.
 %   Options are "csv" and "excel" for csv and excel files respectively. The
-%   user can also input "none" if no exporting is neccesary
+%   user can also input "none" if no exporting is necessary
 %
 %   fname: The filename the user would like to export the matrices as. If
 %   the option "none" is inputted, this parameter does not matter. If "csv"
@@ -49,7 +49,7 @@ function [Xtrain, Xverify, ytrain, yverify] = export_NRpars(datasets, param_stru
 % [Xtrain, Xverify, ytrain, yverify] = export_NRpars(Example_Dataset, NR_pars1, ...
 %       [], "none", "none")
 %
-% % save five parametes from three different parameter structs to a CSV file
+% % save five parameters from three different parameter structs to a CSV file
 % % and return the same data to MATLAB variables.
 % [Xtrain, Xverify, ytrain, yverify] = export_NRpars(Example_Dataset, ...
 %       [NR_pars1, NR_pars2, NR_pars3], [Parm1, Param2, Param3, Param4, Param5], "csv", "test.csv")
@@ -179,7 +179,6 @@ function bool_array = get_training_validation(dataset)
     end
 end
 
-
 function [Xtrain, Xtest, ytrain, ytest] = training_testing_split(Xin, yin, boolean_array)
     Xtrain = Xin(boolean_array, :);
     Xtest = Xin(~boolean_array, :);
@@ -190,13 +189,22 @@ end
 function export_format(training_data, testing_data, fname, format)
     switch format
         case 'csv'
-            writetable(training_data, "train_" + fname);
-            writetable(testing_data, "test_" + fname);
+            [filepath,name,ext] = fileparts(fname);
+            fname_train = strcat(filepath, "\train_", name, ext);
+            fname_test = strcat(filepath, "\test_", name, ext);
+
+            if startsWith(fname_train, "\") && ~startsWith(fname_train, "\\")
+                fname_train = extractAfter(fname_train, "\");
+            end
+            if startsWith(fname_test, "\") && ~startsWith(fname_test, "\\")
+                fname_test = extractAfter(fname_test, "\");
+            end
+            
+            writetable(training_data, fname_train);
+            writetable(testing_data, fname_test);
         case 'excel'
             writetable(training_data, fname, "Sheet", "Training Data");
             writetable(testing_data, fname, "Sheet", "Testing Data");
         case 'none'
     end
-
 end
-    

@@ -1,10 +1,10 @@
 function [boolean_array, alt_train, alt_validation] = training_validation_split(y, probability)
-%Traning Validation Split
+%Training Validation Split
 %   This function returns a p, 1-p split of the data into two separate
 %   matrices for independent testing and validation of data. This is supposed
 %   to be generically used to split data into testing and validation sets. 
 %   p represents the percentage of training data you'd like to use. 
-%   Namely, p = .8 means that i'd like 80% of the data to be used for
+%   Namely, p = .8 means that I'd like 80% of the data to be used for
 %   training. This function creates a separate split from the already
 %   internal split caused by the processing of data.
 %
