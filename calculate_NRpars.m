@@ -285,6 +285,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
                 tmp = [tmp sprintf('- calculating ''%s'' features\n', feature_function('group'))];
                 tmp = [tmp sprintf('- mode ''pars'' returned %d values, but mode ''pixels'' returns %d parameter names\n', ...
                     length(values), length(feature_function('parameter_names')))];
+                tmp = [tmp sprintf('- Note: make sure your parameters are stored in a vector and not a cell array\n')];
         
                 % delete parameter file, which may also contain this error
                 delete(parfile);
