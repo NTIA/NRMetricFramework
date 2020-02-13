@@ -2,6 +2,8 @@
 
 NRMetricFramework is an open software framework for collaborative development of No Reference (NR) metrics for Image Quality Analysis (IQA) and Video Quality Analysis (VQA). This framework includes the support tools necessary to begin research and avoid common mistakes. The vision is a series of NR-VQA metrics that build upon each other to industry requirements for scope, accuracy, and capability. Documentation for this repository is provided in the Wiki [https://github.com/NTIA/NRMetricFramework/wiki].
 
+The most recent release is available [here](https://github.com/NTIA/NRMetricFramework/releases/tag/v1.0).
+
 This software was developed by employees of the National Telecommunications and Information Administration (NTIA), an agency of the Federal Government and is provided to you as a public service. 
 
 Please review the [License terms](LICENSE.md).
