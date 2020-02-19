@@ -242,12 +242,12 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             subnum = ceil(length(nr_dataset) / 3); 
             for dcnt = 1:length(nr_dataset)
                 subplot(3, subnum, dcnt);
-                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan);
+                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
             end
         else
             do_subplot = false;
             for dcnt = 1:length(nr_dataset)
-                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan);
+                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
             end
         end
 
@@ -256,7 +256,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
         fprintf('average          corr = %5.2f  rmse = %5.2f\n', mean(corr), mean(rmse));
         if length(nr_dataset) ~= 1
             do_subplot = false;
-            analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan);
+            analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
             fprintf('\n\n');
         end
         
@@ -270,12 +270,12 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
                 subnum = ceil(length(options) / 3); 
                 for ccnt = 1:length(options)
                     subplot(3, subnum, ccnt);
-                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt));
+                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message);
                 end
             else
                 do_subplot = false;
                 for ccnt = 1:length(options)
-                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt));
+                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message);
                 end
             end
         end
@@ -293,7 +293,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             fprintf('Outliers\n\n');
             fprintf('%d) %s %s\n', pcnt, NRpars(1).par_name{pcnt}, preproc_message);
             for dcnt = 1:length(nr_dataset)
-                analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, false, false, false, true, all_datasets, NRpars_all, 2, nan);
+                analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, false, false, false, true, all_datasets, NRpars_all, 2, nan, preproc_message);
             end
  
             if ~isnan(do_category)
@@ -302,7 +302,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
                     fprintf('\n\n');
                     fprintf('Outliers by %s = %s\n\n', nr_dataset.category_name{do_category}, options(ccnt));
                     analyze_par_dataset(nr_dataset, NRpars, pcnt, ...
-                        false, false, false, true, all_datasets, NRpars_all, do_category, options(ccnt));
+                        false, false, false, true, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message);
                 end
             end
 
@@ -312,7 +312,7 @@ end
 
 
 function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_print, do_plot, do_subplot, do_outliers, ...
-    all_dataset, all_NRpars, is_category, is_level)
+    all_dataset, all_NRpars, is_category, is_level, preproc_message)
 
     % pick off training media for this parameter and dataset
     subset = [one_dataset.media(:).category2] == categorical({'train'});
@@ -383,21 +383,49 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         end
         
         train_set_all = [all_dataset.media(:).category2] == categorical({'train'});
-        plot(all_NRpars.data(pcnt,train_set_all), [all_dataset.media(train_set_all).mos], '.g', 'MarkerSize', 3);
+        plot(all_NRpars.data(pcnt,train_set_all), [all_dataset.media(train_set_all).mos], '.', 'MarkerSize', 3, 'Color',[0 0.8 0]);
         hold on;
 
-        plot(one_NRpars.data(pcnt,subset), [one_dataset.media(subset).mos], '.b', 'MarkerSize', 6);
+        % If plotting a sub-set of data, overlay subset in blue
+        if length([one_dataset.media(subset).mos]) < length([all_dataset.media(train_set_all).mos])
+            plot(one_NRpars.data(pcnt,subset), [one_dataset.media(subset).mos], '.b', 'MarkerSize', 6);
+        else
+            % otherwise, just make data points larger and retain green color.
+            plot(one_NRpars.data(pcnt,subset), [one_dataset.media(subset).mos], '.', 'MarkerSize', 6, 'Color', [0 0.8 0]);
+        end
 
         % plot linear fit
         xmin = min(one_NRpars.data(pcnt,subset));
         xmax = max(one_NRpars.data(pcnt,subset));
         ymin = w(1) + w(2) * xmin;
         ymax = w(1) + w(2) * xmax;
-        plot([xmin xmax],[ymin,ymax],'k--');
+        plot([xmin xmax],[ymin,ymax],'r-','LineWidth',1);
 
         hold off;
         
-        xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
+        % specify axes. Always include 0 in metric value range. Assume
+        % [1..5] for MOS range.
+        xmin = min(min(all_NRpars.data(pcnt,train_set_all)),min(one_NRpars.data(pcnt,subset)));
+        xmax = max(max(all_NRpars.data(pcnt,train_set_all)),max(one_NRpars.data(pcnt,subset)));
+        if xmin > 0
+            xmin = 0;
+        elseif xmax < 0
+            xmax = 0;
+        end
+        
+        ymin = min(min([all_dataset.media(train_set_all).mos]), min([one_dataset.media(subset).mos]));
+        ymin = min(ymin, 1);
+        ymax = max(max([all_dataset.media(train_set_all).mos]), max([one_dataset.media(subset).mos]));
+        ymax = max(ymax, 5);
+        
+        axis([xmin xmax ymin ymax]);
+        
+        % labels
+        if isempty(preproc_message) 
+            xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
+        else
+            xlabel([one_NRpars.par_name{pcnt} preproc_message],'interpreter','none');
+        end
         ylabel('MOS', 'interpreter','none');
         title(sprintf('%s, y = %4.2f + %4.2f * x', test_name, w(1), w(2)), 'interpreter','none');
     end
