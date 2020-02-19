@@ -450,9 +450,9 @@ function nr_dataset = import_dataset_spreadsheet(spreadsheet, nr_dataset)
     
     media = nr_dataset.media(1);
     
-    [num,~,~] = xlsread(spreadsheet,'Format');
-    [rows,~] = size(num);
-    for cnt=2:rows
+    [~,~,raw] = xlsread(spreadsheet,'Format');
+    [rows,~] = size(raw);
+    for cnt=2:rows-1
         nr_dataset.media(cnt) = media;
     end
     
