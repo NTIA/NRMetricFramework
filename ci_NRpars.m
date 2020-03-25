@@ -153,8 +153,12 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
             if isempty(choose1)
                 choose1 = length(list_want);
             end
-            % find 20% false differentiate leve
-            choose2 = find( false_differentiate<0.20, 1 );
+            % find 20% false differentiate level
+            % divide by 2 to get 10%, because the subjective test pools two
+            % situations together (either subjective test could decide the
+            % stimuli are equal), but for metrics we distinguish between
+            % these two cases.
+            choose2 = find( false_differentiate<0.10, 1 );
             if isempty(choose2)
                 choose2 = length(list_want);
             end
