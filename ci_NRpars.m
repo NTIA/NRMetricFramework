@@ -1,12 +1,14 @@
-function classify_NRpars(nr_dataset, base_dir, feature_function)
-% classify_NRpars
-%   Classify the type of errors associated with the distance between NRpar values 
+function ci_NRpars(nr_dataset, base_dir, feature_function)
+% ci_NRpars
+%   Estimate the confidence interval (CI) of an NR parameter
 % SYNTAX
-%   classify_NRpars(nr_dataset, base_dir, feature_function, parnum);
+%   ci_NRpars(nr_dataset, base_dir, feature_function, parnum);
 % SEMANTICS
-%   The performance of an NR parameter is evaluated based on the
-%   classification errors when compared to subjective data (i.e., false
-%   differentiation, false ties, and false classification). 
+%   Estimate the confidence interval (CI) of an NR metric or parameter, 
+%   when compared to subjective test MOSs, using the classification of 
+%   decisions reached by the subjective data and the metric for pairs of
+%   stimuli (i.e., better, equivalent, or worse). The likelihood of each
+%   combination will be plotted, and a suggested threshold returned.
 %
 % Input Parameters:
 %   nr_dataset          Data struction. Each describes an entire dataset (name, file location, ...)
@@ -14,42 +16,16 @@ function classify_NRpars(nr_dataset, base_dir, feature_function)
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %
-%  Details:
-%   This function computes a variant of the classification plots specified
-%   by ATIS T1.TR.72-2003 “Methodological Framework for Specifying Accuracy 
-%   and Cross-Calibration of Video Quality Metrics,” available at 
-%   https://www.atis.org/docstore/product.aspx?id=10518.
-%   The following modifications are made:
-%   1. Data from multiple datasets is included into a single analysis.
-%   2. The subjective and objective data are not scaled
-%   3. A constant threshold is used to compare subjective scores
-%   Data points are only compared within a single dataset, but results from
-%   multiple datasets are aggregated into the overall conclusion. Number of
-%   subjects is not viewed as an accurate correction factor, because the
-%   datasets include lab studies, field studies, and crowdsource studies.
-%
-%
-%
-% DEFINITIONS:
-%
-% Lab study refers to a subjetive test conducted in a controlled laboratory
-% environment, with 24 subjects and a rigorous experiment design that adheres to
-% best practices of VQEG and the ITU. Source scenes must be good quality or better.
-% Confounding factors are minimized.
-% 
-% Field study refers to a subjective test that focuses on camera impairments
-% and other problems from deployed systems. The experiment design contains
-% contains confounding factors.
-% 
-% Informative study refers to subjective tests with less rigorous experiment designs,
-% which may include fewer subjects, scenes selected for convenience, distracting
-% test environments, new video technologies, and media that are difficult to
-% rate (e.g., a subject may simultaneously want to rate the media both "good" and "poor".
+%   Details of this algorithm will be published in an NTIA Report. 
+%   Analysis of subjective tests yields three constants that are used by
+%   this function:
+%   - confidence interval for MOSs: 0.5
+%   - rate of uncertain = 1% (i.e., one test ranks the stimuli, the other
+%                                   concludes equivalent quality)
+%   - rate of disagreement = 20% (i.e., opposite ranking of the stimuli) 
 
 
-
-    threshold_level = [0.5 0.7 1.0];
-    threshold_name = {'Lab Study', 'Field Study', 'Informative Study'};
+    threshold_level = 0.5;
     
     
     % load the parameters. This will calculate them, if not yet computed. 
@@ -65,14 +41,6 @@ function classify_NRpars(nr_dataset, base_dir, feature_function)
     end
     fprintf('NR parameters loaded\n\n');
 
-    fprintf('*************************************************************\n');
-    fprintf('Subjective test confidence intervals are\n');
-    for tcnt = 1:length(threshold_level)
-        fprintf('    %4.1f for a %s\n', threshold_level(tcnt), threshold_name{tcnt});
-    end
-    fprintf('\n');
-    
-    
     fprintf('*************************************************************\n');
     fprintf('NRFF Group %s\n\n', feature_function('group'));
 
@@ -113,33 +81,29 @@ function classify_NRpars(nr_dataset, base_dir, feature_function)
             continue;
         end
 
-        for tcnt = 1:length(threshold_level)
-            thresh = threshold_level(tcnt);
+        curr = 1;
+        for dcnt1 = 1:length(nr_dataset)
+            for mcnt1 = 1:length(subset{dcnt})
+                for mcnt2 = mcnt1+1:length(subset{dcnt})
+                    want1 = subset{dcnt}(mcnt1);
+                    want2 = subset{dcnt}(mcnt2);
 
-            curr = 1;
-            for dcnt1 = 1:length(nr_dataset)
-                for mcnt1 = 1:length(subset{dcnt})
-                    for mcnt2 = mcnt1+1:length(subset{dcnt})
-                        want1 = subset{dcnt}(mcnt1);
-                        want2 = subset{dcnt}(mcnt2);
-
-                        % subj(curr) is decision whether #1 is better,
-                        % equivalent, or worse than #2
-                        diff = nr_dataset(dcnt).media(want1).mos - nr_dataset(dcnt).media(want2).mos;
-                        if diff > thresh
-                            subj(curr) = 1;
-                        elseif diff < -thresh
-                            subj(curr) = -1;
-                        else
-                            subj(curr) = 0;
-                        end
-
-                        % obj(curr) is distance before thresholding, since the
-                        % point of this function is to choose a threshold
-                        obj(curr) = NRpars(dcnt).data(pcnt,want1) - NRpars(dcnt).data(pcnt,want2); 
-
-                        curr = curr + 1;
+                    % subj(curr) is decision whether #1 is better,
+                    % equivalent, or worse than #2
+                    diff = nr_dataset(dcnt).media(want1).mos - nr_dataset(dcnt).media(want2).mos;
+                    if diff > threshold_level
+                        subj(curr) = 1;
+                    elseif diff < -threshold_level
+                        subj(curr) = -1;
+                    else
+                        subj(curr) = 0;
                     end
+
+                    % obj(curr) is distance before thresholding, since the
+                    % point of this function is to choose a threshold
+                    obj(curr) = NRpars(dcnt).data(pcnt,want1) - NRpars(dcnt).data(pcnt,want2); 
+
+                    curr = curr + 1;
                 end
             end
             % flip sign of objective differences, if parameter is
@@ -189,8 +153,8 @@ function classify_NRpars(nr_dataset, base_dir, feature_function)
             if isempty(choose1)
                 choose1 = length(list_want);
             end
-            % find 13% false differentiate leve
-            choose2 = find( false_differentiate<0.13, 1 );
+            % find 20% false differentiate leve
+            choose2 = find( false_differentiate<0.20, 1 );
             if isempty(choose2)
                 choose2 = length(list_want);
             end
@@ -198,8 +162,7 @@ function classify_NRpars(nr_dataset, base_dir, feature_function)
             choose = max(choose1, choose2);
             
             % print recommended threshold
-            fprintf('%17s: %4.2f CI', ...
-                threshold_name{tcnt}, list_want(choose));
+            fprintf('%4.2f CI', list_want(choose));
             fprintf('    (%d %% false ranking, %d %% correct ranking)\n', ...
                 round(false_ranking(choose)*100), round(correct_rank(choose)*100));
 
@@ -221,7 +184,6 @@ function classify_NRpars(nr_dataset, base_dir, feature_function)
 
             xlabel(['$\Delta$ Metric (' NRpars(1).par_name{pcnt} ')'], 'interpreter','latex')
             ylabel('Frequency', 'interpreter','latex')
-            title([sprintf('Compared to %s (', threshold_name{tcnt}) '$\Delta$' sprintf('S = %3.1f)', threshold_level(tcnt)) ], 'interpreter','latex');
             grid on;
 
             legend('Correct ranking', 'Correct tie', 'False tie', 'False differentiate', ...
