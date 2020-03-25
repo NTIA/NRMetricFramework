@@ -172,22 +172,22 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 
             % create plot
             figure('name', NRpars(1).par_name{pcnt});
-            plot(list_want, correct_rank, 'g', 'linewidth', 2);
+            plot(list_want, 100 * correct_rank, 'g', 'linewidth', 2);
             hold on;
-            plot(list_want, correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
-            plot(list_want, false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
-            plot(list_want, false_differentiate, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
-            plot(list_want, false_ranking, 'r', 'linewidth', 2);
+            plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
+            plot(list_want, 100 * false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
+            plot(list_want, 100 * false_differentiate, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
+            plot(list_want, 100 * false_ranking, 'r', 'linewidth', 2);
 
             curr_axis = axis;
             plot([list_want(choose) list_want(choose) list_want(choose) list_want(choose) list_want(choose)], ...
-                [correct_rank(choose) correct_tie(choose) false_tie(choose) false_differentiate(choose) false_ranking(choose)], ...
+                100 * [correct_rank(choose) correct_tie(choose) false_tie(choose) false_differentiate(choose) false_ranking(choose)], ...
                 '*k');
             axis(curr_axis);
             hold off;
 
             xlabel(['$\Delta$ Metric (' NRpars(1).par_name{pcnt} ')'], 'interpreter','latex')
-            ylabel('Frequency', 'interpreter','latex')
+            ylabel('Likelihood (Percent)', 'interpreter','latex')
             grid on;
 
             legend('Correct ranking', 'Correct tie', 'False tie', 'False differentiate', ...
