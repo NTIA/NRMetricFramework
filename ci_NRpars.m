@@ -85,7 +85,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         clear subj obj wt;
         
         curr = 1;
-        for dcnt1 = 1:length(nr_dataset)
+        for dcnt = 1:length(nr_dataset)
             for mcnt1 = 1:length(subset{dcnt})
                 for mcnt2 = mcnt1+1:length(subset{dcnt})
                     want1 = subset{dcnt}(mcnt1);
@@ -149,11 +149,13 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
                 end
             end
         end
-        correct_rank = correct_rank / length(subj);
-        correct_tie = correct_tie / length(subj);
-        false_ranking = false_ranking / length(subj);
-        false_differentiate = false_differentiate / length(subj);
-        false_tie = false_tie / length(subj);
+        total_votes = sum(wt);
+        
+        correct_rank = correct_rank / total_votes;
+        correct_tie = correct_tie / total_votes;
+        false_ranking = false_ranking / total_votes;
+        false_differentiate = false_differentiate / total_votes;
+        false_tie = false_tie / total_votes;
 
         % find 1% false ranking level
         choose1 = find( false_ranking<0.01, 1 );
@@ -179,8 +181,8 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 
         % dataset names
         tmp = '';
-        for dcnt1 = 1:length(nr_dataset)
-            tmp = [tmp ' ' nr_dataset.test];
+        for dcnt = 1:length(nr_dataset)
+            tmp = [tmp ' ' nr_dataset(dcnt).test];
         end
         
         % create plot
