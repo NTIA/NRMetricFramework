@@ -180,18 +180,23 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
             plot(list_want, 100 * false_ranking, 'r', 'linewidth', 2);
 
             curr_axis = axis;
-            plot([list_want(choose) list_want(choose) list_want(choose) list_want(choose) list_want(choose)], ...
-                100 * [correct_rank(choose) correct_tie(choose) false_tie(choose) false_differentiate(choose) false_ranking(choose)], ...
-                '*k');
+            plot([list_want(choose) list_want(choose)], ylim, ':k', 'linewidth', 1);
             axis(curr_axis);
             hold off;
 
             xlabel(['$\Delta$ Metric (' NRpars(1).par_name{pcnt} ')'], 'interpreter','latex')
-            ylabel('Likelihood (Percent)', 'interpreter','latex')
+            ylabel('Probability', 'interpreter','latex')
             grid on;
+            
+            tmp = yticks;
+            for cnt=1:length(tmp)
+                tmpl{cnt} = sprintf('%2d%%', tmp(cnt));
+            end
+            yticklabels(tmpl)
 
             legend('Correct ranking', 'Correct tie', 'False tie', 'False differentiate', ...
-                'False ranking', sprintf('%s CI', NRpars(1).par_name{pcnt}), 'location', 'eastoutside');
+                'False ranking', 'Recommended CI', 'location', 'eastoutside', ...
+                'interpreter','latex');
 
             0;
         end
