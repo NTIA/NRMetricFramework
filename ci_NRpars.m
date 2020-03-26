@@ -11,7 +11,9 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   combination will be plotted, and a suggested threshold returned.
 %
 % Input Parameters:
-%   nr_dataset          Data struction. Each describes an entire dataset (name, file location, ...)
+%   nr_dataset          Data structures, of datasets to be analyzed. If 2+
+%                       datasets are provided, then the datasets will be
+%                       weighted equally.
 %   base_dir    Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
@@ -26,6 +28,8 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 
 
     threshold_level = 0.5;
+    false_rank_thresh = 0.01;
+    false_diff_thresh = 0.10; % half of the uncertain rate of 20% 
     
     
     % load the parameters. This will calculate them, if not yet computed. 
@@ -158,7 +162,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         false_tie = false_tie / total_votes;
 
         % find 1% false ranking level
-        choose1 = find( false_ranking<0.01, 1 );
+        choose1 = find( false_ranking<false_rank_thresh, 1 );
         if isempty(choose1)
             choose1 = length(list_want);
         end
@@ -167,7 +171,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         % situations together (either subjective test could decide the
         % stimuli are equal), but for metrics we distinguish between
         % these two cases.
-        choose2 = find( false_differentiate<0.10, 1 );
+        choose2 = find( false_differentiate<false_diff_thresh, 1 );
         if isempty(choose2)
             choose2 = length(list_want);
         end
