@@ -114,7 +114,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 
             % Have all of the data. Now make the plot.
             incr = (pmax-pmin)/100;
-            list_want = 0:incr:(pmax-pmin);
+            list_want = incr:incr:(pmax-pmin);
 
             correct_rank = zeros(1,length(list_want));
             correct_tie = zeros(1,length(list_want));
