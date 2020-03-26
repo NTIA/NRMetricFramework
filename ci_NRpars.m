@@ -81,6 +81,9 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
             continue;
         end
 
+        % clear variables from last loop
+        clear subj obj wt;
+        
         curr = 1;
         for dcnt1 = 1:length(nr_dataset)
             for mcnt1 = 1:length(subset{dcnt})
@@ -102,6 +105,9 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
                     % obj(curr) is distance before thresholding, since the
                     % point of this function is to choose a threshold
                     obj(curr) = NRpars(dcnt).data(pcnt,want1) - NRpars(dcnt).data(pcnt,want2); 
+                    
+                    % note weight 
+                    wt(curr) = 1 / length(nr_dataset(dcnt).media);
 
                     curr = curr + 1;
                 end
@@ -130,16 +136,16 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
             for curr = 1:length(subj)
                 if (subj(curr) == 1 && obj(curr) >= delta) || ...
                         (subj(curr) == -1 && obj(curr) <= -delta)
-                    correct_rank(loop) = correct_rank(loop) + 1;
+                    correct_rank(loop) = correct_rank(loop) + wt(curr);
                 elseif subj(curr) == 0 && obj(curr) > -delta && obj(curr) < delta
-                    correct_tie(loop) = correct_tie(loop) + 1;
+                    correct_tie(loop) = correct_tie(loop) + wt(curr);
                 elseif (subj(curr) == 1 && obj(curr) <= -delta) || ...
                         (subj(curr) == -1 && obj(curr) >= delta)
-                    false_ranking(loop) = false_ranking(loop) + 1;
+                    false_ranking(loop) = false_ranking(loop) + wt(curr);
                 elseif (subj(curr) ~= 0 && obj(curr) > -delta && obj(curr) < delta)
-                    false_tie(loop) = false_tie(loop) + 1;
+                    false_tie(loop) = false_tie(loop) + wt(curr);
                 else
-                    false_differentiate(loop) = false_differentiate(loop) + 1;
+                    false_differentiate(loop) = false_differentiate(loop) + wt(curr);
                 end
             end
         end
@@ -171,8 +177,14 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         fprintf('    (%d %% false ranking, %d %% correct ranking)\n', ...
             round(false_ranking(choose)*100), round(correct_rank(choose)*100));
 
+        % dataset names
+        tmp = '';
+        for dcnt1 = 1:length(nr_dataset)
+            tmp = [tmp ' ' nr_dataset.test];
+        end
+        
         % create plot
-        figure('name', NRpars(1).par_name{pcnt});
+        figure('name', tmp); % put dataset names on title bar
         plot(list_want, 100 * correct_rank, 'g', 'linewidth', 2);
         hold on;
         plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
