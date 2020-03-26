@@ -106,95 +106,94 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
                     curr = curr + 1;
                 end
             end
-            % flip sign of objective differences, if parameter is
-            % negatively correlated to MOS
-            if ~is_pos_corr
-                obj = -obj;
-            end
+        end
+        % flip sign of objective differences, if parameter is
+        % negatively correlated to MOS
+        if ~is_pos_corr
+            obj = -obj;
+        end
 
-            % Have all of the data. Now make the plot.
-            incr = (pmax-pmin)/100;
-            list_want = 0:incr:(pmax-pmin);
+        % Have all of the data. Now make the plot.
+        incr = (pmax-pmin)/100;
+        list_want = 0:incr:(pmax-pmin);
 
-            correct_rank = zeros(1,length(list_want));
-            correct_tie = zeros(1,length(list_want));
-            false_ranking = zeros(1,length(list_want));
-            false_differentiate = zeros(1,length(list_want));
-            false_tie = zeros(1,length(list_want));
+        correct_rank = zeros(1,length(list_want));
+        correct_tie = zeros(1,length(list_want));
+        false_ranking = zeros(1,length(list_want));
+        false_differentiate = zeros(1,length(list_want));
+        false_tie = zeros(1,length(list_want));
 
-            % create data for roughly 60% of the range of parameter values
-            % from there, the plot flattens and contains no more info
-            for loop = 1:length(list_want)
-                delta = list_want(loop);
-                for curr = 1:length(subj)
-                    if (subj(curr) == 1 && obj(curr) >= delta) || ...
-                            (subj(curr) == -1 && obj(curr) <= -delta)
-                        correct_rank(loop) = correct_rank(loop) + 1;
-                    elseif subj(curr) == 0 && obj(curr) > -delta && obj(curr) < delta
-                        correct_tie(loop) = correct_tie(loop) + 1;
-                    elseif (subj(curr) == 1 && obj(curr) <= -delta) || ...
-                            (subj(curr) == -1 && obj(curr) >= delta)
-                        false_ranking(loop) = false_ranking(loop) + 1;
-                    elseif (subj(curr) ~= 0 && obj(curr) > -delta && obj(curr) < delta)
-                        false_tie(loop) = false_tie(loop) + 1;
-                    else
-                        false_differentiate(loop) = false_differentiate(loop) + 1;
-                    end
+        % create data for roughly 60% of the range of parameter values
+        % from there, the plot flattens and contains no more info
+        for loop = 1:length(list_want)
+            delta = list_want(loop);
+            for curr = 1:length(subj)
+                if (subj(curr) == 1 && obj(curr) >= delta) || ...
+                        (subj(curr) == -1 && obj(curr) <= -delta)
+                    correct_rank(loop) = correct_rank(loop) + 1;
+                elseif subj(curr) == 0 && obj(curr) > -delta && obj(curr) < delta
+                    correct_tie(loop) = correct_tie(loop) + 1;
+                elseif (subj(curr) == 1 && obj(curr) <= -delta) || ...
+                        (subj(curr) == -1 && obj(curr) >= delta)
+                    false_ranking(loop) = false_ranking(loop) + 1;
+                elseif (subj(curr) ~= 0 && obj(curr) > -delta && obj(curr) < delta)
+                    false_tie(loop) = false_tie(loop) + 1;
+                else
+                    false_differentiate(loop) = false_differentiate(loop) + 1;
                 end
             end
-            correct_rank = correct_rank / length(subj);
-            correct_tie = correct_tie / length(subj);
-            false_ranking = false_ranking / length(subj);
-            false_differentiate = false_differentiate / length(subj);
-            false_tie = false_tie / length(subj);
-
-            % find 1% false ranking level
-            choose1 = find( false_ranking<0.01, 1 );
-            if isempty(choose1)
-                choose1 = length(list_want);
-            end
-            % find 20% false differentiate level
-            % divide by 2 to get 10%, because the subjective test pools two
-            % situations together (either subjective test could decide the
-            % stimuli are equal), but for metrics we distinguish between
-            % these two cases.
-            choose2 = find( false_differentiate<0.10, 1 );
-            if isempty(choose2)
-                choose2 = length(list_want);
-            end
-            
-            choose = max(choose1, choose2);
-            
-            % print recommended threshold
-            fprintf('%4.2f CI', list_want(choose));
-            fprintf('    (%d %% false ranking, %d %% correct ranking)\n', ...
-                round(false_ranking(choose)*100), round(correct_rank(choose)*100));
-
-            % create plot
-            figure('name', NRpars(1).par_name{pcnt});
-            plot(list_want, 100 * correct_rank, 'g', 'linewidth', 2);
-            hold on;
-            plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
-            plot(list_want, 100 * false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
-            plot(list_want, 100 * false_differentiate, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
-            plot(list_want, 100 * false_ranking, 'r', 'linewidth', 2);
-
-            curr_axis = axis;
-            plot([list_want(choose) list_want(choose) list_want(choose) list_want(choose) list_want(choose)], ...
-                100 * [correct_rank(choose) correct_tie(choose) false_tie(choose) false_differentiate(choose) false_ranking(choose)], ...
-                '*k');
-            axis(curr_axis);
-            hold off;
-
-            xlabel(['$\Delta$ Metric (' NRpars(1).par_name{pcnt} ')'], 'interpreter','latex')
-            ylabel('Likelihood (Percent)', 'interpreter','latex')
-            grid on;
-
-            legend('Correct ranking', 'Correct tie', 'False tie', 'False differentiate', ...
-                'False ranking', sprintf('%s CI', NRpars(1).par_name{pcnt}), 'location', 'eastoutside');
-
-            0;
         end
+        correct_rank = correct_rank / length(subj);
+        correct_tie = correct_tie / length(subj);
+        false_ranking = false_ranking / length(subj);
+        false_differentiate = false_differentiate / length(subj);
+        false_tie = false_tie / length(subj);
+
+        % find 1% false ranking level
+        choose1 = find( false_ranking<0.01, 1 );
+        if isempty(choose1)
+            choose1 = length(list_want);
+        end
+        % find 20% false differentiate level
+        % divide by 2 to get 10%, because the subjective test pools two
+        % situations together (either subjective test could decide the
+        % stimuli are equal), but for metrics we distinguish between
+        % these two cases.
+        choose2 = find( false_differentiate<0.10, 1 );
+        if isempty(choose2)
+            choose2 = length(list_want);
+        end
+
+        choose = max(choose1, choose2);
+
+        % print recommended threshold
+        fprintf('%4.2f CI', list_want(choose));
+        fprintf('    (%d %% false ranking, %d %% correct ranking)\n', ...
+            round(false_ranking(choose)*100), round(correct_rank(choose)*100));
+
+        % create plot
+        figure('name', NRpars(1).par_name{pcnt});
+        plot(list_want, 100 * correct_rank, 'g', 'linewidth', 2);
+        hold on;
+        plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
+        plot(list_want, 100 * false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
+        plot(list_want, 100 * false_differentiate, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
+        plot(list_want, 100 * false_ranking, 'r', 'linewidth', 2);
+
+        curr_axis = axis;
+        plot([list_want(choose) list_want(choose) list_want(choose) list_want(choose) list_want(choose)], ...
+            100 * [correct_rank(choose) correct_tie(choose) false_tie(choose) false_differentiate(choose) false_ranking(choose)], ...
+            '*k');
+        axis(curr_axis);
+        hold off;
+
+        xlabel(['$\Delta$ Metric (' NRpars(1).par_name{pcnt} ')'], 'interpreter','latex')
+        ylabel('Likelihood (Percent)', 'interpreter','latex')
+        grid on;
+
+        legend('Correct ranking', 'Correct tie', 'False tie', 'False differentiate', ...
+            'False ranking', sprintf('%s CI', NRpars(1).par_name{pcnt}), 'location', 'eastoutside');
+
     end
     
     
