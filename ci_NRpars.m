@@ -124,8 +124,8 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         end
 
         % Have all of the data. Now make the plot.
-        % round our increment to two significant digits
-        incr = round((pmax-pmin)/100, 2, 'significant');
+        % round our increment to one significant digits
+        incr = round((pmax-pmin)/100, 1, 'significant');
         list_want = incr:incr:(pmax-pmin);
 
         correct_rank = zeros(1,length(list_want));
@@ -184,9 +184,9 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         end
         
         % print recommended threshold
-        fprintf('%4.3f Ideal CI      (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
+        fprintf('%5.4f Ideal CI      (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
             list_want(ideal_ci), round(false_ranking(ideal_ci)*100), round(false_distinction(ideal_ci)*100), round(correct_rank(ideal_ci)*100));
-        fprintf('%4.3f Practical CI  (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
+        fprintf('%5.4f Practical CI  (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
             list_want(practical_ci), round(false_ranking(practical_ci)*100), round(false_distinction(practical_ci)*100), round(correct_rank(practical_ci)*100));
 
         % dataset names
