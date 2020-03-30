@@ -30,7 +30,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
     threshold_level = 0.5;
     false_rank_thresh = 0.01;
     false_diff_thresh = 0.10; % half of the uncertain rate of 20% 
-    
+    practical_threshold = 0.16;
     
     % load the parameters. This will calculate them, if not yet computed. 
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
@@ -107,7 +107,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
                     end
 
                     % obj(curr) is distance before thresholding, since the
-                    % point of this function is to choose a threshold
+                    % point of this function is to ideal_ci a threshold
                     obj(curr) = NRpars(dcnt).data(pcnt,want1) - NRpars(dcnt).data(pcnt,want2); 
                     
                     % note weight 
@@ -130,7 +130,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         correct_rank = zeros(1,length(list_want));
         correct_tie = zeros(1,length(list_want));
         false_ranking = zeros(1,length(list_want));
-        false_differentiate = zeros(1,length(list_want));
+        false_distinction = zeros(1,length(list_want));
         false_tie = zeros(1,length(list_want));
 
         % create data for roughly 60% of the range of parameter values
@@ -149,7 +149,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
                 elseif (subj(curr) ~= 0 && obj(curr) > -delta && obj(curr) < delta)
                     false_tie(loop) = false_tie(loop) + wt(curr);
                 else
-                    false_differentiate(loop) = false_differentiate(loop) + wt(curr);
+                    false_distinction(loop) = false_distinction(loop) + wt(curr);
                 end
             end
         end
@@ -158,30 +158,35 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         correct_rank = correct_rank / total_votes;
         correct_tie = correct_tie / total_votes;
         false_ranking = false_ranking / total_votes;
-        false_differentiate = false_differentiate / total_votes;
+        false_distinction = false_distinction / total_votes;
         false_tie = false_tie / total_votes;
-
-        % find 1% false ranking level
-        choose1 = find( false_ranking<false_rank_thresh, 1 );
-        if isempty(choose1)
-            choose1 = length(list_want);
-        end
-        % find 20% false differentiate level
-        % divide by 2 to get 10%, because the subjective test pools two
-        % situations together (either subjective test could decide the
-        % stimuli are equal), but for metrics we distinguish between
-        % these two cases.
-        choose2 = find( false_differentiate<false_diff_thresh, 1 );
-        if isempty(choose2)
-            choose2 = length(list_want);
+        
+        % if too much data is false_tie and correct_tie at minimum
+        % threshold, don't try. Skip. Rule of thumb: 50% ties. We expect
+        % values close to zero, so this should mean most of the metric is a
+        % constant value.
+        if false_tie(1) + correct_tie(1) > 0.5
+            fprintf('Half of data is correct ties or false ties. Skipping.\n');
+            continue;
         end
 
-        choose = max(choose1, choose2);
+        % compute the ideal ci
+        ideal_ci = find( false_ranking < false_rank_thresh & false_distinction < false_diff_thresh, 1 );
+        if isempty(ideal_ci)
+            ideal_ci = length(list_want);
+        end
 
+        % compute the practical CI
+        practical_ci = find( false_ranking + false_distinction < practical_threshold, 1 );
+        if isempty(practical_ci)
+            practical_ci = length(list_want);
+        end
+        
         % print recommended threshold
-        fprintf('%4.2f CI', list_want(choose));
-        fprintf('    (%d %% false ranking, %d %% correct ranking)\n', ...
-            round(false_ranking(choose)*100), round(correct_rank(choose)*100));
+        fprintf('%4.2f Ideal CI      (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
+            list_want(ideal_ci), round(false_ranking(ideal_ci)*100), round(false_distinction(ideal_ci)*100), round(correct_rank(ideal_ci)*100));
+        fprintf('%4.2f Practical CI  (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
+            list_want(practical_ci), round(false_ranking(practical_ci)*100), round(false_distinction(practical_ci)*100), round(correct_rank(practical_ci)*100));
 
         % dataset names
         tmp = '';
@@ -195,11 +200,12 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         hold on;
         plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
         plot(list_want, 100 * false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
-        plot(list_want, 100 * false_differentiate, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
+        plot(list_want, 100 * false_distinction, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
         plot(list_want, 100 * false_ranking, 'r', 'linewidth', 2);
 
         curr_axis = axis;
-        plot([list_want(choose) list_want(choose)], ylim, ':k', 'linewidth', 1);
+        plot([list_want(ideal_ci) list_want(ideal_ci)], ylim, ':k', 'linewidth', 1.5);
+        plot([list_want(practical_ci) list_want(practical_ci)], ylim, ':k', 'linewidth', 1);
         axis(curr_axis);
         hold off;
 
@@ -213,8 +219,8 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         end
         yticklabels(tmpl)
 
-        legend('Correct ranking', 'Correct tie', 'False tie', 'False differentiate', ...
-            'False ranking', 'Recommended CI', 'location', 'eastoutside', ...
+        legend('Correct ranking', 'Correct tie', 'False tie', 'False distinction', ...
+            'False ranking', 'Ideal CI', 'Practical CI', 'location', 'eastoutside', ...
             'interpreter','latex');
 
     end
