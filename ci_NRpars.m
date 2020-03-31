@@ -199,14 +199,15 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         figure('name', tmp); % put dataset names on title bar
         plot(list_want, 100 * correct_rank, 'g', 'linewidth', 2);
         hold on;
-        plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
-        plot(list_want, 100 * false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
-        plot(list_want, 100 * false_distinction, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
         plot(list_want, 100 * false_ranking, 'r', 'linewidth', 2);
+        plot(list_want, 100 * false_distinction, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
+        plot(list_want, 100 * false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
+        plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
 
         curr_axis = axis;
-        plot([list_want(ideal_ci) list_want(ideal_ci)], ylim, ':k', 'linewidth', 1.5);
-        plot([list_want(practical_ci) list_want(practical_ci)], ylim, ':k', 'linewidth', 1);
+        plot([list_want(ideal_ci) list_want(ideal_ci)], ylim, '-k', 'linewidth', 1);
+        plot([list_want(practical_ci) list_want(practical_ci)], ylim, '-.k', 'linewidth', 1);
+        curr_axis(2) = list_want(ideal_ci) * 1.25; % only graph 25% beyond the ideal CI
         axis(curr_axis);
         hold off;
 
@@ -220,8 +221,8 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         end
         yticklabels(tmpl)
 
-        legend('Correct ranking', 'Correct tie', 'False tie', 'False distinction', ...
-            'False ranking', 'Ideal CI', 'Practical CI', 'location', 'eastoutside', ...
+        legend('Correct ranking', 'False ranking', 'False distinction', 'False tie', ...
+            'Correct tie', 'Ideal CI', 'Practical CI', 'location', 'eastoutside', ...
             'interpreter','latex');
 
     end
