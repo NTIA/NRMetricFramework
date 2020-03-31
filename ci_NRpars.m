@@ -5,32 +5,31 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   ci_NRpars(nr_dataset, base_dir, feature_function, parnum);
 % SEMANTICS
 %   Estimate the confidence interval (CI) of an NR metric or parameter, 
-%   when compared to subjective test MOSs, using the classification of 
-%   decisions reached by the subjective data and the metric for pairs of
-%   stimuli (i.e., better, equivalent, or worse). The likelihood of each
-%   combination will be plotted, and a suggested threshold returned.
+%   by comparing the conclusions reached by the model with conclusions 
+%   reached by a subjective test. Both will use a constant confidence 
+%   interval (CI) to make decisions. The subjective CI is based on
+%   5-level ACR MOSs. Two recommended CIs are printed to the command window.
+%   (1) ideal CI, and (2) practical CI. The classification types are plotted, 
+%   which allows the user to choose an alternate CI.
 %
 % Input Parameters:
 %   nr_dataset          Data structures, of datasets to be analyzed. If 2+
 %                       datasets are provided, then the datasets will be
 %                       weighted equally.
-%   base_dir    Path to directory where NR features and NR parameters are stored.
+%   base_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %
 %   Details of this algorithm will be published in an NTIA Report. 
-%   Analysis of subjective tests yields three constants that are used by
-%   this function:
-%   - confidence interval for MOSs: 0.5
-%   - rate of uncertain = 1% (i.e., one test ranks the stimuli, the other
-%                                   concludes equivalent quality)
-%   - rate of disagreement = 20% (i.e., opposite ranking of the stimuli) 
 
 
-    threshold_level = 0.5;
-    false_rank_thresh = 0.01;
+    % Analysis of subjective tests yields several constants that are used by
+    % this function. These constants are computed from lab-to-lab comparisons
+    % of subjective tests.   
+    threshold_level = 0.5; % delta S, where 95% of stimuli MOS can be rank orderd
+    false_rank_thresh = 0.01; % disagree rate
     false_diff_thresh = 0.10; % half of the uncertain rate of 20% 
-    practical_threshold = 0.16;
+    practical_threshold = 0.16; % half of maximum unceretain rate plus disagree rate
     
     % load the parameters. This will calculate them, if not yet computed. 
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
