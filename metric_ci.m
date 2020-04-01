@@ -1,8 +1,8 @@
-function [] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
+function [ideal_ci, practical_ci] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
 % metric_ci
 %   Estimate the confidence interval (CI) of an NR parameter
 % SYNTAX
-%   metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics);
+%   [ideal_ci, practical_ci] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics);
 % SEMANTICS
 %   Estimate the confidence interval (CI) of an NR metric or parameter, 
 %   by comparing the conclusions reached by the model with conclusions 
@@ -94,10 +94,10 @@ function [] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, d
 
                 % obj(curr) is distance before thresholding, since the
                 % point of this function is to ideal_ci a threshold
-                obj(curr) = NRpars(dcnt).data(pcnt,want1) - NRpars(dcnt).data(pcnt,want2); 
+                obj(curr) = dataset_metrics{dcnt}(mcnt1) - dataset_metrics{dcnt}(mcnt2); 
 
                 % note weight 
-                wt(curr) = 1 / length(nr_dataset(dcnt).media);
+                wt(curr) = 1 / length(dataset_mos{dcnt});
 
                 curr = curr + 1;
             end
@@ -154,7 +154,7 @@ function [] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, d
     % constant value.
     if false_tie(1) + correct_tie(1) > 0.5
         fprintf('Half of data is correct ties or false ties. Skipping.\n');
-        continue;
+        return;
     end
 
     % compute the ideal ci
@@ -178,7 +178,7 @@ function [] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, d
     % dataset names
     tmp = '';
     for dcnt = 1:length(nr_dataset)
-        tmp = [tmp ' ' nr_dataset(dcnt).test];
+        tmp = [tmp ' ' dataset_names{dcnt}];
     end
 
     % create plot
@@ -197,7 +197,7 @@ function [] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, d
     axis(curr_axis);
     hold off;
 
-    xlabel(['$\Delta$ Metric (' NRpars(1).par_name{pcnt} ')'], 'interpreter','latex')
+    xlabel(['$\Delta$ Metric (' metric_name ')'], 'interpreter','latex')
     ylabel('Probability', 'interpreter','latex')
     grid on;
 
@@ -211,5 +211,7 @@ function [] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, d
         'Correct tie', 'Ideal CI', 'Practical CI', 'location', 'eastoutside', ...
         'interpreter','latex');
 
+    ideal_ci = list_want(ideal_ci);
+    practical_ci = list_want(practical_ci);
 end
 

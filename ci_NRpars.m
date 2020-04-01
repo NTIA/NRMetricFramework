@@ -23,14 +23,6 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   Details of this algorithm will be published in an NTIA Report. 
 
 
-    % Analysis of subjective tests yields several constants that are used by
-    % this function. These constants are computed from lab-to-lab comparisons
-    % of subjective tests.   
-    threshold_level = 0.5; % delta S, where 95% of stimuli MOS can be rank orderd
-    false_rank_thresh = 0.01; % disagree rate
-    false_diff_thresh = 0.10; % half of the uncertain rate of 20% 
-    practical_threshold = 0.16; % half of maximum unceretain rate plus disagree rate
-    
     % load the parameters. This will calculate them, if not yet computed. 
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
     for dcnt = 1:length(nr_dataset)
@@ -51,197 +43,20 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
     for pcnt = 1:length(NRpars(1).par_name)
         
         fprintf('--------------------------------------------------------------\n');
-        fprintf('%d) %s\n\n', pcnt, NRpars(1).par_name{pcnt});
-
-        % calculate range of this parameter
-        this_par = [];
+        
+        % reorganize dataset information
         for dcnt = 1:length(nr_dataset)
-            this_par = [this_par [NRpars(dcnt).data(pcnt,subset{dcnt})]];
-            tmp = corrcoef([NRpars(dcnt).data(pcnt,subset{dcnt})], [nr_dataset(dcnt).media(subset{dcnt}).mos]);
-            if tmp(1,2) >= 0
-                pos_corr(dcnt) = 1;
-            else
-                pos_corr(dcnt) = -1;
-            end
+            dataset_names{dcnt} = nr_dataset(dcnt).test;
+            dataset_mos{dcnt} = [nr_dataset(dcnt).media(subset{dcnt}).mos];
+            dataset_metrics{dcnt} = [NRpars(dcnt).data(pcnt,subset{dcnt})];
         end
-
-        this_par = sort(this_par);
-        pmin = this_par(1);
-        pmax = this_par(length(this_par));
-        fprintf('Full range [%4.2f..%4.2f], ', pmin, pmax);
-        fprintf('95%% of data in [%4.2f..%4.2f]\n', this_par(round(0.025*length(this_par))), this_par(round(0.975*length(this_par))));
-
-        if sum(pos_corr) > 0
-            fprintf('Positively correlated with MOS for most datasets\n\n');
-            is_pos_corr = true;
-        else
-            fprintf('Negatively correlated with MOS for most datasets\n\n');
-            is_pos_corr = false;
-        end
-        
-        if pmin == pmax
-            fprintf('Error: parameter has a constant value\n');
-            continue;
-        end
-
-        % clear variables from last loop
-        clear subj obj wt;
-        
-        curr = 1;
-        for dcnt = 1:length(nr_dataset)
-            for mcnt1 = 1:length(subset{dcnt})
-                for mcnt2 = mcnt1+1:length(subset{dcnt})
-                    want1 = subset{dcnt}(mcnt1);
-                    want2 = subset{dcnt}(mcnt2);
-
-                    % subj(curr) is decision whether #1 is better,
-                    % equivalent, or worse than #2
-                    diff = nr_dataset(dcnt).media(want1).mos - nr_dataset(dcnt).media(want2).mos;
-                    if diff > threshold_level
-                        subj(curr) = 1;
-                    elseif diff < -threshold_level
-                        subj(curr) = -1;
-                    else
-                        subj(curr) = 0;
-                    end
-
-                    % obj(curr) is distance before thresholding, since the
-                    % point of this function is to ideal_ci a threshold
-                    obj(curr) = NRpars(dcnt).data(pcnt,want1) - NRpars(dcnt).data(pcnt,want2); 
-                    
-                    % note weight 
-                    wt(curr) = 1 / length(nr_dataset(dcnt).media);
-
-                    curr = curr + 1;
-                end
-            end
-        end
-        % flip sign of objective differences, if parameter is
-        % negatively correlated to MOS
-        if ~is_pos_corr
-            obj = -obj;
-        end
-
-        % Have all of the data. Now make the plot.
-        % round our increment to one significant digits
-        incr = round((pmax-pmin)/100, 1, 'significant');
-        list_want = incr:incr:(pmax-pmin);
-
-        correct_rank = zeros(1,length(list_want));
-        correct_tie = zeros(1,length(list_want));
-        false_ranking = zeros(1,length(list_want));
-        false_distinction = zeros(1,length(list_want));
-        false_tie = zeros(1,length(list_want));
-
-        % create data for roughly 60% of the range of parameter values
-        % from there, the plot flattens and contains no more info
-        for loop = 1:length(list_want)
-            delta = list_want(loop);
-            for curr = 1:length(subj)
-                if (subj(curr) == 1 && obj(curr) >= delta) || ...
-                        (subj(curr) == -1 && obj(curr) <= -delta)
-                    correct_rank(loop) = correct_rank(loop) + wt(curr);
-                elseif subj(curr) == 0 && obj(curr) > -delta && obj(curr) < delta
-                    correct_tie(loop) = correct_tie(loop) + wt(curr);
-                elseif (subj(curr) == 1 && obj(curr) <= -delta) || ...
-                        (subj(curr) == -1 && obj(curr) >= delta)
-                    false_ranking(loop) = false_ranking(loop) + wt(curr);
-                elseif (subj(curr) ~= 0 && obj(curr) > -delta && obj(curr) < delta)
-                    false_tie(loop) = false_tie(loop) + wt(curr);
-                else
-                    false_distinction(loop) = false_distinction(loop) + wt(curr);
-                end
-            end
-        end
-        total_votes = sum(wt);
-        
-        correct_rank = correct_rank / total_votes;
-        correct_tie = correct_tie / total_votes;
-        false_ranking = false_ranking / total_votes;
-        false_distinction = false_distinction / total_votes;
-        false_tie = false_tie / total_votes;
-        
-        % if too much data is false_tie and correct_tie at minimum
-        % threshold, don't try. Skip. Rule of thumb: 50% ties. We expect
-        % values close to zero, so this should mean most of the metric is a
-        % constant value.
-        if false_tie(1) + correct_tie(1) > 0.5
-            fprintf('Half of data is correct ties or false ties. Skipping.\n');
-            continue;
-        end
-
-        % compute the ideal ci
-        ideal_ci = find( false_ranking < false_rank_thresh & false_distinction < false_diff_thresh, 1 );
-        if isempty(ideal_ci)
-            ideal_ci = length(list_want);
-        end
-
-        % compute the practical CI
-        practical_ci = find( false_ranking + false_distinction < practical_threshold, 1 );
-        if isempty(practical_ci)
-            practical_ci = length(list_want);
-        end
-        
-        % print recommended threshold
-        fprintf('%5.4f Ideal CI      (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
-            list_want(ideal_ci), round(false_ranking(ideal_ci)*100), round(false_distinction(ideal_ci)*100), round(correct_rank(ideal_ci)*100));
-        fprintf('%5.4f Practical CI  (%d %% false ranking, %d %% false distinction, %d %% correct ranking)\n', ...
-            list_want(practical_ci), round(false_ranking(practical_ci)*100), round(false_distinction(practical_ci)*100), round(correct_rank(practical_ci)*100));
-
-        % dataset names
-        tmp = '';
-        for dcnt = 1:length(nr_dataset)
-            tmp = [tmp ' ' nr_dataset(dcnt).test];
-        end
-        
-        % create plot
-        figure('name', tmp); % put dataset names on title bar
-        plot(list_want, 100 * correct_rank, 'g', 'linewidth', 2);
-        hold on;
-        plot(list_want, 100 * false_ranking, 'r', 'linewidth', 2);
-        plot(list_want, 100 * false_distinction, '--', 'linewidth', 2, 'color', [0.3 0.3 1]);
-        plot(list_want, 100 * false_tie, '--', 'linewidth', 2, 'color', [1 0.9 0]);
-        plot(list_want, 100 * correct_tie, '-', 'linewidth', 2, 'color', [1 0.9 0]);
-
-        curr_axis = axis;
-        plot([list_want(ideal_ci) list_want(ideal_ci)], ylim, '-k', 'linewidth', 1);
-        plot([list_want(practical_ci) list_want(practical_ci)], ylim, '-.k', 'linewidth', 1);
-        curr_axis(2) = list_want(ideal_ci) * 1.25; % only graph 25% beyond the ideal CI
-        axis(curr_axis);
-        hold off;
-
-        xlabel(['$\Delta$ Metric (' NRpars(1).par_name{pcnt} ')'], 'interpreter','latex')
-        ylabel('Probability', 'interpreter','latex')
-        grid on;
-
-        tmp = yticks;
-        for cnt=1:length(tmp)
-            tmpl{cnt} = sprintf('%2d%%', tmp(cnt));
-        end
-        yticklabels(tmpl)
-
-        legend('Correct ranking', 'False ranking', 'False distinction', 'False tie', ...
-            'Correct tie', 'Ideal CI', 'Practical CI', 'location', 'eastoutside', ...
-            'interpreter','latex');
-
-    end
     
-    
+        metric_ci(NRpars(1).par_name{pcnt}, ... % current parameter name
+            length(nr_dataset), ... % number of datasets
+            dataset_names, ... % name of each dataset
+            dataset_mos, ...
+            dataset_metrics);
+    end 
 end
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
