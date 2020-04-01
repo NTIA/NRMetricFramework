@@ -177,7 +177,7 @@ function [ideal_ci, practical_ci] = metric_ci(metric_name, num_datasets, dataset
 
     % dataset names
     tmp = '';
-    for dcnt = 1:length(nr_dataset)
+    for dcnt = 1:num_datasets
         tmp = [tmp ' ' dataset_names{dcnt}];
     end
 
