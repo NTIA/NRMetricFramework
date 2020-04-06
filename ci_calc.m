@@ -1,11 +1,12 @@
-function [ideal_ci, practical_ci] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
-% metric_ci
+function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
+% ci_calc
 %   Estimate the confidence interval (CI) of an NR parameter
 % SYNTAX
-%   [ideal_ci, practical_ci] = metric_ci(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics);
+%   [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_names, ...
+%       dataset_mos, dataset_metrics);
 % SEMANTICS
 %   Estimate the confidence interval (CI) of an NR metric or parameter, 
-%   by comparing the conclusions reached by the model with conclusions 
+%   by comparing the conclusions reached by the metric with conclusions 
 %   reached by a subjective test. Both will use a constant confidence 
 %   interval (CI) to make decisions. The subjective CI is based on
 %   5-level ACR MOSs. Two recommended CIs are printed to the command window.
@@ -25,7 +26,7 @@ function [ideal_ci, practical_ci] = metric_ci(metric_name, num_datasets, dataset
 %                   stimuli in the dataset. Order of stimuli must be
 %                   identical to dataset_mos.
 %
-%   Details of this algorithm are pending publication. 
+%   The theoretical underpinnings of this algorithm are pending publication. 
 %
 % Constraints:
 %   All datasets are weighted equally.

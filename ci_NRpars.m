@@ -51,7 +51,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
             dataset_metrics{dcnt} = [NRpars(dcnt).data(pcnt,subset{dcnt})];
         end
     
-        metric_ci(NRpars(1).par_name{pcnt}, ... % current parameter name
+        ci_calc(NRpars(1).par_name{pcnt}, ... % current parameter name
             length(nr_dataset), ... % number of datasets
             dataset_names, ... % name of each dataset
             dataset_mos, ...
