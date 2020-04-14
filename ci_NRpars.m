@@ -20,7 +20,8 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %
-%   Details of this algorithm will be published in an NTIA Report. 
+%   Details of this algorithm will be published in an NTIA Report. See
+%   ci_calc.m for details.
 
 
     % load the parameters. This will calculate them, if not yet computed. 

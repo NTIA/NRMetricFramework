@@ -11,7 +11,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
 %
 % Input Parameters:
 %   nr_dataset          Data struction. Each describes an entire dataset (name, file location, ...)
-%   base_dir    Path to directory where NR features and NR parameters are stored.
+%   base_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %
@@ -265,6 +265,9 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             fprintf('Analyze by %s\n\n', nr_dataset.category_name{do_category});
             options = nr_dataset.category_list{do_category};
             if do_plot && length(options) > 1
+                % Aesthetic choice: create 3 rows of subplots. We assume
+                % the screen is wider than tall, so the hard limit is placed 
+                % on the number of rows.
                 do_subplot = true;
                 figure('Name', NRpars(1).par_name{pcnt});
                 subnum = ceil(length(options) / 3); 

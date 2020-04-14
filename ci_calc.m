@@ -26,7 +26,15 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 %                   stimuli in the dataset. Order of stimuli must be
 %                   identical to dataset_mos.
 %
-%   The theoretical underpinnings of this algorithm are pending publication. 
+%   The theoretical underpinnings of this algorithm are pending publication
+%   of NTIA Report "Confidence Intervals for Subjective Tests and 
+%   Objective Metrics" by Margaret H Pinson
+%
+%   For a preliminary analysis, see Margaret Pinson, "NR metric confidence 
+%   interval estimation using classification errors," Video Quality Experts
+%   Group (VQEG) meeting, Statistical Analysis Methods (SAM) Group, 
+%   Presentation 11, March 2020.  
+%   ftp://vqeg.its.bldrdoc.gov/Documents/VQEG_online_Mar20/VQEG_2020_SAM_011_confidence_intervals_for_metrics.pptx
 %
 % Constraints:
 %   All datasets are weighted equally.
@@ -35,11 +43,11 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 
     % Analysis of subjective tests yields several constants that are used by
     % this function. These constants are computed from lab-to-lab comparisons
-    % of subjective tests.   
-    threshold_level = 0.5; % delta S, where 95% of stimuli MOS can be rank orderd
+    % of subjective tests (publication pending).  
+    threshold_level = 0.5; % delta S, where 95% of stimuli MOS can be rank ordered
     false_rank_thresh = 0.01; % disagree rate
     false_diff_thresh = 0.10; % half of the uncertain rate of 20% 
-    practical_threshold = 0.16; % half of maximum unceretain rate plus disagree rate
+    practical_threshold = 0.16; % half of maximum uncertain rate plus disagree rate
     
     fprintf('Metric confidence interval analysis for %s\n\n', metric_name);
 
@@ -65,6 +73,9 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
     if sum(pos_corr) > 0
         fprintf('Positively correlated with MOS for most datasets\n\n');
         is_pos_corr = true;
+    elseif sum(pos_corr) == 0
+        fprintf('Split decision on whether metric is positively or negatively correlated with MOS.\nAssume positive correlation.\n\n');
+        is_pos_corr = true;
     else
         fprintf('Negatively correlated with MOS for most datasets\n\n');
         is_pos_corr = false;
@@ -72,6 +83,8 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 
     if pmin == pmax
         fprintf('Warning: parameter has a constant value, aborting.\n');
+        ideal_ci = nan; 
+        practical_ci = nan;
         return;
     end
 
@@ -155,6 +168,8 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
     % constant value.
     if false_tie(1) + correct_tie(1) > 0.5
         fprintf('Half of data is correct ties or false ties. Skipping.\n');
+        ideal_ci = nan; 
+        practical_ci = nan;
         return;
     end
 
