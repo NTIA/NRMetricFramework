@@ -1,8 +1,8 @@
-function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
+function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
 % ci_calc
 %   Estimate the confidence interval (CI) of an NR parameter
 % SYNTAX
-%   [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_names, ...
+%   [ideal_ci, practical_ci, N] = ci_calc(metric_name, num_datasets, dataset_names, ...
 %       dataset_mos, dataset_metrics);
 % SEMANTICS
 %   Estimate the confidence interval (CI) of an NR metric or parameter, 
@@ -12,6 +12,10 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 %   5-level ACR MOSs. Two recommended CIs are printed to the command window.
 %   (1) ideal CI, and (2) practical CI. The classification types are plotted, 
 %   which allows the user to choose an alternate CI.
+%
+%   By analogy, assess the performance of the metric in terms of an ad-hoc
+%   test with N people. This analysis assumes that the metric and MOSs are 
+%   compared without statistical tests or confidence intervals. 
 %
 % Input Parameters:
 %   metric_name     Character string that contains the metric's name
@@ -35,6 +39,19 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 %   Group (VQEG) meeting, Statistical Analysis Methods (SAM) Group, 
 %   Presentation 11, March 2020.  
 %   ftp://vqeg.its.bldrdoc.gov/Documents/VQEG_online_Mar20/VQEG_2020_SAM_011_confidence_intervals_for_metrics.pptx
+%
+% Output Parameters
+%   ideal_ci = the ideal confidence interval
+%   practial_ci = the practical confidence interval
+%   N = the number of people in an ad-hoc test with an equivalent likelihood of
+%       false ranking, or zerro (0) if the performance is worse than a 1
+%       person ad-hoc test. 
+%
+%   For positively correlated metrics, false ranking is where a well designed
+%   subjective test would conclude that stimuli A is statisticall better 
+%   than stimuli B, but the metric value for stimuli B is greater than
+%   the metric value for stimuli A. "Less than" is used for negatively
+%   correlated metrics. 
 %
 % Constraints:
 %   All datasets are weighted equally.
@@ -231,5 +248,32 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 
     ideal_ci = list_want(ideal_ci);
     practical_ci = list_want(practical_ci);
+    
+    
+    % create return variable indicating the equivalent of this metric,
+    % based on false ranking rates of ad-hoc tests
+    
+    if false_ranking(1) <= 0.0325
+        equivalent = 12;
+        fprintf('This metric is equivalent to a %d person ad-hoc test\n', equivalent);
+    elseif false_ranking(1) <= 0.0395
+        equivalent = 9;
+        fprintf('This metric is equivalent to a %d person ad-hoc test\n', equivalent);
+    elseif false_ranking(1) <= 0.056
+        equivalent = 6;
+        fprintf('This metric is equivalent to a %d person ad-hoc test\n', equivalent);
+    elseif false_ranking(1) <= 0.0765
+        equivalent = 3;
+        fprintf('This metric is equivalent to a %d person ad-hoc test\n', equivalent);
+    elseif false_ranking(1) <= 0.0995
+        equivalent = 2;
+        fprintf('This metric is equivalent to a %d person ad-hoc test\n', equivalent);
+    elseif false_ranking(1) <= 0.1285
+        equivalent = 1;
+        fprintf('This metric is equivalent to a %d person ad-hoc test\n', equivalent);
+    else
+        equivalent = 0;
+        fprintf('This metric is less accurate than a typical 1-person ad-hoc test\n');
+    end
 end
 
