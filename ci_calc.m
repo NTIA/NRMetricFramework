@@ -209,6 +209,9 @@ function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_dataset
     fprintf('%5.4f Practical CI  (%d %% correct ranking, %d %% false ranking, %d %% false distinction, %d %% false tie, %d %% correct tie)\n', ...
         list_want(practical_ci), round(correct_rank(practical_ci)*100), round(false_ranking(practical_ci)*100), round(false_distinction(practical_ci)*100), ...
             round(false_tie(practical_ci)*100), round(correct_tie(practical_ci)*100));
+    fprintf('No CI used           (%d %% correct ranking, %d %% false ranking, %d %% false distinction, %d %% false tie, %d %% correct tie)\n', ...
+        round(correct_rank(1)*100), round(false_ranking(1)*100), round(false_distinction(1)*100), ...
+            round(false_tie(1)*100), round(correct_tie(1)*100));
 
     % dataset names
     tmp = '';
@@ -275,5 +278,6 @@ function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_dataset
         equivalent = 0;
         fprintf('This metric is less accurate than a typical 1-person ad-hoc test\n');
     end
+    fprintf('\n');
 end
 
