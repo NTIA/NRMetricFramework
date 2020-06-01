@@ -65,7 +65,7 @@ function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_dataset
     false_rank_thresh = 0.01; % disagree rate
     false_diff_thresh = 0.10; % half of the uncertain rate of 20% 
     practical_threshold = 0.165; % half of maximum uncertain rate plus disagree rate
-    concur_threshold = 0.91; 
+    concur_threshold = 0.91; % based on analyses of the VQEG FRTV Phase I ratings
     
     fprintf('Metric confidence interval analysis for %s\n\n', metric_name);
 
@@ -239,7 +239,9 @@ function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_dataset
         'Correct tie', 'Ideal CI', 'Practical CI', 'location', 'eastoutside', ...
         'interpreter','latex');
     
-    % analyze whether equivalent to a subjective test
+    % Analyze whether equivalent to a subjective test.
+    % This formulae was created by fitting correct ranking and correct tie
+    % rates for subjective tests conducted in two labs. 
     equiv_ideal = sqrt(correct_rank(ideal_ci)) + 1.2 * correct_tie(ideal_ci);
     equiv_practical = sqrt(correct_rank(practical_ci)) + 1.2 * correct_tie(practical_ci);
 
@@ -261,8 +263,8 @@ function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_dataset
     end
     
     %------------------------------------------------------------
-    % repeat above for delta = 0
-    % this analyzes performance when no CI is used
+    % Repeat the above calculation for delta = 0
+    % This analyzes performance when no CI is used
     
     correct_rank_zero = 0;
     correct_tie_zero = 0;
@@ -297,9 +299,9 @@ function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_dataset
         round(correct_rank_zero*100), round(false_ranking_zero*100), round(false_distinction_zero*100), ...
             round(false_tie_zero*100), round(correct_tie_zero*100));
     
-    % create return variable indicating the equivalent of this metric,
+    % Create return variable indicating the equivalent of this metric,
     % based on false ranking rates of ad-hoc tests
-    
+    % Rates for ad-hoc tests were simulated using the VQEG FRTV Phase I data
     if false_ranking_zero <= 0.0325
         equivalent = 12;
         fprintf(' ==> equivalent to a pilot test with %d subjects\n', equivalent);

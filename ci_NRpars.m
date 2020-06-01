@@ -12,6 +12,10 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   (1) ideal CI, and (2) practical CI. The classification types are plotted, 
 %   which allows the user to choose an alternate CI.
 %
+%   By analogy, assess the performance of the metric in terms of an ad-hoc
+%   test with N people. This analysis assumes that the metric and MOSs are 
+%   compared without statistical tests or confidence intervals. 
+%
 % Input Parameters:
 %   nr_dataset          Data structures, of datasets to be analyzed. If 2+
 %                       datasets are provided, then the datasets will be
