@@ -1,10 +1,351 @@
+############################################################################################
+# Program Name : Confidence Interval Calculator / Grapher
+# Description  : Displays confidence intervals from actual MOS values and calculated 
+#                   statistics.  Made from a a matlab version by a video quality researcher
+#                   in germany.
+############################################################################################
+
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import scipy
+import scipy.io
 
+# Input Value Files and Fields
+MOSFileNameList     = []
+MOSFieldNameList    = []
+NRParsFileNameList  = []
+NRParsFieldNameList = []
+NRParsMOSCount      =  0
+
+GraphSaveFileName =    ""
+IsVerbose         = False
+
+# Global field values
+MetricName = ""
+MOSList    = []
+NRParsList = []
+
+# Main
+#   Plot the confidence interval (CI) of an NR parameter by MOS values
+# SYNTAX
+#   python ci_calc.py -m iqa_camera.mat ccriq_dataset blur.mat 10_percent
+# SEMANTICS
+#   Read values and run ci_calc algorithm. Please see ci_calc
+#   description or documentation for extra detail on f output graph
+#   and output parameters.
+#
+# Input Parameters:
+#   mosFileName     Input mos filename(s)
+#   mosFieldName    MOS filename's field name
+#   nrParsFileName  Input NR Parameter's filename(s)
+#   nrParsFieldName NR Parameter's field name
+##
+# Output Parameters
+#   ideal_ci = the ideal confidence interval
+#   practial_ci = the practical confidence interval
+#
+# Constraints:
+#   All datasets are weighted equally.
+#   The MOSs must range from 1 to 5. 
+#
+def Main():
+    # sys.argv = [ sys.argv[0], "-m", "iqa_camera.mat", "ccriq_dataset", "blur.mat", "10_percent" ]
+
+    # Parse commandline arguments
+    parse_command_arguments(sys.argv)
+
+    read_mos_and_nrpars()
+
+# Main
+#   Parse command arguments
+# SYNTAX
+#   parse_command_arguments([ "-help" ])
+# SEMANTICS
+#   Parses input filenames and fields.  And, prints any format errors.
+#
+# Input Parameters:
+#   argvList: Command line arguments
+##
+# Output Parameters
+#   MOSFileNameList     Input mos filename(s)
+#   MOSFieldNameList    MOS filename's field name
+#   NRParsFileNameList  Input NR Parameter's filename(s)
+#   NRParsFieldNameList NR Parameter's field name
+#
+def parse_command_arguments(argvList):
+    # Global vars
+    global MOSFileNameList
+    global MOSFieldNameList
+    global NRParsFileNameList
+    global NRParsFieldNameList
+    global NRParsMOSCount
+    global GraphSaveFileName
+    global IsVerbose
+
+    # Clear data
+    MOSFileNameList     =    []
+    MOSFieldNameList    =    []
+    NRParsFileNameList  =    []
+    NRParsFieldNameList =    []
+    NRParsMOSCount      =     0
+    GraphSaveFileName   =    ""
+    IsVerbose           = False
+
+    # Parse arguments
+    if len(argvList)<=1:
+        argvList = [ argvList[0] if len(argvList)>0 else "", "-h" ]
+
+    argvListCount = len(argvList)
+    index = 1
+
+    while index<argvListCount:
+        # Format argument
+        argv = (argvList[index] or "").strip().lower()
+        if argv.startswith("/"):
+            argv = "-"+argv[1:]
+
+        # Read argument
+        if (argv=="-m" and index+4<argvListCount):
+            MOSFileNameList    .append((argvList[index+1] or "").strip())
+            MOSFieldNameList   .append((argvList[index+2] or "").strip())
+            NRParsFileNameList .append((argvList[index+3] or "").strip())
+            NRParsFieldNameList.append((argvList[index+4] or "").strip())
+            NRParsMOSCount += 1
+            index += 4
+        elif (argv=="-s" and index+1<argvListCount):
+            GraphSaveFileName = (argvList[index+1] or "").strip()
+        elif (argv=="-h" or argv=="--help"):
+            print("Usage:")
+            print(" python3 ci_calc.py [options]")
+            print("Options:")
+            print(" -m    <mosFileName> <mosFieldName> <nrParsFileName> <nrParsFieldName>")
+            print(" -s    <graphSaveFileName>")
+            print(" -b    Verbose / Program Status")
+            print("Misc Options:")
+            print(" -h --help       Help")
+            print(" -v --version    Version Number")
+            print(" -b --verbose    Verbose Messages")
+            print("Example:")
+            print("")
+            print("")
+        elif (argv=="-v" or argv=="--version"):
+            print("Version 1.0a")
+        elif (argv=="-b" or argv=="-?" or argv=="--verbose"):
+            IsVerbose = True
+        else:
+            print("  <Error: Failed to Parse Arguments at Index {0} of {1} with First Value \"{2}\" >".format(index, argvListCount, argvList[index]))
+
+        index += 1
+
+# read_mos_and_nrpars
+#   Read MOS and NRPars
+# SYNTAX
+#   read_mos_and_nrpars();
+# SEMANTICS
+#   Read MOS and NRPars into global variables.
+#
+# Input Parameters:
+#   MOSFileNameList       MOS filename(is a list)
+#   MOSFieldNameList      MOS dataset name
+#   NRParsFileNameList    NRPars filename
+#   NRParsFieldNameList   NRPars fieldname
+#
+# Output Parameters
+#   MetricName   Metric name, taken from fieldnames
+#   MOSList      MOS values from mat file
+#   NRParsList   NRPar values from mat file
+#
+def read_mos_and_nrpars():
+    # Global vars
+    global MetricName
+    global MOSList
+    global NRParsList
+
+    # Through mat files
+    for index in range(NRParsMOSCount):
+        # Attempt to read MOS file
+        if not os.path.exists(MOSFileNameList[index]):
+            print("  <Failed to find MOS File \"{0}\">".format(MOSFileNameList[index]))
+            exit(0)
+
+        data = scipy.io.loadmat(MOSFileNameList[index])
+
+        if not MOSFieldNameList[index] in data.keys():
+            print("  <Failed to find MOS Dataset Field \"{0}\">".format(MOSFieldNameList[index]))
+            exit(0)
+
+        data = data[MOSFieldNameList[index]]
+
+        if not( type(data      )==np.ndarray and len(data      )>0 \
+            and type(data[0]   )==np.ndarray and len(data[0]   )>0 \
+            and type(data[0][0])==np.void    and "media" in np.dtype(data[0][0]).names):
+            print("  <Failed to find \"media\" Field in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
+            exit(0)
+
+        dataIndex = np.dtype(data[0][0]).names.index("media")
+        data = data[0][0]
+
+        if not(dataIndex<len(data) \
+            and type(data[dataIndex]   )==np.ndarray and len(data[dataIndex]   )>0 \
+            and type(data[dataIndex][0])==np.ndarray and len(data[dataIndex][0])>0):
+            print("  <Failed to find \"media\" Field as a List in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
+            exit(0)
+
+        for rowIndex in range(len(data[dataIndex][0])):
+            row = data[dataIndex][0][rowIndex]
+            if not("mos" in np.dtype(row).names):
+                print("  <Failed to find MOS column on row \"{0}\">".format(rowIndex))
+                exit(0)
+            columnIndex = np.dtype(row).names.index("mos")
+            if not( type(row[columnIndex]      )==np.ndarray and len(row[columnIndex]   )>0 \
+                and type(row[columnIndex][0]   )==np.ndarray and len(row[columnIndex][0])>0 \
+                and type(row[columnIndex][0][0]) in (np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64, np.float32, np.float64)):
+                print("  <Failed to find MOS column as a formatted float on row \"{0}\">".format(rowIndex))
+                exit(0)
+            mos = float(row[columnIndex][0][0])
+            MOSList.append(mos)
+
+        # Attempt to read NRPars file
+        if not os.path.exists(NRParsFileNameList[index]):
+            print("  <Failed to find NRPars File \"{0}\">".format(NRParsFileNameList[index]))
+            exit(0)
+
+        data = scipy.io.loadmat(NRParsFileNameList[index])
+
+        if not "NRpars" in data.keys():
+            print("  <Failed to find NRPars Dataset Field \"NRPars\">")
+            exit(0)
+
+        data = data["NRpars"]
+
+        if not( type(data      )==np.ndarray and len(data      )>0 \
+            and type(data[0]   )==np.ndarray and len(data[0]   )>0 \
+            and type(data[0][0])==np.void    and "par_name" in np.dtype(data[0][0]).names and "data" in np.dtype(data[0][0]).names):
+            print("  <Failed to find \"par_name\" and \"data\" Fields in NRPars Dataset \"{0}\">".format(NRParsFieldNameList[index]))
+            exit(0)
+
+        dataIndex1 = np.dtype(data[0][0]).names.index("par_name")
+        dataIndex2 = np.dtype(data[0][0]).names.index("data")
+        data = data[0][0]
+
+        if not(dataIndex1<len(data) and dataIndex2<len(data) \
+            and type(data[dataIndex1])==np.ndarray and len(data[dataIndex1])>0 \
+            and type(data[dataIndex2])==np.ndarray and len(data[dataIndex2])>0):
+            print("  <Failed to find \"par_name\" and \"data\" Fields as a List in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
+            exit(0)
+
+        # if not( type(data[dataIndex1][0])==np.ndarray and len(data[dataIndex1][0])>0 \
+        #     and type(data[dataIndex2][0])==np.ndarray and len(data[dataIndex2][0])>0:
+        #     print("  <Failed to find \"par_name\" and \"data\" Fields as a List in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
+        #     exit(0)
+
+        # NRParsFieldNameList[index]
+        print("msg2 : ({0})".format(type(data[dataIndex1][0])))
+        print("msg2 : ({0})".format(len(data[dataIndex1][0])))
+        print("msg2 : ({0})".format(len(data[dataIndex1][0][0])))
+        print("msg2 : ({0})".format(len(data[dataIndex1][0][1])))
+        print("msg2 : ({0})".format(type(data[dataIndex2][0])))
+        print("msg2 : ({0})".format(len(data[dataIndex2][0])))
+        print("msg2 : ({0})".format(data[dataIndex2][0][0]))
+
+
+        # for rowIndex in range(len(data[dataIndex][0])):
+        #     row = data[dataIndex][0][rowIndex]
+        #     if not("mos" in np.dtype(row).names):
+        #         print("  <Failed to find MOS column on row \"{0}\">".format(rowIndex))
+        #         exit(0)
+        #     columnIndex = np.dtype(row).names.index("mos")
+        #     if not( type(row[columnIndex]      )==np.ndarray and len(row[columnIndex]   )>0 \
+        #         and type(row[columnIndex][0]   )==np.ndarray and len(row[columnIndex][0])>0 \
+        #         and type(row[columnIndex][0][0]) in (np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64, np.float32, np.float64)):
+        #         print("  <Failed to find MOS column as a formatted float on row \"{0}\">".format(rowIndex))
+        #         exit(0)
+        #     mos = float(row[columnIndex][0][0])
+        #     MOSList.append(mos)
+
+        # print("msg2 : ({0})".format(type(data[dataIndex][0])))
+        # print("msg2 : ({0})".format(len(data[dataIndex][0])))
+        # print("msg2 : ({0})".format(type(data[dataIndex][0][0])))
+        # print("msg2 : ({0})".format("mos" in np.dtype(data[dataIndex][0][0]).names))
+        # print("msg0 : ({0})".format(type(row[columnIndex][0][0])))
+
+        # mosFileName[index]
+        # mosFieldName[index]
+        # nrParsFileName[index]
+        # nrParsFieldName[index]
+        # print("msg0 : ({0})".format(data.keys()))
+        # print("msg1 : ({0})".format(data["__version__"]))
+        # print("msg2 : ({0})".format(len(data["NRpars"])))
+        # print("msg3 : ({0})".format(len(data["NRpars"][0])))
+        # print("msg4 : ({0})".format(len(data["NRpars"][0][0])))
+        # print("msg5 : ({0})".format(len(data["NRpars"][0][0][0][0])))
+        # print("msg6 : ({0})".format(len(data["NRpars"][0][0][1][0])))
+        # print("msg7 : ({0})".format(len(data["NRpars"][0][0][2][0])))
+        # print("msg8 : ({0})".format(len(data["NRpars"][0][0][2][1])))
+        # print("msg9 : ({0})".format(len(data["NRpars"][0][0][3][0])))
+        # print("msg10: ({0})".format(len(data["NRpars"][0][0][4][0])))
+
+# ci_calc
+#   Estimate the confidence interval (CI) of an NR parameter
+# SYNTAX
+#   (ideal_ci, practical_ci) = ci_calc(metric_name, dataset_mos, 
+#       dataset_metrics, fig_path = False, verbose = True);
+# SEMANTICS
+#   Estimate the confidence interval (CI) of an NR metric or parameter, 
+#   by comparing the conclusions reached by the metric with conclusions 
+#   reached by a subjective test. Both will use a constant confidence 
+#   interval (CI) to make decisions. The subjective CI is based on
+#   5-level ACR MOSs. Two recommended CIs are printed to the command window.
+#   (1) ideal CI, and (2) practical CI. The classification types are plotted, 
+#   which allows the user to choose an alternate CI.
+#
+#   By analogy, assess the performance of the metric in terms of an ad-hoc
+#   test with N people. This analysis assumes that the metric and MOSs are 
+#   compared without statistical tests or confidence intervals. 
+#
+# Input Parameters:
+#   metric_name     Character string that contains the metric's name
+#   dataset_mos     Cell array. For each dataset (1..num_datasets), a
+#                   double array that contains the mean opinion score (MOS)
+#                   for each stimuli in the dataset.
+#   dataset_metrics Cell array. For each dataset (1..num_datasets), a
+#                   double array that contains the metric's value for each
+#                   stimuli in the dataset. Order of stimuli must be
+#                   identical to dataset_mos.
+#   fig_path        figure path for saving
+#   verbose         print extra status messages
+#
+#   The theoretical underpinnings of this algorithm are pending publication
+#   of NTIA Report "Confidence Intervals for Subjective Tests and 
+#   Objective Metrics" by Margaret H Pinson
+#
+#   For a preliminary analysis, see Margaret Pinson, "NR metric confidence 
+#   interval estimation using classification errors," Video Quality Experts
+#   Group (VQEG) meeting, Statistical Analysis Methods (SAM) Group, 
+#   Presentation 11, March 2020.  
+#   ftp://vqeg.its.bldrdoc.gov/Documents/VQEG_online_Mar20/VQEG_2020_SAM_011_confidence_intervals_for_metrics.pptx
+#
+# Output Parameters
+#   ideal_ci = the ideal confidence interval
+#   practial_ci = the practical confidence interval
+#   N = the number of people in an ad-hoc test with an equivalent likelihood of
+#       false ranking, or zerro (0) if the performance is worse than a 1
+#       person ad-hoc test. 
+#
+#   For positively correlated metrics, false ranking is where a well designed
+#   subjective test would conclude that stimuli A is statisticall better 
+#   than stimuli B, but the metric value for stimuli B is greater than
+#   the metric value for stimuli A. "Less than" is used for negatively
+#   correlated metrics. 
+#
+# Constraints:
+#   All datasets are weighted equally.
+#   The MOSs must range from 1 to 5. 
+#
 def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose = True):
-
     threshold_level = 0.5 # delta S, where 95% of stimuli MOS can be rank ordered
     false_rank_thresh = 0.01 # disagree rate
     false_diff_thresh = 0.10 # half of the uncertain rate of 20%
@@ -247,51 +588,52 @@ def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose
 
     return list_want[ideal_ci], list_want[practical_ci]
 
-
 if __name__ == "__main__":
-    df = pd.read_csv("p2str01.csv")
+    Main()
 
-    dataset_mos = {"db01": [2.692307692,
-3.846153846,
-4.192307692,
-4.269230769,
-4.384615385,
-1.576923077,
-2.461538462,
-3.192307692,
-4.076923077,
-1.653846154,
-1.423076923,
-2.730769231,
-3.653846154,
-4.615384615,
-1.230769231,
-3.115384615,
-3.269230769,
-3.5,
-2
-]}
-    dataset_metrics = {"db01": [2.105,
-2.784,
-2.988,
-4.035,
-1.666,
-2.299,
-3.052,
-3.578,
-4.429,
-2.489,
-2.286,
-3.021,
-3.516,
-4.405,
-2.533,
-2.158,
-2.169,
-2.337,
-2.159
-]}
+#     df = pd.read_csv("p2str01.csv")
 
-    metric_name = "TEST_METRIC"
+#     dataset_mos = {"db01": [2.692307692,
+# 3.846153846,
+# 4.192307692,
+# 4.269230769,
+# 4.384615385,
+# 1.576923077,
+# 2.461538462,
+# 3.192307692,
+# 4.076923077,
+# 1.653846154,
+# 1.423076923,
+# 2.730769231,
+# 3.653846154,
+# 4.615384615,
+# 1.230769231,
+# 3.115384615,
+# 3.269230769,
+# 3.5,
+# 2
+# ]}
+#     dataset_metrics = {"db01": [2.105,
+# 2.784,
+# 2.988,
+# 4.035,
+# 1.666,
+# 2.299,
+# 3.052,
+# 3.578,
+# 4.429,
+# 2.489,
+# 2.286,
+# 3.021,
+# 3.516,
+# 4.405,
+# 2.533,
+# 2.158,
+# 2.169,
+# 2.337,
+# 2.159
+# ]}
 
-    ideal_ci, practical_ci = ci_calc(metric_name, dataset_mos, dataset_metrics, verbose=True)
+#     metric_name = "TEST_METRIC"
+
+#     ideal_ci, practical_ci = ci_calc(metric_name, dataset_mos, dataset_metrics, verbose=True)
