@@ -25,8 +25,8 @@ IsVerbose         = False
 
 # Global field values
 MetricName = ""
-MOSList    = []
-NRParsList = []
+MOSDict    = []
+NRParsDict = []
 
 # Main
 #   Plot the confidence interval (CI) of an NR parameter by MOS values
@@ -52,12 +52,12 @@ NRParsList = []
 #   The MOSs must range from 1 to 5. 
 #
 def Main():
-    # sys.argv = [ sys.argv[0], "-m", "iqa_camera.mat", "ccriq_dataset", "blur.mat", "10_percent" ]
-
-    # Parse commandline arguments
+    # Parse commandline arguments and read mat files
     parse_command_arguments(sys.argv)
-
     read_mos_and_nrpars()
+
+    # Calculate confidence intervals
+    (ideal_ci, practical_ci) = ci_calc(MetricName, MOSDict, NRParsDict, GraphSaveFileName, IsVerbose)
 
 # Main
 #   Parse command arguments
@@ -109,6 +109,8 @@ def parse_command_arguments(argvList):
 
         # Read argument
         if (argv=="-m" and index+4<argvListCount):
+            if NRParsMOSCount>0:
+                print("  <Warning: Only 1 Dataset Can Currently be Plotted, Defaulting to Last Entered Dataset>")
             MOSFileNameList    .append((argvList[index+1] or "").strip())
             MOSFieldNameList   .append((argvList[index+2] or "").strip())
             NRParsFileNameList .append((argvList[index+3] or "").strip())
@@ -117,6 +119,7 @@ def parse_command_arguments(argvList):
             index += 4
         elif (argv=="-s" and index+1<argvListCount):
             GraphSaveFileName = (argvList[index+1] or "").strip()
+            index += 1
         elif (argv=="-h" or argv=="--help"):
             print("Usage:")
             print(" python3 ci_calc.py [options]")
@@ -129,14 +132,15 @@ def parse_command_arguments(argvList):
             print(" -v --version    Version Number")
             print(" -b --verbose    Verbose Messages")
             print("Example:")
-            print("")
-            print("")
+            print(" python3 ci_calc.py -b -m iqa_camera.mat ccriq_dataset \"..\\nr_data\\group_blur\\NRpars_blur_ccriq.mat\" unsharp -s \"ci_graph1.jpg\"")
+            print(" python3 ci_calc.py -b -m iqa_camera.mat ccriq_dataset \"..\\nr_data\\group_blur\\NRpars_blur_ccriq.mat\" viqet-sharpness -s \"ci_graph1.jpg\"")
+            print(" python3 ci_calc.py -v")
         elif (argv=="-v" or argv=="--version"):
             print("Version 1.0a")
         elif (argv=="-b" or argv=="-?" or argv=="--verbose"):
             IsVerbose = True
         else:
-            print("  <Error: Failed to Parse Arguments at Index {0} of {1} with First Value \"{2}\" >".format(index, argvListCount, argvList[index]))
+            print("  <Error: Failed to Parse Arguments at Index {0} of {1} with First Value \"{2}\">".format(index, argvListCount, argvList[index]))
 
         index += 1
 
@@ -155,17 +159,37 @@ def parse_command_arguments(argvList):
 #
 # Output Parameters
 #   MetricName   Metric name, taken from fieldnames
-#   MOSList      MOS values from mat file
-#   NRParsList   NRPar values from mat file
+#   MOSDict      MOS values from mat file
+#   NRParsDict   NRPar values from mat file
 #
 def read_mos_and_nrpars():
     # Global vars
     global MetricName
-    global MOSList
-    global NRParsList
+    global MOSDict
+    global NRParsDict
 
-    # Through mat files
+    MetricName = ""
+    MOSDict    = {}
+    NRParsDict = {}
+
+    # Print header
+    if IsVerbose:
+        print("Reading MOS and NRPars from Files")
+
+    # Set metric name
     for index in range(NRParsMOSCount):
+        MetricName += "{0}({1}) ".format(MOSFieldNameList[index], NRParsFieldNameList[index])
+    MetricName = MetricName.strip()
+
+    # Read mat files
+    for index in range(NRParsMOSCount):
+        # Print header
+        if IsVerbose:
+            print("Reading Files \"{0}\" and \"{1}\"".format(MOSFileNameList[index], NRParsFileNameList[index]))
+
+        # Set MOS and NRPar names
+        dataSetName = "{0}({1}) ".format(MOSFileNameList[index], MOSFieldNameList[index], NRParsFileNameList[index], NRParsFieldNameList[index])
+
         # Attempt to read MOS file
         if not os.path.exists(MOSFileNameList[index]):
             print("  <Failed to find MOS File \"{0}\">".format(MOSFileNameList[index]))
@@ -179,8 +203,8 @@ def read_mos_and_nrpars():
 
         data = data[MOSFieldNameList[index]]
 
-        if not( type(data      )==np.ndarray and len(data      )>0 \
-            and type(data[0]   )==np.ndarray and len(data[0]   )>0 \
+        if not( type(data      )==np.ndarray and len(data   )>0 \
+            and type(data[0]   )==np.ndarray and len(data[0])>0 \
             and type(data[0][0])==np.void    and "media" in np.dtype(data[0][0]).names):
             print("  <Failed to find \"media\" Field in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
             exit(0)
@@ -194,6 +218,7 @@ def read_mos_and_nrpars():
             print("  <Failed to find \"media\" Field as a List in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
             exit(0)
 
+        MOSDict[dataSetName] = []
         for rowIndex in range(len(data[dataIndex][0])):
             row = data[dataIndex][0][rowIndex]
             if not("mos" in np.dtype(row).names):
@@ -206,7 +231,7 @@ def read_mos_and_nrpars():
                 print("  <Failed to find MOS column as a formatted float on row \"{0}\">".format(rowIndex))
                 exit(0)
             mos = float(row[columnIndex][0][0])
-            MOSList.append(mos)
+            MOSDict[dataSetName].append(mos)
 
         # Attempt to read NRPars file
         if not os.path.exists(NRParsFileNameList[index]):
@@ -227,66 +252,45 @@ def read_mos_and_nrpars():
             print("  <Failed to find \"par_name\" and \"data\" Fields in NRPars Dataset \"{0}\">".format(NRParsFieldNameList[index]))
             exit(0)
 
-        dataIndex1 = np.dtype(data[0][0]).names.index("par_name")
-        dataIndex2 = np.dtype(data[0][0]).names.index("data")
         data = data[0][0]
+        dataIndex1 = np.dtype(data).names.index("par_name")
+        dataIndex2 = np.dtype(data).names.index("data")
 
         if not(dataIndex1<len(data) and dataIndex2<len(data) \
-            and type(data[dataIndex1])==np.ndarray and len(data[dataIndex1])>0 \
-            and type(data[dataIndex2])==np.ndarray and len(data[dataIndex2])>0):
+            and type(data[dataIndex1]   )==np.ndarray and len(data[dataIndex1]   )>0 \
+            and type(data[dataIndex1][0])==np.ndarray and len(data[dataIndex1][0])>0 \
+            and type(data[dataIndex2]   )==np.ndarray and len(data[dataIndex2]   )>0):
             print("  <Failed to find \"par_name\" and \"data\" Fields as a List in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
             exit(0)
 
-        # if not( type(data[dataIndex1][0])==np.ndarray and len(data[dataIndex1][0])>0 \
-        #     and type(data[dataIndex2][0])==np.ndarray and len(data[dataIndex2][0])>0:
-        #     print("  <Failed to find \"par_name\" and \"data\" Fields as a List in MOS Dataset \"{0}\">".format(MOSFieldNameList[index]))
-        #     exit(0)
+        parNames = [ str(d[0]) for d in data[dataIndex1][0] if type(d)==np.ndarray and len(d)>0 and type(d[0])==np.str_ ]
 
-        # NRParsFieldNameList[index]
-        print("msg2 : ({0})".format(type(data[dataIndex1][0])))
-        print("msg2 : ({0})".format(len(data[dataIndex1][0])))
-        print("msg2 : ({0})".format(len(data[dataIndex1][0][0])))
-        print("msg2 : ({0})".format(len(data[dataIndex1][0][1])))
-        print("msg2 : ({0})".format(type(data[dataIndex2][0])))
-        print("msg2 : ({0})".format(len(data[dataIndex2][0])))
-        print("msg2 : ({0})".format(data[dataIndex2][0][0]))
+        if not(NRParsFieldNameList[index] in parNames):
+            print("  <Failed to find parameter name \"{0}\">".format(NRParsFieldNameList[index]))
+            exit(0)
 
+        parNamesIndex = parNames.index(NRParsFieldNameList[index])
 
-        # for rowIndex in range(len(data[dataIndex][0])):
-        #     row = data[dataIndex][0][rowIndex]
-        #     if not("mos" in np.dtype(row).names):
-        #         print("  <Failed to find MOS column on row \"{0}\">".format(rowIndex))
-        #         exit(0)
-        #     columnIndex = np.dtype(row).names.index("mos")
-        #     if not( type(row[columnIndex]      )==np.ndarray and len(row[columnIndex]   )>0 \
-        #         and type(row[columnIndex][0]   )==np.ndarray and len(row[columnIndex][0])>0 \
-        #         and type(row[columnIndex][0][0]) in (np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64, np.float32, np.float64)):
-        #         print("  <Failed to find MOS column as a formatted float on row \"{0}\">".format(rowIndex))
-        #         exit(0)
-        #     mos = float(row[columnIndex][0][0])
-        #     MOSList.append(mos)
+        if not(parNamesIndex<len(data[dataIndex2]) \
+            and type(data[dataIndex2][parNamesIndex])==np.ndarray and len(data[dataIndex2][parNamesIndex])>0):
+            print("  <Failed to find data Fields for parameter name \"{0}\">".format(NRParsFieldNameList[index]))
+            exit(0)
 
-        # print("msg2 : ({0})".format(type(data[dataIndex][0])))
-        # print("msg2 : ({0})".format(len(data[dataIndex][0])))
-        # print("msg2 : ({0})".format(type(data[dataIndex][0][0])))
-        # print("msg2 : ({0})".format("mos" in np.dtype(data[dataIndex][0][0]).names))
-        # print("msg0 : ({0})".format(type(row[columnIndex][0][0])))
+        NRParsDict[dataSetName] = []
+        for rowIndex in range(len(data[dataIndex2][parNamesIndex])):
+            val = data[dataIndex2][parNamesIndex][rowIndex]
+            if not type(val) in (np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64, np.float32, np.float64):
+                print("  <Failed to find data as a formatted float on row \"{0}\">".format(rowIndex))
+                exit(0)
+            NRParsDict[dataSetName].append(val)
 
-        # mosFileName[index]
-        # mosFieldName[index]
-        # nrParsFileName[index]
-        # nrParsFieldName[index]
-        # print("msg0 : ({0})".format(data.keys()))
-        # print("msg1 : ({0})".format(data["__version__"]))
-        # print("msg2 : ({0})".format(len(data["NRpars"])))
-        # print("msg3 : ({0})".format(len(data["NRpars"][0])))
-        # print("msg4 : ({0})".format(len(data["NRpars"][0][0])))
-        # print("msg5 : ({0})".format(len(data["NRpars"][0][0][0][0])))
-        # print("msg6 : ({0})".format(len(data["NRpars"][0][0][1][0])))
-        # print("msg7 : ({0})".format(len(data["NRpars"][0][0][2][0])))
-        # print("msg8 : ({0})".format(len(data["NRpars"][0][0][2][1])))
-        # print("msg9 : ({0})".format(len(data["NRpars"][0][0][3][0])))
-        # print("msg10: ({0})".format(len(data["NRpars"][0][0][4][0])))
+        if not len(MOSDict[dataSetName])==len(NRParsDict[dataSetName]):
+            print("  <Failed To Read Data Where {0} MOS Rows and {1} NRPars Rows>".format(len(MOSDict[dataSetName]), len(NRParsDict[dataSetName])))
+            exit(0)
+
+    # Print footer
+    if IsVerbose:
+        print("Reading MOS and NRPars from Files Complete")
 
 # ci_calc
 #   Estimate the confidence interval (CI) of an NR parameter
@@ -367,12 +371,13 @@ def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose
 
 
     this_par = sorted(this_par)
+    this_par_count = len(this_par)
     pmin = min(this_par)
     pmax = max(this_par)
 
-    if verbose:
+    if verbose and len(this_par)>0:
         print('Full range {}..{}, '.format(pmin, pmax))
-        print('95% of data in {}..{}\n'.format(this_par[int(0.025*len(this_par))], this_par[int(0.975*len(this_par))]))
+        print('95% of data in {}..{}\n'.format(this_par[max(int(round(0.025*this_par_count)), this_par_count-1)], this_par[max(int(round(0.975*this_par_count)), this_par_count-1)]))
 
     if sum(pos_corr) > 0:
         if verbose:
@@ -403,9 +408,6 @@ def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose
         curr_len = len(mos)
         for mcnt1 in range(0,curr_len):
             for mcnt2 in range(mcnt1+1,curr_len):
-
-                if curr == 479:
-                    stop_here = 1
                 # subj(curr) is decision whether #1 is better,
                 # equivalent, or worse than #2
                 diff = mos[mcnt1] - mos[mcnt2]
@@ -427,7 +429,7 @@ def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose
     # flip sign of objective differences, if parameter is
     # negatively correlated to MOS
     if is_pos_corr == False:
-        obj = -obj
+        obj = list(-np.array(obj))
 
     # Have all of the data. Now make the plot.
     # round our increment to one significant digits
@@ -496,21 +498,17 @@ def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose
 
     # print recommended threshold
     if verbose:
-        print('{} Ideal CI      ({}% correct ranking, {}% false ranking, {}% false distinction, {}% false tie, {}% correct tie)'.format(
-        list_want[ideal_ci], round(correct_rank[ideal_ci]*100), round(false_ranking[ideal_ci]*100), round(false_distinction[ideal_ci]*100),
+        print('{} Ideal CI      ({}% correct ranking, {}% false ranking, {}% false distinction, {}% false tie, {}% correct tie)'.format( \
+            list_want[ideal_ci], round(correct_rank[ideal_ci]*100), round(false_ranking[ideal_ci]*100), round(false_distinction[ideal_ci]*100), \
             round(false_tie[ideal_ci]*100), round(correct_tie[ideal_ci]*100)))
         if equiv_ideal >= concur_threshold:
             print(' ==> equivalent to a subjective test with 24 subjects')
 
-        print('\n{} Practical CI  ({}% correct ranking, {}% false ranking, {}% false distinction, {}% false tie, {}% correct tie)'.format(
-        list_want[practical_ci], round(correct_rank[practical_ci]*100), round(false_ranking[practical_ci]*100), round(false_distinction[practical_ci]*100),
+        print('\n{} Practical CI  ({}% correct ranking, {}% false ranking, {}% false distinction, {}% false tie, {}% correct tie)'.format( \
+            list_want[practical_ci], round(correct_rank[practical_ci]*100), round(false_ranking[practical_ci]*100), round(false_distinction[practical_ci]*100), \
             round(false_tie[practical_ci]*100), round(correct_tie[practical_ci]*100)))
         if equiv_practical >= concur_threshold:
             print(' ==> equivalent to a subjective test with 15 subjects')
-
-    # dataset names
-    tmp = " ".join(sorted(dataset_mos.keys()))
-
 
     # create plot
     fig, ax = plt.subplots(figsize=(6, 6))
@@ -562,7 +560,7 @@ def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose
     false_distinction_zero = false_distinction_zero/total_votes
     false_tie_zero = false_tie_zero/total_votes
 
-    print('\nNo CI used ({}% correct ranking, {}% false ranking, {}% false distinction, {}% false tie, {}% correct tie)'.format(
+    print('\nNo CI used ({}% correct ranking, {}% false ranking, {}% false distinction, {}% false tie, {}% correct tie)'.format( \
         round(correct_rank_zero*100), round(false_ranking_zero*100), round(false_distinction_zero*100), round(false_tie_zero*100), round(correct_tie_zero*100)))
 
     if false_ranking_zero <= 0.0325:
@@ -590,50 +588,3 @@ def ci_calc(metric_name, dataset_mos, dataset_metrics, fig_path = False, verbose
 
 if __name__ == "__main__":
     Main()
-
-#     df = pd.read_csv("p2str01.csv")
-
-#     dataset_mos = {"db01": [2.692307692,
-# 3.846153846,
-# 4.192307692,
-# 4.269230769,
-# 4.384615385,
-# 1.576923077,
-# 2.461538462,
-# 3.192307692,
-# 4.076923077,
-# 1.653846154,
-# 1.423076923,
-# 2.730769231,
-# 3.653846154,
-# 4.615384615,
-# 1.230769231,
-# 3.115384615,
-# 3.269230769,
-# 3.5,
-# 2
-# ]}
-#     dataset_metrics = {"db01": [2.105,
-# 2.784,
-# 2.988,
-# 4.035,
-# 1.666,
-# 2.299,
-# 3.052,
-# 3.578,
-# 4.429,
-# 2.489,
-# 2.286,
-# 3.021,
-# 3.516,
-# 4.405,
-# 2.533,
-# 2.158,
-# 2.169,
-# 2.337,
-# 2.159
-# ]}
-
-#     metric_name = "TEST_METRIC"
-
-#     ideal_ci, practical_ci = ci_calc(metric_name, dataset_mos, dataset_metrics, verbose=True)
