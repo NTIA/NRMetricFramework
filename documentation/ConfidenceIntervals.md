@@ -28,9 +28,13 @@ When using **ideal CI** or **practical CI**, metric values indicate a preference
 
 ## Assumptions
 
-* The subjective test must be conducted using the Absolute Category Rating (ACR) scale with five levels. The mean opinion scores (MOS) must remain on the [1..5] scale. The MOS must calculated as a direct average of subject rating. Normalization, scaling, and fitting are not allowed, as this would change characteristics of rating distributions.
+* The subjective test must be conducted using the Absolute Category Rating (ACR) scale with five levels. The mean opinion scores (MOS) must remain on the [1..5] scale and must be calculated as a simple average of subject ratings. Normalization, scaling, and fitting are not allowed, as this would change characteristics of rating distributions.
 
-* The MOSS must be from a well-designed and carefully conducted subjective test that adheres to an international standard, such as ITU-R Rec. BT.500, ITU-T Rec. P.913, or ITU-T P.800. 
+* The MOSs must be from a well-designed and carefully conducted subjective test that adheres to an international standard, such as ITU-R Rec. BT.500, ITU-T Rec. P.913, or ITU-T P.800. 
+
+* This statistical method assesses metric precision. **Ideal CI** and **practical CI** do not assess the accuracy of a metric. 
+
+* **N** is limited to 0, 1, 2, 3, 6, 9, or 12 subjects. Fractions are not allowed.
 
 ## Categorizing Conclusions Reached
 
@@ -44,8 +48,6 @@ A confusion matrix is used to compare the conclusions reached by the metric and 
 
 Conclusions about the metric are printed to the MATLAB command window. In addition, the incidence rates are plotted as a function of CI. This allows the user to choose a CI value other than those recommended.
  
-Note that **Ideal CI** and **practical CI** do not assess the accuracy of a metric. 
-
 ## Multiple Datasets
 When given multiple subjective datasets, **ci_NRpars.m** will only compare stimuli pairs within each dataset individually. All decisions will be pooled, and all dataset will be weighted equally. 
 
