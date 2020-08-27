@@ -20,7 +20,7 @@ Functions `ci_NRpars.m` calls `ci_calc.m` calculate the following values:
 * Whether the metric is equivalent to a 15 person subjective test, when using **practical CI** 
 * **N**, the number of subjects in an ad-hoc assessment or pilot test that is equivalent to the metric
 
-**Ideal CI** is a larger CI based on very stringent criteria. **Practical CI** is a smaller CI based on somewhat looser criteria. This increases the likelihood of errors and correct decisions. Both thresholds are justified by lab-to-lab comparisons (e.g., when two labs perform the same subjective test, what is the likelihood that they will reach different conclusions). We recommend **practical CI** for most uses. 
+We recommend **practical CI** for most uses. Both thresholds are justified by lab-to-lab comparisons (e.g., when two labs perform the same subjective test, what is the likelihood that they will reach different conclusions).  
 
 When using **ideal CI** or **practical CI**, metric values indicate a preference only when the difference is greater than the CI.  
 
