@@ -26,6 +26,12 @@ When using **ideal CI** or **practical CI**, metric values indicate a preference
 
 # Details
 
+## Assumptions
+
+* The subjective test must be conducted using the Absolute Category Rating (ACR) scale with five levels. The mean opinion scores (MOS) must remain on the [1..5] scale. The MOS must calculated as a direct average of subject rating. Normalization, scaling, and fitting are not allowed, as this would change characteristics of rating distributions.
+
+* The MOSS must be from a well-designed and carefully conducted subjective test that adheres to an international standard, such as ITU-R Rec. BT.500, ITU-T Rec. P.913, or ITU-T P.800. 
+
 ## Categorizing Conclusions Reached
 
 A confusion matrix is used to compare the conclusions reached by the metric and the subjective test. This confusion matrix contains the following categories:
