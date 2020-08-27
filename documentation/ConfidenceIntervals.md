@@ -28,7 +28,7 @@ When using **ideal CI** or **practical CI**, metric values indicate a preference
 
 ## Categorizing Conclusions Reached
 
-This function uses a confusion matrix that contains the following incidence categories:
+A confusion matrix is used to compare the conclusions reached by the metric and the subjective test. This confusion matrix contains the following categories:
 
 * Correct ranking = Both conclude that quality of **A** is better than the quality of **B** 
 * Correct tie = Both conclude that **A** and **B** have statistically equivalent quality
@@ -36,7 +36,7 @@ This function uses a confusion matrix that contains the following incidence cate
 * False distinction = The metric can rank order the quality of **A** and **B** but the subjective test cannot
 * False ranking = The metric and subjective test reach opposing conclusion on the quality ranking of **A** and **B** 
 
-Conclusions about the objective metric are printed to the MATLAB command window. In addition, the above incidence rates are plotted as a function of CI. This allows the user to choose a CI value other than those recommended.
+Conclusions about the metric are printed to the MATLAB command window. In addition, the incidence rates are plotted as a function of CI. This allows the user to choose a CI value other than those recommended.
  
 Note that **Ideal CI** and **practical CI** do not assess the accuracy of a metric. 
 
