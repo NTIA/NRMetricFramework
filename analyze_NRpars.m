@@ -253,7 +253,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
 
         % combined
         fprintf('\n'); 
-        fprintf('average          corr = %5.2f  rmse = %5.2f\n', mean(corr), mean(rmse));
+        fprintf('average          corr = %5.2f  rmse = %5.2f\n', nanmean(corr), nanmean(rmse));
         if length(nr_dataset) ~= 1
             do_subplot = false;
             analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
@@ -347,16 +347,36 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
     
     % skip if less than 2 elements
     if sum(double(subset)) < 2
+        % create plot with "no data" prominantly displayed in the center
         xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
         ylabel('MOS', 'interpreter','none');
-        title(sprintf('%s (no data)', test_name), 'interpreter','none');
+        title(test_name, 'interpreter','none');
+        axis([0 1 1 5])
+        text(0.5, 3,'no data','HorizontalAlignment','center','color','r')
+
+        corr = nan;
+        rmse = nan;
         return;
     end
-
+    
     % organize data for linear regression
     xdata = ones(sum(subset),2);
     xdata(:,2) = one_NRpars.data(pcnt,subset);
     ydata = [one_dataset.media(subset).mos]';
+
+    % skip if all data is NaN or Inf; need at least 2 elements
+    if sum(~isnan(xdata(:,2)) & ~isinf(xdata(:,2))) < 2
+        % create plot with "no data" prominantly displayed in the center
+        xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
+        ylabel('MOS', 'interpreter','none');
+        title(test_name, 'interpreter','none');
+        axis([0 1 1 5])
+        text(0.5, 3,'no data','HorizontalAlignment','center','color','r')
+            
+        corr = nan;
+        rmse = nan;
+        return;
+    end
     
     % discard inf, nan
     keep = isfinite(xdata(:,2)) & isfinite(ydata);
@@ -406,22 +426,22 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
 
         hold off;
         
-        % specify axes. Always include 0 in metric value range. Assume
-        % [1..5] for MOS range.
+        % specify axes. Assume [1..5] for MOS range.
         xmin = min(min(all_NRpars.data(pcnt,train_set_all)),min(one_NRpars.data(pcnt,subset)));
         xmax = max(max(all_NRpars.data(pcnt,train_set_all)),max(one_NRpars.data(pcnt,subset)));
-        if xmin > 0
-            xmin = 0;
-        elseif xmax < 0
-            xmax = 0;
-        end
         
         ymin = min(min([all_dataset.media(train_set_all).mos]), min([one_dataset.media(subset).mos]));
         ymin = min(ymin, 1);
         ymax = max(max([all_dataset.media(train_set_all).mos]), max([one_dataset.media(subset).mos]));
         ymax = max(ymax, 5);
         
-        axis([xmin xmax ymin ymax]);
+        if xmin < xmax
+            axis([xmin xmax ymin ymax]);
+        else
+            % parameter is constant / one value
+            tmp = axis;
+            axis([tmp(1) tmp(2) ymin ymax]);
+        end
         
         % labels
         if isempty(preproc_message) 
@@ -430,7 +450,7 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
             xlabel([one_NRpars.par_name{pcnt} preproc_message],'interpreter','none');
         end
         ylabel('MOS', 'interpreter','none');
-        title(sprintf('%s, y = %4.2f + %4.2f * x', test_name, w(1), w(2)), 'interpreter','none');
+        title(test_name, 'interpreter','none');
     end
     
     if do_outliers
