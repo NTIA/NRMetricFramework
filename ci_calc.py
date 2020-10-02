@@ -1,7 +1,7 @@
 ############################################################################################
 # Program Name : Confidence Interval Calculator / Grapher
 # Description  : Displays confidence intervals from actual MOS values and calculated 
-#                   statistics.  Made from a a matlab version by a video quality researcher
+#                   statistics.  Made from a matlab version by a video quality researcher
 #                   in germany.
 ############################################################################################
 
@@ -68,9 +68,9 @@ def Main():
 #
 # Input Parameters:
 #   argvList: Command line arguments
-##
+#
 # Output Parameters
-#   MOSFileNameList     Input mos filename(s)
+#   MOSFileNameList     Input MOS filename(s)
 #   MOSFieldNameList    MOS filename's field name
 #   NRParsFileNameList  Input NR Parameter's filename(s)
 #   NRParsFieldNameList NR Parameter's field name
@@ -336,11 +336,11 @@ def read_mos_and_nrpars():
 #   ideal_ci = the ideal confidence interval
 #   practial_ci = the practical confidence interval
 #   N = the number of people in an ad-hoc test with an equivalent likelihood of
-#       false ranking, or zerro (0) if the performance is worse than a 1
+#       false ranking, or zero (0) if the performance is worse than a 1
 #       person ad-hoc test. 
 #
 #   For positively correlated metrics, false ranking is where a well designed
-#   subjective test would conclude that stimuli A is statisticall better 
+#   subjective test would conclude that stimuli A is statistical better 
 #   than stimuli B, but the metric value for stimuli B is greater than
 #   the metric value for stimuli A. "Less than" is used for negatively
 #   correlated metrics. 
