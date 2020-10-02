@@ -26,6 +26,7 @@ This repository does not contain images and videos. See the [subjective datasets
 - [calculate_NRpars.m](CalculateNRpars.md)
 - [compromise_NRpars.m](CompromiseNRpars.md)
 - [ci_NRpars.m and ci_calc.m](ConfidenceIntervals.md) - new!
+- [ci_calc.py](ConfidenceIntervalsPython.md) - new!
 
 ## Exporting Functions
 - [export_dataset.m](ExportDataset.md)
