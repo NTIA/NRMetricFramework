@@ -24,11 +24,11 @@ SEMANTICS
   information is printed to the command line. 
 
  Input Parameters:
-  nr_dataset          Data struction. Each describes an entire dataset (name, file location, ...)
+  nr_dataset          Data structure. Each describes an entire dataset (name, file location, ...)
   base_dir            Path to directory where NR features and NR parameters are stored.
   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
                       adhere to the interface specified in calculate_NRpars.
   parnum              Parameter number, within @feature_function.
-  min_value           Minimum paramter value to select.
+  min_value           Minimum parameter value to select.
   max_value           Maximum parameter value to select.
 ```

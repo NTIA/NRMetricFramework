@@ -12,12 +12,12 @@ function peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value,
 %   information is printed to the command line. 
 %
 % Input Parameters:
-%   nr_dataset          Data struction. Each describes an entire dataset (name, file location, ...)
+%   nr_dataset          Data structure. Each describes an entire dataset (name, file location, ...)
 %   base_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %   parnum              Parameter number, within @feature_function.
-%   min_value           Minimum paramter value to select.
+%   min_value           Minimum parameter value to select.
 %   max_value           Maximum parameter value to select.
 
     % load the parameters. This will calculate them, if not yet computed. 
@@ -28,7 +28,7 @@ function peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value,
         fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
         NRpars = calculate_NRpars(nr_dataset(dcnt), base_dir, 'none', feature_function);
 
-        % find media that fit these criteria (range of values
+        % find media that fit these criteria (range of values)
         want=find(NRpars.data(parnum,:) <= max_value & NRpars.data(parnum,:) >= min_value);
         
         % sort media by MOS
