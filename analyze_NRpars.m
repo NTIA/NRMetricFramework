@@ -253,7 +253,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
 
         % combined
         fprintf('\n'); 
-        fprintf('average          corr = %5.2f  rmse = %5.2f\n', nanmean(corr), nanmean(rmse));
+        fprintf('average          corr = %5.2f  rmse = %5.2f\n', mean(corr,'omitnan'), mean(rmse,'omitnan'));
         if length(nr_dataset) ~= 1
             do_subplot = false;
             analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
@@ -347,7 +347,7 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
     
     % skip if less than 2 elements
     if sum(double(subset)) < 2
-        % create plot with "no data" prominantly displayed in the center
+        % create plot with "no data" prominently displayed in the center
         xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
         ylabel('MOS', 'interpreter','none');
         title(test_name, 'interpreter','none');
@@ -366,7 +366,7 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
 
     % skip if all data is NaN or Inf; need at least 2 elements
     if sum(~isnan(xdata(:,2)) & ~isinf(xdata(:,2))) < 2
-        % create plot with "no data" prominantly displayed in the center
+        % create plot with "no data" prominently displayed in the center
         xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
         ylabel('MOS', 'interpreter','none');
         title(test_name, 'interpreter','none');
