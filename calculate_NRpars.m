@@ -143,7 +143,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         for cnt=1:length(nr_dataset)
             NRpars(cnt) = calculate_NRpars(nr_dataset(cnt), base_dir, parallel_mode, feature_function);
         end
-        warning('on','MATLAB:MKDIR:DirectoryExists');
         return;
     end
     
@@ -154,7 +153,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         % this is a metric instead of an NR parameter. Calculate as follows
         % and return
         NRpars = feature_function('compose', nr_dataset, base_dir);
-        warning('on','MATLAB:MKDIR:DirectoryExists');
         return;
     end
 
@@ -179,7 +177,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         for cnt=1:length(nr_dataset.media)
             if ~strcmp(NRpars.media_name{cnt}, nr_dataset.media(cnt).name)
                 fprintf('List of clips differs. Discarding and re-calculate NR parameters. Features retained\n\n');
-                warning('on','MATLAB:MKDIR:DirectoryExists');
                 error('recalculate NRpars');
 
                 % * * * add more robust error handling * * * 
@@ -219,7 +216,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         tmp = [tmp sprintf('- parallel processing mode %s not recognized\n', parallel_mode)];
         tmp = [tmp sprintf('- expected ''all'', ''stimuli'', ''tslice'', or ''none''')];
 
-        warning('on','MATLAB:MKDIR:DirectoryExists');
         error(tmp);
     end
 
@@ -236,7 +232,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
     clip_list = temp(~NRpars.computed);
 
     if isempty(clip_list)
-        warning('on','MATLAB:MKDIR:DirectoryExists');
         return;
     end
     
@@ -275,7 +270,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
                 delete(parfile);
                 
                 % throw the error again
-                warning('on','MATLAB:MKDIR:DirectoryExists');
                 error('Aborting');  
             end
             
@@ -287,7 +281,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
                 % delete parameter file, which may also contain this error
                 delete(parfile);
 
-                warning('on','MATLAB:MKDIR:DirectoryExists');
                 error(tmp);
             elseif ~isnumeric(values)
                 tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
@@ -297,7 +290,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
                 % delete parameter file, which may also contain this error
                 delete(parfile);
 
-                warning('on','MATLAB:MKDIR:DirectoryExists');
                 error(tmp);
             elseif length(values) ~= length(feature_function('parameter_names'))
                 tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
@@ -309,7 +301,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
                 % delete parameter file, which may also contain this error
                 delete(parfile);
 
-                warning('on','MATLAB:MKDIR:DirectoryExists');
                 error(tmp);
             elseif numel(values) ~= length(feature_function('parameter_names'))
                 tmp = sprintf('Error within ''feature_function'' input argument of ''calculate_NRpars'':\n');
@@ -319,7 +310,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
                 % delete parameter file, which may also contain this error
                 delete(parfile);
 
-                warning('on','MATLAB:MKDIR:DirectoryExists');
                 error(tmp);
             end
             NRpars.data(:,clip_num) = values;
@@ -355,7 +345,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
             catch
                 % delete parameter file, which may be the source of this error
                 delete(parfile);
-                warning('on','MATLAB:MKDIR:DirectoryExists');
                 error('fatal error: run without parallel processing for more information');
             end
             fprintf('\b-\n');
@@ -363,7 +352,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 
         % Move NRpars data back into NRpars structure
         % Note: there are only two dimensions to "data" so the shiftdim 
-        % call shifts the dimentions to the right by one, wrapping.
+        % call shifts the dimensions to the right by one, wrapping.
         NRpars.data = shiftdim(data, 1);
         NRpars.computed(:) = true;
 
@@ -372,8 +361,6 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 
     end
     fprintf('\n');
-
-    warning('on','MATLAB:MKDIR:DirectoryExists');
 
 end
 
