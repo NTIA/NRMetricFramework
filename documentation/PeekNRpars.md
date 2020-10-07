@@ -2,16 +2,16 @@
  
 ## Usage
 
-Visualize the media that are detected by a particular range of NR parameter values. 
+Visualize media detected by a particular range of NR parameter values. 
 
 ## Semantics
 
-Given specific NR parameter and range of parameter values, this function finds the media that have NR parameter values within that range. These images (or the first frame of videos) are displayed, first as thumbnails then full resolution. The list of media is printed to the command line.
+Given specific NR parameters and a corresponding range of values, this function finds the media within the NR parameter value range specified. Found images (or the first frame of videos) are displayed as thumbnails, 12 per figure. Then, each found image is displayed in full resolution, in its own figure. The list of media is printed to the command line.
 
 ## Inline Documentation
 ```text
 PEEK_NRPARS
-  View media that trigger a certain range of parameter values
+  Visualize media detected by a particular range of NR parameter values.
 SYNTAX
   peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value, max_value)
 SEMANTICS

@@ -1,5 +1,5 @@
 function peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value, max_value)
-% View media that trigger a certain range of parameter values
+%  Visualize media detected by a particular range of NR parameter values. 
 % SYNTAX
 %   peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value, max_value)
 % SEMANTICS
