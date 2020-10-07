@@ -67,7 +67,9 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         data(cntD).mos = 1 - (data(cntD).mos - min_mos) / (max_mos - min_mos);
     end
     
-   
+    fprintf('Loading data. Please wait a minute\n');
+    fprintf('- this may take hours if data is not already computed\n\n');
+    
     loop = 1;
     cntP = 1;
     while loop <= varargin_len
@@ -140,8 +142,6 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     % create 'pooled' dataset
     num_datasets = length(data) + 1;
     data(num_datasets).test = 'pooled';
-%     data(num_datasets).mos(media)
-%     data(num_datasets).parvalue(cntP,media)
     data(num_datasets).mos = [];
     data(num_datasets).parvalue = [];
     for cntD = 1:num_datasets
@@ -150,11 +150,44 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     end
     
     %---------------------------------------------------------------------
+    % Figure out which, if any, media must be discarded, because one or
+    % more parameters are nan or inf
+    fprintf('Discard media with nan or inf parameter values\n');
+    need_warning = false;
+    for cntD = 1:num_datasets
+        want = true(1,length(data(cntD).mos)); 
+        for cntP = 1:size(data(cntD).parvalue,1)
+            want = [want & ~isnan(data(cntD).parvalue(cntP,:)) & ~isinf(data(cntD).parvalue(cntP,:))];
+        end
+        keep = sum(want);
+        discard = length(want) - keep;
+        
+        if keep == 0
+            error('No media remain after discards');
+        end
+        
+        data(cntD).parvalue = data(cntD).parvalue(:,want);
+        data(cntD).mos = data(cntD).mos(1,want);
+        if sum(want) < length(want)
+            need_warning = true;
+        end
+        fprintf('%5d of %d media in %s\n', discard, keep + discard, data(cntD).test);
+    end
+    fprintf('\n');
+    
+    %---------------------------------------------------------------------
     % Analysis
 
     fprintf('Parameter List:\n');
     for cntP = 1:num_pars
         fprintf('%d  %s\n', cntP, parinfo(cntP).parname);
+    end
+    
+    % create figure with the parameters in figure title, if only 2 pars
+    % compared
+    if num_pars == 2
+        temp = sprintf('par1 = %s, par2 = %s', parinfo(1).parname, parinfo(2).parname);
+        figure('Name', temp, 'NumberTitle','off');
     end
     
     fprintf('\n\nMOS scaled so 0 = best, 1 = worst\n');
@@ -175,31 +208,33 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         fprintf(' %d    ', cntP);
     end
     fprintf('\n');
+    
     for cntP = 1:num_pars
         fprintf('%d  ', cntP);
         
         for cntP2 = 1:num_pars
-            tmp = corrcoef(data(num_datasets).parvalue(cntP,:), data(num_datasets).parvalue(cntP2,:));
-            fprintf('%5.2f ', tmp(1,2));
+            tmp = corr(data(num_datasets).parvalue(cntP,:)', ...
+                data(num_datasets).parvalue(cntP2,:)');
+            fprintf('%5.2f ', tmp);
+            
         end
         fprintf('\n');
     end
     fprintf('\n');
     
     % loop through each parameter. Find correlation between this parameter and each dataset..
-    fprintf('\nParameter to dataset correlations\n');
+    fprintf('Parameter to dataset correlations\n');
     fprintf('                      ');
     for cntP = 1:num_pars
-        fprintf(' %d    ', cntP);
+        fprintf(' %d     ', cntP);
     end
     fprintf('\n');
     for cntD = 1:num_datasets
         fprintf('%20s  ', data(cntD).test);
         
         for cntP = 1:num_pars
-            tmp = corrcoef(data(cntD).mos, data(cntD).parvalue(cntP,:));
-            data(cntD).corr(cntP) = tmp(1,2);
-            fprintf('%5.2f ', data(cntD).corr(cntP));
+            data(cntD).corr(cntP) = corr(data(cntD).mos', data(cntD).parvalue(cntP,:)');
+            fprintf('%6.3f ', data(cntD).corr(cntP));
         end
         fprintf('\n');
     end
@@ -226,8 +261,8 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         end
         fprintf('%6.2f', data(cntD).weights(num_pars+1));
         
-        tmp = corrcoef(y, x * data(cntD).weights); 
-        fprintf('  (%5.2f correlation)\n', tmp(1,2));
+        tmp = corr(y, x * data(cntD).weights); 
+        fprintf('  (%6.3f correlation)\n', tmp);
     end
     warning('on','MATLAB:rankDeficientMatrix');
     
@@ -235,7 +270,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         fprintf('\nSkipping weighted compromise; this analysis requires exactly two parameters\n');
     else
         
-        fprintf('\nSee figure 1 for weighted compromise\n');
+        fprintf('\nSee figure for weighted compromise\n');
         points = 0:0.1:1;
         num_points = length(points);
         for cntD = 1:num_datasets
@@ -274,5 +309,8 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     end
     
     
+    if need_warning
+        fprintf('\nWARNING: these analyses omit media with NaN or INF parameter values\n');
+    end
     
 end
