@@ -1,8 +1,8 @@
-function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
+function [ideal_ci, practical_ci, equivalent] = ci_calc(metric_name, num_datasets, dataset_names, dataset_mos, dataset_metrics)
 % ci_calc
 %   Estimate the confidence interval (CI) of an NR parameter
 % SYNTAX
-%   [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_names, ...
+%   [ideal_ci, practical_ci, N] = ci_calc(metric_name, num_datasets, dataset_names, ...
 %       dataset_mos, dataset_metrics);
 % SEMANTICS
 %   Estimate the confidence interval (CI) of an NR metric or parameter, 
@@ -12,6 +12,10 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 %   5-level ACR MOSs. Two recommended CIs are printed to the command window.
 %   (1) ideal CI, and (2) practical CI. The classification types are plotted, 
 %   which allows the user to choose an alternate CI.
+%
+%   By analogy, assess the performance of the metric in terms of an ad-hoc
+%   test with N people. This analysis assumes that the metric and MOSs are 
+%   compared without statistical tests or confidence intervals. 
 %
 % Input Parameters:
 %   metric_name     Character string that contains the metric's name
@@ -26,15 +30,24 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
 %                   stimuli in the dataset. Order of stimuli must be
 %                   identical to dataset_mos.
 %
-%   The theoretical underpinnings of this algorithm are pending publication
-%   of NTIA Report "Confidence Intervals for Subjective Tests and 
-%   Objective Metrics" by Margaret H Pinson
+%   The theoretical underpinnings of this algorithm are published in
+%   Margaret H. Pinson, "Confidence Intervals for Subjective Tests and
+%   Objective Metrics That Assess Image, Video, Speech, or Audiovisual
+%   Quality," NTIA Technical Report TR-21-550, October 2020.
+%   https://www.its.bldrdoc.gov/publications/details.aspx?pub=3253
 %
-%   For a preliminary analysis, see Margaret Pinson, "NR metric confidence 
-%   interval estimation using classification errors," Video Quality Experts
-%   Group (VQEG) meeting, Statistical Analysis Methods (SAM) Group, 
-%   Presentation 11, March 2020.  
-%   ftp://vqeg.its.bldrdoc.gov/Documents/VQEG_online_Mar20/VQEG_2020_SAM_011_confidence_intervals_for_metrics.pptx
+% Output Parameters
+%   ideal_ci = the ideal confidence interval
+%   practial_ci = the practical confidence interval
+%   N = the number of people in an ad-hoc test with an equivalent likelihood of
+%       false ranking, or zero (0) if the performance is worse than a 1
+%       person ad-hoc test. 
+%
+%   For positively correlated metrics, false ranking is where a well designed
+%   subjective test would conclude that stimuli A is statistically better 
+%   than stimuli B, but the metric value for stimuli B is greater than
+%   the metric value for stimuli A. "Less than" is used for negatively
+%   correlated metrics. 
 %
 % Constraints:
 %   All datasets are weighted equally.
@@ -47,7 +60,8 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
     threshold_level = 0.5; % delta S, where 95% of stimuli MOS can be rank ordered
     false_rank_thresh = 0.01; % disagree rate
     false_diff_thresh = 0.10; % half of the uncertain rate of 20% 
-    practical_threshold = 0.16; % half of maximum uncertain rate plus disagree rate
+    practical_threshold = 0.165; % half of maximum uncertain rate plus disagree rate
+    concur_threshold = 0.91; % based on analyses of the VQEG FRTV Phase I ratings
     
     fprintf('Metric confidence interval analysis for %s\n\n', metric_name);
 
@@ -185,14 +199,6 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
         practical_ci = length(list_want);
     end
 
-    % print recommended threshold
-    fprintf('%5.4f Ideal CI      (%d %% correct ranking, %d %% false ranking, %d %% false distinction, %d %% false tie, %d %% correct tie)\n', ...
-        list_want(ideal_ci), round(correct_rank(ideal_ci)*100), round(false_ranking(ideal_ci)*100), round(false_distinction(ideal_ci)*100), ...
-            round(false_tie(ideal_ci)*100), round(correct_tie(ideal_ci)*100));
-    fprintf('%5.4f Practical CI  (%d %% correct ranking, %d %% false ranking, %d %% false distinction, %d %% false tie, %d %% correct tie)\n', ...
-        list_want(practical_ci), round(correct_rank(practical_ci)*100), round(false_ranking(practical_ci)*100), round(false_distinction(practical_ci)*100), ...
-            round(false_tie(practical_ci)*100), round(correct_tie(practical_ci)*100));
-
     % dataset names
     tmp = '';
     for dcnt = 1:num_datasets
@@ -228,7 +234,94 @@ function [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_n
     legend('Correct ranking', 'False ranking', 'False distinction', 'False tie', ...
         'Correct tie', 'Ideal CI', 'Practical CI', 'location', 'eastoutside', ...
         'interpreter','latex');
+    
+    % Analyze whether equivalent to a subjective test.
+    % This formulae was created by fitting correct ranking and correct tie
+    % rates for subjective tests conducted in two labs. 
+    equiv_ideal = sqrt(correct_rank(ideal_ci)) + 1.2 * correct_tie(ideal_ci);
+    equiv_practical = sqrt(correct_rank(practical_ci)) + 1.2 * correct_tie(practical_ci);
 
+    
+    % print recommended threshold
+    fprintf('%5.4f Ideal CI      (%d %% correct ranking, %d %% false ranking, %d %% false distinction, %d %% false tie, %d %% correct tie)\n', ...
+        list_want(ideal_ci), round(correct_rank(ideal_ci)*100), round(false_ranking(ideal_ci)*100), round(false_distinction(ideal_ci)*100), ...
+            round(false_tie(ideal_ci)*100), round(correct_tie(ideal_ci)*100));
+    if equiv_ideal >= concur_threshold
+        fprintf(' ==> equivalent to a subjective test with 24 subjects\n');
+    end
+    
+    fprintf('\n%5.4f Practical CI  (%d %% correct ranking, %d %% false ranking, %d %% false distinction, %d %% false tie, %d %% correct tie)\n', ...
+        list_want(practical_ci), round(correct_rank(practical_ci)*100), round(false_ranking(practical_ci)*100), round(false_distinction(practical_ci)*100), ...
+            round(false_tie(practical_ci)*100), round(correct_tie(practical_ci)*100));
+
+    if equiv_practical >= concur_threshold
+        fprintf(' ==> equivalent to a subjective test with 15 subjects\n');
+    end
+    
+    %------------------------------------------------------------
+    % Repeat the above calculation for delta = 0
+    % This analyzes performance when no CI is used
+    
+    correct_rank_zero = 0;
+    correct_tie_zero = 0;
+    false_ranking_zero = 0;
+    false_distinction_zero = 0;
+    false_tie_zero = 0;
+    
+    delta = 0;
+    for curr = 1:length(subj)
+        if (subj(curr) == 1 && obj(curr) >= delta) || ...
+                (subj(curr) == -1 && obj(curr) <= -delta)
+            correct_rank_zero = correct_rank_zero + wt(curr);
+        elseif subj(curr) == 0 && obj(curr) > -delta && obj(curr) < delta
+            correct_tie_zero = correct_tie_zero + wt(curr);
+        elseif (subj(curr) == 1 && obj(curr) <= -delta) || ...
+                (subj(curr) == -1 && obj(curr) >= delta)
+            false_ranking_zero = false_ranking_zero + wt(curr);
+        elseif (subj(curr) ~= 0 && obj(curr) > -delta && obj(curr) < delta)
+            false_tie_zero = false_tie_zero + wt(curr);
+        else
+            false_distinction_zero = false_distinction_zero + wt(curr);
+        end
+    end
+    
+    correct_rank_zero = correct_rank_zero / total_votes;
+    correct_tie_zero = correct_tie_zero / total_votes;
+    false_ranking_zero = false_ranking_zero / total_votes;
+    false_distinction_zero = false_distinction_zero / total_votes;
+    false_tie_zero = false_tie_zero / total_votes;
+    
+    fprintf('\nNo CI used           (%d %% correct ranking, %d %% false ranking, %d %% false distinction, %d %% false tie, %d %% correct tie)\n', ...
+        round(correct_rank_zero*100), round(false_ranking_zero*100), round(false_distinction_zero*100), ...
+            round(false_tie_zero*100), round(correct_tie_zero*100));
+    
+    % Create return variable indicating the equivalent of this metric,
+    % based on false ranking rates of ad-hoc tests
+    % Rates for ad-hoc tests were simulated using the VQEG FRTV Phase I data
+    if false_ranking_zero <= 0.0325
+        equivalent = 12;
+        fprintf(' ==> equivalent to a pilot test with %d subjects\n', equivalent);
+    elseif false_ranking_zero <= 0.0395
+        equivalent = 9;
+        fprintf(' ==> equivalent to a pilot test with %d subjects\n', equivalent);
+    elseif false_ranking_zero <= 0.056
+        equivalent = 6;
+        fprintf(' ==> equivalent to a pilot test with %d subjects\n', equivalent);
+    elseif false_ranking_zero <= 0.0765
+        equivalent = 3;
+        fprintf(' ==> equivalent to a %d person ad-hoc test\n', equivalent);
+    elseif false_ranking_zero <= 0.0995
+        equivalent = 2;
+        fprintf(' ==> equivalent to a %d person ad-hoc test\n', equivalent);
+    elseif false_ranking_zero <= 0.1285
+        equivalent = 1;
+        fprintf(' ==> equivalent to a %d person ad-hoc test\n', equivalent);
+    else
+        equivalent = 0;
+    end
+    fprintf('\n');
+
+    % change these variables from a threshold to an output variable
     ideal_ci = list_want(ideal_ci);
     practical_ci = list_want(practical_ci);
 end

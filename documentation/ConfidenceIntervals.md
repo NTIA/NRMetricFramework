@@ -1,17 +1,18 @@
 # MATLAB function `ci_NRpars.m` and `ci_calc.m`
 
-Note that `ci_NRpars.m` calls `ci_calc.m` to perform calculations. `ci_calc.m` provides a standalone interface.
+Functions `ci_NRpars.m` and `ci_calc.m` implement the algorithms described in [[7]](Publications.md). [Python code](ConfidenceIntervalsPython.md) is also available.
 
 ## Usage
 
-Let us define ΔM as possible confidence intervals (CI) for an NR metric. That is, for the quality of two stimuli to be considered statistically significant, the NR metric values must differ by at least this CI.
+The goal is to express the precision of a metric using confidence intervals (CI). Given a metric and one or more datasets, the following five value are calculated: 
 
-Our goal is to compute the value of ΔM that yields the same error rates as a well-designed subjective test that is conducted in a controlled environment; adheres to ITU-R BT.500, ITU-T Rec. P.913, or ITU-T Rec. P.910; and uses the 5-level absolute category rating (ACR) method. 
+* Ideal CI, calculated with strict criteria 
+* Whether the metric is equivalent to a 24 person subjective test, when using ideal CI 
+* Practical CI, calculated with less stringent criteria 
+* Whether the metric is equivalent to a 15 person subjective test, when using practical CI 
+* N, the number of subjects in an ad-hoc assessment or pilot test that is equivalent to the metric 
 
-* **ideal CI** yields the same error rates as a subjective test with 24 subjects
-* **practical CI** yields the same error rates as a subjective test with 15 subjects
-
-**Ideal CI** is a larger CI based on very stringent criteria. **Practical CI** is a smaller CI based on somewhat looser criteria. This increases the likelihood of errors and correct decisions. Both thresholds are justified by lab-to-lab comparisons (e.g., when two labs perform the same subjective test, what is the likelihood that they will reach different conclusions). 
+For the quality difference between two stimuli to be considered statistically significant, the NR metric values must differ by at least the chosen CI. We recommend Practical CI for most purposes. The metric's classification rates are also reported (see details, below). 
 
 ## Details
 
@@ -34,8 +35,14 @@ Two CI values are computed. **Ideal CI** uses more stringent ΔM selection crite
 ## Multiple Datasets
 When given multiple subjective datasets, **ci_NRpars.m** will only compare stimuli pairs within each dataset individually. All decisions will be pooled, and all dataset will be weighted equally. 
 
+These methods were developed on datasets that rated image quality, video quality, speech quality, and audiovisual quality. For best results, calculate CI for datasets that were **not** used to train the metric. 
+
 
 ## Inline Documentation
+Note: 
+* `ci_NRpars.m` calls `ci_calc.m` to perform calculations. 
+* `ci_calc.m` provides a standalone interface.
+* `ci_calc.py` implements ci_calc.m in Python code.
 ```text
 SYNTAX
   ci_NRpars(nr_dataset, base_dir, feature_function, parnum);
@@ -59,7 +66,7 @@ Input Parameters:
 
 ```text
 SYNTAX
-  [ideal_ci, practical_ci] = ci_calc(metric_name, num_datasets, dataset_names, ...
+  [ideal_ci, practical_ci, N] = ci_calc(metric_name, num_datasets, dataset_names, ...
       dataset_mos, dataset_metrics);
 SEMANTICS
     (See ci_NRpars.m above)
@@ -76,6 +83,14 @@ Input Parameters:
                   double array that contains the metric's value for each
                   stimuli in the dataset. Order of stimuli must be
                   identical to dataset_mos.
+
+Output Parameters:
+  ideal_ci = the ideal confidence interval
+  practial_ci = the practical confidence interval
+  N = the number of people in an ad-hoc test with an equivalent likelihood of
+      false ranking, or zero (0) if the performance is worse than a 1
+      person ad-hoc test. 
+
 Constraints:
   All datasets are weighted equally.
   The MOSs must range from 1 to 5. 

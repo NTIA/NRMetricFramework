@@ -48,7 +48,8 @@ function peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value,
                 curr = 12; 
             end
             subplot(3,4,curr);
-            [y, cb, cr] = read_media('frames', nr_dataset(dcnt), want(cnt), 1, 1);
+            frame = nr_dataset(dcnt).media(want(cnt)).start; % show first available frame
+            [y, cb, cr] = read_media('frames', nr_dataset(dcnt), want(cnt), frame, frame);
             display_color_xyt(y,cb,cr,'subplot');
             
             % print to command line full information
@@ -64,7 +65,8 @@ function peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value,
         
         % loop through a 2nd time and open full size images
         for cnt=1:length(want)
-            [y, cb, cr] = read_media('frames', nr_dataset(dcnt), want(cnt), 1, 1);
+            frame = nr_dataset(dcnt).media(want(cnt)).start; % show first available frame
+            [y, cb, cr] = read_media('frames', nr_dataset(dcnt), want(cnt), frame, frame);
             display_color_xyt(y,cb,cr);
         end
     end

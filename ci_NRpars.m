@@ -12,6 +12,10 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   (1) ideal CI, and (2) practical CI. The classification types are plotted, 
 %   which allows the user to choose an alternate CI.
 %
+%   By analogy, assess the performance of the metric in terms of an ad-hoc
+%   test with N people. This analysis assumes that the metric and MOSs are 
+%   compared without statistical tests or confidence intervals. 
+%
 % Input Parameters:
 %   nr_dataset          Data structures, of datasets to be analyzed. If 2+
 %                       datasets are provided, then the datasets will be
@@ -20,9 +24,11 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %
-%   Details of this algorithm will be published in an NTIA Report. See
-%   ci_calc.m for details.
-
+%   The theoretical underpinnings of this algorithm are published in
+%   Margaret H. Pinson, "Confidence Intervals for Subjective Tests and
+%   Objective Metrics That Assess Image, Video, Speech, or Audiovisual
+%   Quality," NTIA Technical Report TR-21-550, October 2020.
+%   https://www.its.bldrdoc.gov/publications/details.aspx?pub=3253
 
     % load the parameters. This will calculate them, if not yet computed. 
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
@@ -52,11 +58,17 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
             dataset_metrics{dcnt} = [NRpars(dcnt).data(pcnt,subset{dcnt})];
         end
     
-        ci_calc(NRpars(1).par_name{pcnt}, ... % current parameter name
-            length(nr_dataset), ... % number of datasets
-            dataset_names, ... % name of each dataset
-            dataset_mos, ...
-            dataset_metrics);
+        % calculate confidence intervals for this NR metric
+        % if the code fails, continue with the next NR metric
+        try
+            ci_calc(NRpars(1).par_name{pcnt}, ... % current parameter name
+                length(nr_dataset), ... % number of datasets
+                dataset_names, ... % name of each dataset
+                dataset_mos, ...
+                dataset_metrics);
+        catch
+            fprintf('Unexpected error in CI calculations; skipping to next metric.\n\n');
+        end
     end 
 end
 

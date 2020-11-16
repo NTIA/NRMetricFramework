@@ -29,6 +29,9 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
     success = true;
     
     % locate subdirectory for this NRFF  
+    if base_dir(length(base_dir)) ~= '\' && base_dir(length(base_dir)) ~= '/'
+        base_dir = [base_dir '\'];
+    end
     subdir = [base_dir 'group_' feature_function('group') '\'];
 
 
@@ -158,10 +161,18 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
                 
             for cnt = 1:total-overlap
                 % calculate NR features
-                if feature_function('luma_only')
-                    this_frame = feature_function('pixels', nr_dataset.media(media_num).fps, y(:,:,cnt:cnt+overlap));
+                if is_overlap
+                    if feature_function('luma_only')
+                        this_frame = feature_function('pixels', nr_dataset.media(media_num).fps, y(:,:,[cnt cnt+overlap]));
+                    else
+                        this_frame = feature_function('pixels', nr_dataset.media(media_num).fps, y(:,:,[cnt cnt+overlap]), cb(:,:,[cnt cnt+overlap]), cr(:,:,[cnt cnt+overlap]));
+                    end
                 else
-                    this_frame = feature_function('pixels', nr_dataset.media(media_num).fps, y(:,:,cnt:cnt+overlap), cb(:,:,cnt:cnt+overlap), cr(:,:,cnt:cnt+overlap));
+                    if feature_function('luma_only')
+                        this_frame = feature_function('pixels', nr_dataset.media(media_num).fps, y(:,:,cnt:cnt));
+                    else
+                        this_frame = feature_function('pixels', nr_dataset.media(media_num).fps, y(:,:,cnt:cnt), cb(:,:,cnt:cnt), cr(:,:,cnt));
+                    end
                 end
 
                 % error checking
