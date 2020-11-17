@@ -49,7 +49,8 @@ This repository does not contain images and videos. See the [subjective datasets
 - [valid_region_search_nosafety.m](ValidRegionSearchNoSafety.md)
 
 ## NR Metrics and Reports 
-- [Introduction](Report.md)
+- [Introduction](Report.md) to NR metric code and their performance reports
+- [List of metrics](ListMetrics.md)
 
 The following NR metric was developed by NTIA using the NRMetricFramework repository.  
 - [Sawatch](ReportSawatch.md)
