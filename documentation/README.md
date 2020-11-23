@@ -15,10 +15,9 @@ This repository does not contain images and videos. See the [subjective datasets
 
 ## References
 - [Dataset Structure](DatasetStructure.md) — variables that describe subjective datasets
-- [List of Metrics](ListMetrics.md) — list of NR metrics in this repository
 - [Publications](Publications.md) — papers that describe this repository 
 - [Subjective Datasets](SubjectiveDatasets.md) — list of subjective datasets for no reference metric research
-- [Wishlist](Wishlist.md) — future capabilities
+- [Wishlist](Wishlist.md) — future capabilities that are desired but not yet implemented
 
 ## Main Functions
 - [analyze_NRpars.m](AnalyzeNRpars.md)
@@ -52,7 +51,26 @@ This repository does not contain images and videos. See the [subjective datasets
 ## NR Metrics and Reports 
 - [Introduction](Report.md) to NR metric code and their performance reports
 - [List of metrics](ListMetrics.md)
-- Metric Sawatch: [Description](MetricSawatch.md) and [report](ReportSawatch.md)
+
+The following NR metric was developed by NTIA using the NRMetricFramework repository.  
+- [Sawatch](ReportSawatch.md)
+
+Sawatch calls on the following groups of NR metric parameters, which supply root cause analysis (RCA):
+- [Auto Enhancement](ReportAutoEnhancement.md)
+- [Blockiness](ReportBlockiness.md)
+- [Blur](ReportBlur.md)
+- [Fine Detail](ReportFineDetail.md)
+- [Pan Speed](ReportPanIPS.md)
+- [Peculiar Color](ReportPeculiarColor.md)
+
+The following pages provide objective and factual information on the performance of NR metrics from other organizations: 
+- Additive Gaussian White Noise ([AGWN](ReportAGWN.md))
+- [Basic Statistics](ReportBasicStats.md) 
+- Blind / Referenceless Image Spatial Quality Evaluator [BRISQUE](ReportBrisque.md)
+- [Log-BIQA](ReportLogBiqa.md)
+- Natural Image Quality Evaluator [NIQE](ReportNiqe.md)
+- [Uneven Illumination](ReportUnevenIllumination.md)
+
  
 ## Acknowledgements
 

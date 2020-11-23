@@ -3,6 +3,12 @@ function [data] = nrff_auto_enhancement(mode, varargin)
 %   Implement standard function calls to calculate image auto-enhancement features
 %   That is, features associated with autocontrast, white level, and black
 %   level. 
+% 
+% PARAMETERS
+%   par 1, white level, measures whether the white level is too low 
+%                       i.e., the image is too dark
+%   par 2, black level, measures whether the black level is too high  
+%                       i.e., the image is too light or fully white
 %
 % SYNTAX & SEMANTICS
 %   See 'calculate_NRpars' for interface specifications.
@@ -19,9 +25,7 @@ elseif strcmp(mode, 'feature_names')
 
     data{1} = 'white level';
     
-    data{2} = 'r_block_std';
-    data{3} = 'g_block_std';
-    data{4} = 'b_block_std';
+    data{2} = 'black level';
 
     
 
@@ -31,12 +35,12 @@ elseif strcmp(mode, 'parameter_names')
 
     data{1} = 'white level'; % 98% white level, clipped at 150 maximum, ignore black border.
     
-    data{2} = 'rgb_block_std';
+    data{2} = 'black level'; % black level is too high; image whitewashed
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % color space
 elseif strcmp(mode, 'luma_only')
-    data = false;
+    data = true;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % calculate features on 1 frame
@@ -49,8 +53,6 @@ elseif strcmp(mode, 'read_mode')
 elseif strcmp(mode, 'pixels')
     fps = varargin{1};
     y = varargin{2};
-    cb = varargin{3};
-    cr = varargin{4};
 
     % compute features.
     % Put all into the same data array, associated with the same feature name.
@@ -99,29 +101,9 @@ elseif strcmp(mode, 'pixels')
         data{1} = y_vector( offset_98 );
     end
     
-    %
-    [red, green, blue] = ycbcr2rgb_double(y, cb, cr, '128');
-    [row,col] = size(red);
-    rgb = nan(row,col,3);
-    rgb(:,:,1) = red / 256;
-    rgb(:,:,2) = green / 256;
-    rgb(:,:,3) = blue / 256;
-    rgb = rgb/128; % guess wants [0..1] scale
-
-    % divide the image into approximately 100 blocks. Number of blocks will
-    % be the same for each frame of a video. 
-    [blocks] = divide_100_blocks(row, col, 0);
-
-    for loop = 1:length(blocks)
-        this_block = red(blocks(loop).top:blocks(loop).bottom,blocks(loop).left:blocks(loop).right);
-        data{2}(loop) = st_statistic('std', this_block);
-        
-        this_block = green(blocks(loop).top:blocks(loop).bottom,blocks(loop).left:blocks(loop).right);
-        data{3}(loop) = st_statistic('std', this_block);
-        
-        this_block = blue(blocks(loop).top:blocks(loop).bottom,blocks(loop).left:blocks(loop).right);
-        data{4}(loop) = st_statistic('std', this_block);
-    end
+    % take mean and standard deviation of the luma image
+    data{2}(1) = nanmean(y(:));
+    data{2}(2) = nanstd(y(:));
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,9 +123,23 @@ elseif strcmp(mode, 'pars')
     % clip white level at 150 maximum
     data(1) = min(data(1), 150);
 
-    data(2) = ( st_statistic('mean', feature_data{2}) + ...
-            st_statistic('mean', feature_data{3}) + st_statistic('mean', feature_data{4}) );
+    % Estimate whether the black level is too high, based on the standard
+    % deviation of the luma image. This will also detect too dark images,
+    % as per data(1), so we must invalidate this parameter when 
+    % the mean image value is below mid level grey (128). In that case,
+    % clip to 20, which was determined experimentally using the CCRIQ
+    % dataset. Above 20, this parameter spans the full range of MOS.
+    % the 128 threshold was also determined experimentally using the CCRIQ
+    % dataset, based on maximum accuracy when complimenting metric Sawatch
+    % version 1.0.    
+    if feature_data{2}(1) < 128
+        data(2) = 20;
+    else
+        data(2) = min(20, feature_data{2}(2));
+    end
     
+    % rescale to range [0..1] where 0 is no impairment
+    data(2) = (20 - data(2)) / 20;
     
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
