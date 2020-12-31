@@ -5,7 +5,7 @@ function [agree_ranking, agree_tie, unconfirmed, disagree] = ...
 % SYNTAX
 %   [agree_ranking, agree_tie, unconfirmed, disagree] = ...
 %       analyze_lab2lab( lab1, lab2)
-% SEMNATICS
+% SEMANTICS
 %   Analyze the conclusions reached by two subjective test labs (lab1 and 
 %   lab2). Comparisons are made using the Student's t-test. 
 %
