@@ -45,7 +45,7 @@ Note:
 * `ci_calc.py` implements ci_calc.m in Python code.
 ```text
 SYNTAX
-  ci_NRpars(nr_dataset, base_dir, feature_function, parnum);
+  ci_NRpars(nr_dataset, base_dir, feature_function);
 SEMANTICS
   Estimate the confidence interval (CI) of an NR metric or parameter, 
   by comparing the conclusions reached by the model with conclusions 

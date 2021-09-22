@@ -23,12 +23,11 @@ Function `nrff_peculiar_color.m` provides three NR parameters: Color Noise, Supe
 **Pallid** estimates the fraction of the image (or video) that contains an extremely low spread of Cb or Cr values. This detects pallid images (i.e., deficient in color). Luma is ignored to avoid bias with regard to white balance or the image's overall hue. For example, a camera photograph of a black-and-white receipt may not have any pixels where Cb = 0 or Cr = 0. 
 
 ## Speed and Conformity
+Peculiar Color takes __1×__ as long to run as the benchmark metric, [nrff_blur.md](ReportBlur.md).  
+
+In Big-O notation, Pecular Color is O(n). 
+
 Function `nrff_peculiar_color.m` was initially provided by this repository, so conformity is ensured. 
-
-The speed of Super Saturated and Pallid is O(n), which is as fast as can be expected of any NR metric. 
-
-The speed of Color Noise is constrained by the edge filter, which contains symmetries that enable faster calculation. Investigations around 2005 concluded that this filter could be implemented in real time on a typical desktop computer, using chip specific function calls. The MATLAB implementation in this repository is much slower. 
-
 
 ## Analysis
 

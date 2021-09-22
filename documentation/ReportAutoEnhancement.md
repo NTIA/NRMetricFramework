@@ -21,7 +21,11 @@ Function `nrff_auto_enhancement.m` calculates two values: White Level and Black 
  
 
 ## Speed and Conformity
-Function `nrff_auto_enhancement.m` was initially provided by this repository, so conformity is ensured. Speed is O(n), which is as fast as can be expected of any NR metric. Auto Enhancement took twice as long to run as [nrff_blur.m](ReportBlur.md).
+Auto Enhancement took __2×__ as long to run as the benchmark metric, [nrff_blur.m](ReportBlur.md).
+
+In Big-O notation, Auto Enhancement is O(n). 
+
+Function `nrff_auto_enhancement.m` was initially provided by this repository, so conformity is ensured. 
 
 ## Analysis
 

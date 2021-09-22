@@ -16,9 +16,11 @@ Function `nrff_fine_detail.m` compares small edges in the luma plane with large 
 The edge filter is a variant of the Sobel filter that was developed by  NTIA to detect larger edges than the popular (3×3) edge filters (e.g., Sobel, Laplacian). See function `filter_si_hv_adapt.m`.
 
 ## Speed and Conformity
-Function `nrff_fine_detail.m` was initially provided by this repository, so conformity is ensured. Fine Detail runs as fast as [nrff_blur.m](ReportBlur.md), which is approximately O(n).
+Fine Detail runs __1×__ as long to run as the benchmark metric, [nrff_blur.m](ReportBlur.md).
 
 Speed is constrained by the edge filter, which contains symmetries that enable faster calculation. Thus, Fine Detail is O(nm), where n is the number of pixels and m is the size of the larger edge filter (15). Investigations around 2005 concluded that this filter could be implemented in real time.  
+
+Function `nrff_fine_detail.m` was initially provided by this repository, so conformity is ensured. 
 
 ## Analysis
 

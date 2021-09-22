@@ -25,6 +25,7 @@ This repository does not contain images and videos. See the [subjective datasets
 - [calculate_NRpars.m](CalculateNRpars.md)
 - [compromise_NRpars.m](CompromiseNRpars.md)
 - [ci_NRpars.m and ci_calc.m](ConfidenceIntervals.md) - new!
+- [peek_NRpars.m](PeekNRpars.md) - new!
 
 ## Exporting Functions
 - [export_dataset.m](ExportDataset.md)
@@ -52,28 +53,75 @@ This repository does not contain images and videos. See the [subjective datasets
 - [analyze_lab2lab.m](AnalyzeLb2Lab.md)
 
 ## NR Metrics and Reports 
-- [Introduction](Report.md)
+This repository includes (1) code for NR metrics developed by various organizations, and (2) reports that analyze their performance. 
+This [introduction](Report.md) defines the :star: :star: :star: :star: :star: scale used in the reports and tables below. 
+Generally, 1-star metrics are very innacurate, 
+2-star metrics are promising, 
+3-star metrics perform consistently across 10+ datasets,
+4-star metrics are as accurate as one person, and
+5-star metrics are as accurate as a 6 person pilot test.
 
-The following NR metric was developed by NTIA using the NRMetricFramework repository.  
-- [Sawatch](ReportSawatch.md)
+### Our NR Metrics 
 
-Sawatch calls on the following groups of NR metric parameters, which supply root cause analysis (RCA):
-- [Auto Enhancement](ReportAutoEnhancement.md)
-- [Blockiness](ReportBlockiness.md)
-- [Blur](ReportBlur.md)
-- [Fine Detail](ReportFineDetail.md)
-- [Pan Speed](ReportPanIPS.md)
-- [Peculiar Color](ReportPeculiarColor.md)
+The [Sawatch](ReportSawatch.md) NR metric was developed by NTIA using the NRMetricFramework repository. Sawatch estimates mean opinion score (MOS) via a linear combination of other NR metric parameters that supply root cause analysis (RCA). An online demo of Sawatch version 2 is available [here](https://vqwt.its.bldrdoc.gov/login.php).
 
-The following pages provide objective and factual information on the performance of NR metrics from other organizations: 
-- Additive Gaussian White Noise ([AGWN](ReportAGWN.md))
-- [Basic Statistics](ReportBasicStats.md) 
-- Blind / Referenceless Image Spatial Quality Evaluator [BRISQUE](ReportBrisque.md)
-- [Log-BIQA](ReportLogBiqa.md)
-- Natural Image Quality Evaluator [NIQE](ReportNiqe.md)
-- [Uneven Illumination](ReportUnevenIllumination.md)
+Metric Name|Goal|[Rating](Report.md)|Notes
+-----------|----|------|-----
+[Sawatch](ReportSawatch.md) version 2|MOS|:star: :star: :star:|NR metric training method demonstrated
+[Sawatch](ReportSawatch.md) version 1|MOS|:star: :star:|NR metric training method demonstrated
 
- 
+Metric Name|Metric Group|Goal|[Rating](Report.md)
+-----------|------------|----|------
+White Level|[Auto Enhancement](ReportAutoEnhancement.md)|RCA|:star: :star: :star:
+Black Level|[Auto Enhancement](ReportAutoEnhancement.md)|RCA|:star: :star:
+Blockiness|[Blockiness](ReportBlockiness.md)|RCA|:star: :star:
+Unsharp|[Blur](ReportBlur.md)|RCA|:star: :star: :star:
+Viqet-Sharpness|[Blur](ReportBlur.md)|RCA|:star: :star: :star:
+Fine Detail|[Fine Detail](ReportFineDetail.md)|RCA|:star: :star: :star:
+PanIPS|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star:
+Color Noise|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
+Super Saturation|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
+Pallid|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
+
+### Other Organizations' NR Metrics
+
+The following pages provide objective and factual information on the performance of NR metrics from other organizations. These reports analyze the metric's performance on diverse media from modern camera systems. This is often outside of the metric's intended scope. See [Introduction](Report.md) for details. 
+
+Metric Name|Goal|[Rating](Report.md)|Notes
+-----------|----|------|------
+[2stepQA-NR](Report2stepQA.md)|MOS|:star: :star: |NR constrained variant of 2stepQA, outliers and invalid values prevent :star: :star: :star: rating
+[BRISQUE](ReportBrisque.md)|MOS|:star:| 
+[Curvelet QA](ReportCurveletQA.md)|MOS|:question:|4 variants, technical issues mar performance and prevent analyses
+[JP2KNR](ReportJP2KNR.md)|MOS|:star:|Code produces errors, content dependencies, possible inspiration for RCA 
+[LBP](ReportLBP.md)|MOS|:star:|Not intended for MOS estimation, possible inspiration for RCA
+[Log-BIQA](ReportLogBiqa.md)|MOS|:star:|
+[NIQE](ReportNiqe.md)|MOS|:star: :star:|Re-training tools available
+[NR-IQA-CDI](ReportNRIQACDI.md)|MOS|:star:|Variants Mean, Standard deviation, and Skewness
+[NR-IQA-CDI](ReportNRIQACDI.md)|MOS|:star: :star:|Variants Kurtosis and Entropy: possible inspiration for RCA
+[NSS](ReportNSS.md)|MOS|:star:|3 variants, outliers mar performance
+[OG-IQA](ReportOGIQA.md)|MOS|:star: :star:|Partial analysis, possible inspiration for RCA
+[PIQE](ReportPIQE.md)|MOS|:star:|
+[SpEED-NR](ReportSpEED.md)|MOS|:star: :star:|NR constrained variant of Speed-QA, outliers mar performance
+
+Metric Name|Goal|[Rating](Report.md)|Impairment|Notes
+-----------|----|------|---------|------
+[ADMD](ReportADMD.md)|RCA|:star:|Uneven illumination| 
+[AGWN](ReportAGWN.md)|RCA|:star:|Noise|
+[CPBD](ReportCPBD.md)|RCA|:star: :star:|Blur/Sharpness|
+[Entropy_Noise](ReportEntropyNoise.md)|RCA|:star:|Noise|
+[HVS-MaxPol](ReportHVSMaxPol.md)|RCA|:star: :star:|Blur/Sharpness|4 variants, trained on 7 datasets, outliers prevent :star: :star: :star: rating
+[JNB](ReportJNB.md)|RCA|:star: :star:|Blur/Sharpness|Performance marred by resolution dependencies 
+[MaxPol](ReportMaxPol.md)|RCA|:star: :star:|Blur/Sharpness|Aka Synthetic-MaxPol, invalid values prevent :star: :star: :star: rating
+[NR-PWN](ReportNRPWN.md)|RCA|:star: :star:|Noisiness|Performance marred by dataset dependencies
+[TDME](ReportTdme.md)|RCA|:star: :star: :star:|Contrast enhancement|
+[TDMEC](ReportTdmec.md)|RCA|:star: :star: :star:|Contrast enhancement|
+
+
+Metric Name|Goal|[Rating](Report.md)|Notes
+-----------|----|------|------
+[dipIQ](ReportDipIQ.md)|ORD|:star: :star:|NR metric training method, statistics for ORD proposed
+
+
 ## Acknowledgements
 
 If you use this repository in your research or product development, please reference this GitHub repository and the paper listed below:

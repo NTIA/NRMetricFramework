@@ -16,7 +16,12 @@ Function `nrff_blockiness.m` analyzes the angle of small edges in the luma plane
 The edge filter is a variant of the Sobel filter that was developed by NTIA to detect larger edges than the popular (3×3) edge filters (e.g., Sobel, Laplacian). See function `filter_si_hv_adapt.m`.
 
 ## Speed and Conformity
-Function `nrff_blockiness.m` was initially provided by this repository, so conformity is ensured. Speed is O(n), which is as fast as can be expected of any NR metric. Blockiness runs roughly 15% slower than [nrff_blur.m](ReportBlur.md).
+
+Blockiness runs roughly __1.15×__ slower than the benchmark metric, [nrff_blur.m](ReportBlur.md).
+
+In Big-O notation, Blockiness is O(n). 
+
+Function `nrff_blockiness.m` was initially provided by this repository, so conformity is ensured. 
 
 ## Analysis
 

@@ -4,21 +4,25 @@ _Go to [Report.md](Report.md) for an introduction to this series of NR metric re
 
 Function `nrff_brisque.m` implements the Blind/Referenceless Image Spatial Quality Evaluator (BRISQUE), an image quality metric presented in [[8]](Publications.md). BRISQUE does not work reliably across a broad range of modern camera systems and video content. 
 
-MATLAB offers tools to retrain BRISQUE for a target application. Users must provide their own data (images with MOSs). 
-
 Goal|Metric Name|Rating
 ----|-----------|------
 MOS|BRISQUE|:star:
 
+__R&D Potential__: MATLAB® offers tools to retrain BRISQUE for a target application. Users must provide their own data (images with MOSs). 
+
 ## Algorithm Summary
-BRISQUE uses a support vector regression (SVR) model trained by MATLAB on an image database containing standard image distortions. If a distortion is not included in that dataset, BRISQUE will not be able to evaluate the quality of an image affected by it. BRISQUE calculates a nonnegative scalar in the range of [0,100] with lower scores reflecting a higher level of perceptual quality. The properties of the default model are listed in `nrff_brisque.m` and at the MathWorks webpage (https://www.mathworks.com/help/images/ref/brisquemodel.html)
+BRISQUE uses a support vector regression (SVR) model trained by MATLAB on an image database containing standard image distortions. If a distortion is not included in that dataset, BRISQUE will not be able to evaluate the quality of an image affected by it. BRISQUE calculates a nonnegative scalar in the range of [0,100] with lower scores reflecting a higher level of perceptual quality. The properties of the default model are listed in `nrff_brisque.m` and at the MathWorks® webpage (https://www.mathworks.com/help/images/ref/brisquemodel.html)
 
 ## Speed and Conformity
-The MathWorks documentation does not describe the complexity of the algorithm, and [8] does not list computational complexity explicitly in terms of big-O. However, this paper notes that BRISQUE is fairly efficient when compared to other analysis algorithms. This holds in our evaluation, as BRISQUE took 1.5 times as long to run as [nrff_blur.m](ReportBlur.md), which is approximately O(n).
+BRISQUE took __1.5×__ as long to run as the benchmark metric, [nrff_blur.md](ReportBlur.md). 
 
-Without better knowledge of the algorithm that the brisqueModel object uses to evaluate images, it is hard to say exactly how optimal the operations are and how they may be improved. 
+The MathWorks documentation does not describe the complexity of the algorithm, and [8] does not list computational complexity explicitly in terms of Big-O. 
+
+Code is provided by MATLAB.
 
 ## Analysis
+The authors report 0.9424 Pearson correlation between BRISQUE and MOS for the 2006 LIVE Image Quality Assessment Database [[31]](Publications.md), 
+
 BRISQUE does not respond well to diverse content and camera impairments. The correlations are low and BRISQUE values above the 25th percentile are associated with the full range of MOSs. 
 ```
 1) brisque_MEAN 

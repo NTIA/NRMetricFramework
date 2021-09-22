@@ -7,11 +7,13 @@ This page identifies functions that are desired but not yet implemented. See [De
 
 People who cannot afford MATLAB licenses have expressed interest in a Python implementation of this repository. 
 
-## Just Noticeable Difference (JND) Analysis Techniques
+## Analysis Techniques for Ordered Data
 
 [Wang et al.](https://ieee-dataport.org/documents/videoset) make available the University of Southern California (USC) Just Noticeable Difference (JND) dataset. 
 The USC JND dataset would be suitable for training NR metrics, if we had statistical methods for evaluating the performance of a dataset on JND data. 
 These methods would also let experts quickly create datasets with objective JND ratings, based on expert knowledge (e.g., bit-rate reduction, resolution subsampling).
+
+NR metric [dipIQ](ReportDipIQ) provides analysis techniques that may be suitable. 
 
 ## Bitstream Reader
 The code in this repository could support bit-stream algorithms for video quality analysis, if bitstream support were added to [read_media.m](ReadMedia.md). Ioannis Katsavounidis and Margaret Pinson propose the following. 

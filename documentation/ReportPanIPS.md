@@ -17,7 +17,10 @@ Pan Speed is NR parameter #7 in function `nrff_panIPS.m`. Parameter #8 (an alter
 Pan Speed estimates the overall camera pan using several estimates, each based on crossing line of pixels through the image (vertically and horizontally). This algorithm is a compromise between accuracy and run speed, with run speed being the constraining factor. See `nrff_panIPS.m` for details. 
 
 ## Speed and Conformity
-Function `nrff_panIPS.` was initially provided by this repository, so conformity is ensured. PanIPS has the same run speed [nrff_blur.m](ReportBlur.md). 
+
+PanIPS has the same run speed as the benchmark metric, [nrff_blur.m](ReportBlur.md). 
+
+Function `nrff_panIPS.m` was initially provided by this repository, so conformity is ensured. 
 
 ## Analysis
 
