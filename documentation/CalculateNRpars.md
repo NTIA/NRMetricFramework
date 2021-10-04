@@ -126,7 +126,7 @@ STANDARD SEMANTICS
 ***
 
 ## Variant NR Feature Function Interface for NR Metrics
-The following variant feature_function is used to combine already calculated data from several other feature_functions into a single NR metric. See [Demo #3](Demo3.md) and [metric Sawatch](MetricSawatch.md) for an example. 
+The following variant feature_function is used to combine already calculated data from several other feature_functions into a single NR metric. See [Demo #3](Demo3.md) and [metric Sawatch](ReportSawatch.md) for an example. 
 
 ```text 
 SYNTAX
