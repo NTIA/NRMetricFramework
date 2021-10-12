@@ -10,8 +10,8 @@ Blurring is a complex impairment, and there is significant room for improvement.
 
 Goal|Metric Name|Rating
 ----|-----------|------
-RCA|Unsharp|:star: :star:
-RCA|Viqet-Sharpness|:star: :star:
+RCA|Unsharp|:star: :star: :star:
+RCA|Viqet-Sharpness|:star: :star: :star:
 
 ## Algorithm Summary
 
@@ -23,7 +23,12 @@ Inspired by the unsharp filter, this algorithm calculates the difference between
 Viqet-Sharpness is an improved version of a sharpness metric in NR metric [VIQET](https://github.com/VIQET). Since the perceptual quality difference between HD and 4K monitors is minimal, we begin by down-sampling 4K images to HD resolution. We then take the Laplacian filter of the luma plane, calculate the average of the top 1% of pixels, divide by the standard deviation of the Sobel filtered luma plane, and take the square root. There are controls to avoid dividing by values less than one. Dividing by the Sobel filtered image adjusts for the overall edge strength in the image. 
 
 ## Speed and Conformity
-Function `nrff_blur.m` was initially provided by this repository, so conformity is ensured. Speed is O(n), which is as fast as can be expected of any NR metric.  
+
+Blur is the benchmark metric.
+
+In Big-O notation, Blur is O(n).
+
+Function `nrff_blur.m` was initially provided by this repository, so conformity is ensured.   
 
 ## Analysis
 

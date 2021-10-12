@@ -5,7 +5,7 @@ This page demonstrates workflow options to train an NR metric:
 * **Option 1:** export data to simple MATLAB variables (matrices)
 * **Option 2:** export data to a spreadsheet
 * **Option 3:** understand dataset differences using [compromise_NRpars.m](CompromiseNRpars.md)
-* **Option 4:** implement a specific metric, as per [metric_sawatch.m](MetricSawatch.md) 
+* **Option 4:** implement a specific metric, as per [metric_sawatch.m](ReportSawatch.md) 
 
 ## Preliminaries
 
@@ -118,7 +118,7 @@ See figure 1 for weighted compromise
 This figure graphs metric performance (Pearson correlation) of different compromises between the two parameters. The weight of par1 decreases (100%, 90%, ..., 10%, 0%) while the weight of par2 increases (0%, 10%, ..., 90%, 100%).
 Thus, the plot helps the user understand the relative importance of each parameter for each dataset. 
 
-Function [compromise_NRpars.m](CompromiseNRpars.md) can also be called for three or more NR parameters. In this case, the above graph is omitted. The example call below shows the relative importance of the three NR parameters in version 1 of [metric Sawatch](MetricSawatch.md), for six image quality datasets and four video quality datasets.
+Function [compromise_NRpars.m](CompromiseNRpars.md) can also be called for three or more NR parameters. In this case, the above graph is omitted. The example call below shows the relative importance of the three NR parameters in version 1 of [metric Sawatch](ReportSawatch.md), for six image quality datasets and four video quality datasets.
 The third input argument is `false` because the NR parameters 1, 2, and 3 in `metric_sawatch.m` have already been scaled to [0..1].
 
 ```matlab
@@ -180,7 +180,7 @@ Of the many NRFF function call options, a metric function only needs two:
 Plus a new interface option:
 * 'compose'
 
-To demonstrate, we will use the CCRIQ dataset described by `ccriq_dataset` and version 1 of [metric_sawatch.m](MetricSawatch.md). Begin by loading the dataset structures and initializing variables:
+To demonstrate, we will use the CCRIQ dataset described by `ccriq_dataset` and version 1 of [metric_sawatch.m](ReportSawatch.md). Begin by loading the dataset structures and initializing variables:
 ```matlab
 >> load iqa_camera.mat;
 >> image_datasets = [bid_dataset ccriq_dataset cid2013_dataset cv_dataset its4s2_dataset livewild_dataset ];
@@ -211,7 +211,7 @@ Alternatively, NR metrics can be calculated using [calculate_NRpars.m](Calculate
 >> NRpars = calculate_NRpars([bid_dataset ccriq_dataset cid2013_dataset cv_dataset its4s2_dataset], base_dir, 'none', @metric_sawatch);
 ```
 
-The [metric_sawatch.m](MetricSawatch.md) code uses [calculate_NRpars.m](CalculateNRpars.md) to load the features for each dataset in turn.  
+The [metric_sawatch.m](ReportSawatch.md) code uses [calculate_NRpars.m](CalculateNRpars.md) to load the features for each dataset in turn.  
 The NR parameter and NR metric data are saved by dataset to "C:\nr_data\group_sawatch\" as explained in [Demo #1](Demo1.md). 
 
 Function `metric_sawatch.m` can now be passed into [analyze_NRpars.m](AnalyzeNRpars.md) and [compromise_NRpars.m](CompromiseNRpars.md). For example:

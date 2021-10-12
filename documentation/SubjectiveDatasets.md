@@ -7,7 +7,7 @@ This webpage identifies image quality analysis (IQA) and video quality analysis 
 * The dataset implements an [unrepeated scene experiment design](https://link.springer.com/article/10.1007/s41233-019-0026-4)
 * The media depict modern camera systems
 
-Datasets labeled **suboptimal** fail to meet these critera.
+Datasets labeled **suboptimal** fail to meet these criteria.
 
 Most subjective test have experiment designs that split media into subcategories. For example, the CCRIQ dataset contains identical photographs rated on both an HD monitor and a 4K monitor. Each dataset's available categories are identified and numbered below. The category numbers will let you analyze an NR metric's performance for that factor. See the [dataset structure](DatasetStructure.md) page for details.
 
@@ -30,7 +30,7 @@ These datasets contain images from consumer cameras. The impairments characteriz
 
 ### **bid**
 The Blurred Image Database (BID) contains 582 photographs with camera impairments and diverse subject matter.
-* [Publication](https://ieeexplore.ieee.org/document/5492198), see section III
+* Publication [[37]](Publications.md), see section III
 * [Image Download](http://www02.smt.ufrj.br/~eduardo/ImageDatabase.htm)
 * Inexact experiment design&mdash;photographs chosen from a private collection, one DSLR 
 * Diverse subject matter 
@@ -71,7 +71,7 @@ This dataset contains two sessions with different experiment designs: CCRIQ data
 
 ### **cid2013**
 The Camera Image Database 2013 (CID2013) explores the relationship between camera type and scene composition.
-* [Publication](https://ieeexplore.ieee.org/document/6975172)
+* Publication [[38]](Publications.md)
 * [Download](https://zenodo.org/record/2647033)
 * Rigorous experiment design&mdash;identical scene compositions photographed with multiple cameras
 * Limited subject matter
@@ -202,7 +202,8 @@ These datasets contain photographs of documents. MOSs are inferred from optical 
 
 ### **DIQA**
 The document image quality analysis (DIQA) dataset contains photographs of documents. Simulated MOSs are calculated by comparing the truth data (actual text) with text produced by OCR algorithms. Three versions of this dataset are available, from each of three different OCR algorithms.
-* [Publication and Media](https://lampsrv02.umiacs.umd.edu/projdb/project.php?id=73)
+* Publication [[45]](Publications.md)
+* [Media](https://lampsrv02.umiacs.umd.edu/projdb/project.php?id=73)
 * Rigorous experiment design—identical document photographed repeatedly
 * Black text on white paper, surface occasionally visible in the background
 * MATLAB variable: **diqaF_dataset** = FineReader OCR

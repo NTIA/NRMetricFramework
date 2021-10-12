@@ -99,14 +99,10 @@ case 'pixels'
    %this component is the y component of the YCbCr which is the luma/grayscale component of the image
    img = varargin{2}; 
    
-   load niqe_modelparameters.mat;
-   
     % Check for a black image (which would crash computequality)
     try
         %Calculate niqe score
-        score = computequality(img,96,96,0,0,mu_prisparam,cov_prisparam);
-        
-        data{1} = score;
+        data{1} = niqe(img);
         
     catch
         data{1} = nan;

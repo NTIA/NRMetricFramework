@@ -2,11 +2,11 @@
 
 _Go to [Report.md](Report.md) for an introduction to this series of NR metric reports, including their purpose, important warnings, the rating scale, and details of the statistical analysis._ 
 
-Function `nrff_agwn.m` implements the algorithms presented in [[6]](Publications.md). This algorithm was designed to assess Additive Gaussian White Noise (AGWN). It is not suitable for detecting noise from consumer camera capture. 
+Function `nrff_agwn.m` implements the algorithms presented in [[6]](Publications.md). This algorithm was designed to assess Additive Gaussian White Noise (AGWN). AGWN does not work reliably for detecting noise across a broad range of modern camera systems and video content.
 
 Goal|Metric Name|Rating
 ----|-----------|------
-MOS|AGWN|:star:
+RCA|AGWN|:star:
 
 ## Algorithm Summary
 
@@ -14,13 +14,21 @@ Lim [[6]](Publications.md) establishes a simple, elegant relationship between ad
 
 ## Speed and Conformity
 
-The ```nrff_agwn.m``` algorithm runs very quickly: O(n) where *n* is the number of pixels. AGWN took 1.5 times as long to run as [nrff_blur.m](ReportBlur.md). Expected code conformity is high: the paper is clearly written and the algorithms are simple.
+AGWN took __1.5×__ times as long to run as the benchmark metric, [nrff_blur.m](ReportBlur.md). 
+
+In Big-O notation, AGWN is O(n) where *n* is the number of pixels. 
+
+Expected code conformity is high: the paper is clearly written and the algorithms are simple.
 
 Lim [[6]](Publications.md) refers to this no-reference (NR) metric as "proposed." For clarity, we assigned the name AGWN from the paper title. 
 
 ## Analysis 
 
-AGWN is evaluated using six image quality datasets that contain camera impairments. These datasets include images with camera capture noise, which typically depict low-light conditions and have low MOSs. Our datasets exclude additive Gaussian white noise, upon which this metric was trained.
+Note: There is some ambiguity as to whether AGWN is intended to assess MOS (overall quality) or only RCA (Gaussian white noise). The theory presented in [[6]](Publications.md) seems to indicate RCA but the authors report extremely high Pearson correlation when comparing AGWN to a dataset that includes other impairments.
+
+The authors report 0.9785 Pearson correlation between AGWN and MOS for the LIVE Image Quality Assessment Database Release 2 [[30]](Publications.md). 
+
+This report evaluates AGWN using six image quality datasets that contain camera impairments. These datasets include images with camera capture noise, which typically depict low-light conditions and have low MOSs. Our datasets exclude additive Gaussian white noise, upon which this metric was trained.
 
 If this metric were detecting noise we would expect a lower triangle shape scatter plot (i.e., narrow range of values for high quality, wide range of values for low quality). Instead, the scatter plots show an upper triangle shape (i.e., wide range of values for high quality, narrow range of values for low quality). This indicates that the metric detects a feature of some but not all high quality images. However, camera noise is more prevalent in low-quality media (MOS < 3). 
 

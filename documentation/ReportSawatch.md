@@ -84,6 +84,7 @@ Sawatch version 2 (below top) is a substantial improvement over Sawatch version 
 
 Notice that the blue dots show the same overall shape as the green dots (a loose scattering round the red fit line) but some datasets have a different linear fit (offset and gain). This phenomenon occurs because all MOSs are presented on a [1..5] ACR scale, but differences between how dataset use the [1..5] ACR scale are retained. See the **Subjective Ratings** section of (Dataset Structure)[DatasetStructure.md] for more information. 
 
+Sawatch version 2 is equivalent to a one person ad-hoc test for some datasets individually (e.g., CCRIQ, CID2013, ITS4S2).
 ```text
 11) Sawatch version 2 
 bid              corr =  0.50  rmse =  0.88  percentiles [ 1.37, 3.02, 3.42, 3.73, 4.73]
