@@ -13,7 +13,7 @@ RCA  | HVS-MaxPol-2synthetic | :star: :star:
 
 __R&D Potential__: 
 
-- Our assessment of HVS-MaxPol-1natural, HVS-MaxPol-1synthetic, and HVS-MaxPol-2synthethic would be updated to :star: :star: :star: if the cause of extreme outlier values were identified and eliminated. See the Speed and Conformity section for details.
+- Our assessment of HVS-MaxPol-1natural, HVS-MaxPol-1synthetic, and HVS-MaxPol-2synthethic would be updated to :star: :star: :star: if the cause of code failures and extreme outlier values were identified and eliminated. See the Speed and Conformity section for details.
 
 - The authors of HVS-MaxPol [[21]](Publications.md) use seven datasets to analyze NR metrics. Their analysis technique has value for future NR metric research. 
 
@@ -30,6 +30,8 @@ HVS-MaxPol took __3×__ times as long to run as the benchmark metric, [nrff_blur
 In terms of Big-O notation, HVS-MaxPol runs in O(n) time since each image is filtered about 12 times and various other O(n) calculations are also used in this algorithm. 
 
 The algorithm was conformed with in nearly every aspect (i.e., the author supplied MATLAB code that ran without modification). Occasionally, the algorithm returns an extreme outlier (e.g., -100). We replaced these values with NaN, so that these outliers would not overwhelm the other analyses.
+
+The HVS-MaxPol code occasionally produces an error. The values for these media are also replaced with NaN.
 
 ## Analysis
 
@@ -49,6 +51,9 @@ HVS-MaxPol-1natural, HVS-MaxPol-1synthetic, and HVS-MaxPol-2synthetic are nearly
 
 HVS-MAxPol-2natural is very inaccurate for camera capture.  
 ```
+NRFF Group HVS-MaxPol
+
+--------------------------------------------------------------
 1) HVS-MaxPol-1natural 
 bid              corr =  0.36  rmse =  0.95  percentiles [ 5.17,10.80,12.22,13.46,15.86]
 ccriq            corr =  0.53  rmse =  0.87  percentiles [ 5.82,11.49,12.97,13.98,15.76]
@@ -59,9 +64,12 @@ LIVE-Wild        corr =  0.38  rmse =  0.76  percentiles [ 5.57,13.34,14.08,14.5
 its4s3           corr =  0.51  rmse =  0.65  percentiles [ 0.69,11.56,12.97,13.92,16.21]
 its4s4           corr =  0.73  rmse =  0.60  percentiles [ 5.35,10.02,11.87,12.75,15.11]
 konvid1k         corr =  0.39  rmse =  0.59  percentiles [ 3.29,11.62,12.98,13.75,16.07]
+its4s            corr =  0.43  rmse =  0.69  percentiles [ 5.27,11.97,13.08,14.01,  NaN]
+AGH-NTIA-Dolby   corr =  0.28  rmse =  1.08  percentiles [ 8.96,12.46,13.43,14.31,  NaN]
+vqegHDcuts       corr =  0.03  rmse =  0.89  percentiles [ 8.25,11.52,12.50,13.49,  NaN]
 
-average          corr =  0.49  rmse =  0.70
-pooled           corr =  0.42  rmse =  0.76  percentiles [ 0.69,12.13,13.47,14.33,  NaN]
+average          corr =  0.43  rmse =  0.75
+pooled           corr =  0.30  rmse =  0.84  percentiles [ 0.69,11.90,13.23,14.17,  NaN]
 
 
 --------------------------------------------------------------
@@ -75,9 +83,12 @@ LIVE-Wild        corr =  0.27  rmse =  0.77  percentiles [ 0.02, 5.89, 6.98, 7.8
 its4s3           corr =  0.32  rmse =  0.65  percentiles [ 0.14, 4.22, 6.01, 7.55,  NaN]
 its4s4           corr =  0.64  rmse =  0.66  percentiles [ 0.16, 2.85, 4.99, 7.53,  NaN]
 konvid1k         corr =  0.20  rmse =  0.60  percentiles [ 0.03, 4.78, 6.52, 7.83,  NaN]
+its4s            corr =  0.16  rmse =  0.76  percentiles [ 0.00, 4.92, 6.25, 7.47,  NaN]
+AGH-NTIA-Dolby   corr =  0.26  rmse =  1.09  percentiles [ 0.01, 4.43, 6.35, 7.53,  NaN]
+vqegHDcuts       corr =  0.03  rmse =  0.88  percentiles [ 0.02, 3.84, 5.68, 7.14,  NaN]
 
-average          corr =  0.38  rmse =  0.72
-pooled           corr =  0.30  rmse =  0.76  percentiles [ 0.01, 4.94, 6.66, 7.83,  NaN]
+average          corr =  0.32  rmse =  0.77
+pooled           corr =  0.19  rmse =  0.83  percentiles [ 0.00, 4.62, 6.37, 7.68,  NaN]
 
 
 --------------------------------------------------------------
@@ -91,9 +102,12 @@ LIVE-Wild        corr =  0.36  rmse =  0.76  percentiles [10.87,23.93,25.13,25.9
 its4s3           corr =  0.51  rmse =  0.65  percentiles [ 3.33,21.46,23.60,25.08,28.32]
 its4s4           corr =  0.74  rmse =  0.59  percentiles [11.08,19.05,21.90,23.40,26.97]
 konvid1k         corr =  0.39  rmse =  0.59  percentiles [ 7.62,21.30,23.41,24.63,28.08]
+its4s            corr =  0.45  rmse =  0.69  percentiles [11.28,22.08,23.79,25.34,  NaN]
+AGH-NTIA-Dolby   corr =  0.29  rmse =  1.08  percentiles [17.63,22.91,24.37,25.60,  NaN]
+vqegHDcuts       corr =  0.04  rmse =  0.89  percentiles [15.99,21.54,22.83,24.41,  NaN]
 
-average          corr =  0.47  rmse =  0.71
-pooled           corr =  0.40  rmse =  0.76  percentiles [ 3.33,22.36,24.37,25.66,  NaN]
+average          corr =  0.42  rmse =  0.76
+pooled           corr =  0.29  rmse =  0.84  percentiles [ 3.33,21.96,23.98,25.45,  NaN]
 
 
 --------------------------------------------------------------
@@ -107,9 +121,12 @@ LIVE-Wild        corr =  0.38  rmse =  0.76  percentiles [ 4.05, 7.63, 8.00, 8.2
 its4s3           corr =  0.51  rmse =  0.65  percentiles [ 2.21, 6.95, 7.53, 7.95, 8.87]
 its4s4           corr =  0.73  rmse =  0.60  percentiles [ 4.07, 6.21, 7.00, 7.48, 8.52]
 konvid1k         corr =  0.39  rmse =  0.59  percentiles [ 3.35, 6.87, 7.44, 7.80, 8.81]
+its4s            corr =  0.50  rmse =  0.67  percentiles [ 4.08, 7.05, 7.58, 7.99,  NaN]
+AGH-NTIA-Dolby   corr =  0.08  rmse =  1.12  percentiles [ 1.31, 7.34, 7.72, 8.10,  NaN]
+vqegHDcuts       corr =  0.03  rmse =  0.89  percentiles [ 5.26, 6.92, 7.28, 7.73,  NaN]
 
-average          corr =  0.48  rmse =  0.71
-pooled           corr =  0.41  rmse =  0.76  percentiles [ 2.21, 7.18, 7.76, 8.14,  NaN]
+average          corr =  0.41  rmse =  0.76
+pooled           corr =  0.28  rmse =  0.84  percentiles [ 1.31, 7.05, 7.63, 8.07,  NaN]
 ```
 ![](images/report_HVSMaxPol-1natural.png)
 ![](images/report_HVSMaxPol-2natural.png)

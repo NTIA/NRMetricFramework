@@ -33,9 +33,9 @@ elseif strcmp(mode, 'feature_names')
 % create NR parameter names
 elseif strcmp(mode, 'parameter_names')
 
-    data{1} = 'white level'; % 98% white level, clipped at 150 maximum, ignore black border.
+    data{1} = 'S-WhiteLevel'; % 98% white level, clipped at 150 maximum, ignore black border.
     
-    data{2} = 'black level'; % black level is too high; image whitewashed
+    data{2} = 'S-BlackLevel'; % black level is too high; image whitewashed
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % color space
@@ -123,6 +123,12 @@ elseif strcmp(mode, 'pars')
     % clip white level at 150 maximum
     data(1) = min(data(1), 150);
 
+    % Scale from native range to [0..1], where 0 = high quality and 1 = low quality.
+    % Lowest observed value, low quality, 16.86 for CID2013. We round down to 10.
+    % Highest observed value, high quality, 150 for most media
+    % So subtract 10 then divide by 140. Invert range.
+    data(1) = 1 - (data(1) - 10) / 140;
+    
     % Estimate whether the black level is too high, based on the standard
     % deviation of the luma image. This will also detect too dark images,
     % as per data(1), so we must invalidate this parameter when 

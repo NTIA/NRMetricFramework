@@ -6,16 +6,6 @@ function [data] = nrff_niqe(mode, varargin)
 % Calculates the NIQE score as detailed in the paper, "A. Mittal, R.
 % Soundararajan and A. C. Bovik, "Making a Completely Blind Image Quality Analyzer", submitted to IEEE Signal Processing Letters, 2012.
 % 
-% To calculate NIQE score, go to URL:
-% https://live.ece.utexas.edu/research/Quality/index_algorithms.htm 
-% and download the Naturalness Image Quality Evaluator (NIQE) code. Note
-% that there is an option to download code for IL-NIQE, which is NOT the
-% algorithm that was evaluated in this study. 
-%
-% Unzip the folder 'niqe_release' and place it in your MATLAB project path
-% to ensure that this function is able to access the proper variables
-% and functions
-%
 % SYNTAX & SEMANTICS
 %   See 'calculate_NRpars' for interface specifications.
 %

@@ -36,7 +36,7 @@ elseif strcmp(mode, 'feature_names')
 % create NR parameter names (mean over time)
 elseif strcmp(mode, 'parameter_names')
 
-    data{1} = 'unsharp';
+    data{1} = 'S-Blur';
     data{2} = 'viqet-sharpness';
     
 
@@ -184,14 +184,30 @@ elseif strcmp(mode, 'pars')
     data(1) = data(1) * scale_factor;
     
     % correct non-linearities
-    data = sqrt(data);
+    data(1) = sqrt(data(1));
     
+    % Scale from native range to [0..1], where 0 = sharp and 1 = maximum blur.
+    % cid2013_IS_VI_C01_D14 is totally black, yielding a value of zero. 
+    % Ignoring that flat image, the minimum is 0.55.
+    % The maximum currently observed is 3.16 from the CCRIQ dataset.
+    % So, we will subtract 0.5 and divide by 2.75 (3.16 - 0.5, rounded up). 
+    % Then we will clip at zero (set values below zero to zero)
+    
+    data(1) = 1 - max( 0, ( data(1) - 0.5) / 2.75);
     
     % VIQET sharpness. Scale laplacian edge strength by the spread of sobel
     % values. Regions with soft edges are expected to be more blurry.
     data(2) = nanmean(squeeze(feature_data{3})) ./ sqrt( max(1, nanmean(feature_data{4})));
     
     data(2) = sqrt( max(1, data(2)) );
+
+    % Scale from native range to [0..1], where 0 = sharp and 1 = maximum blur.
+    % The minimum observed is 1.0 from CID2013 (probably the same black
+    % image) and the maximum currently observed is 10.37 from the
+    % vqegHDcuts dataset. We will subtract 1 and divide by 9.5 (rounding
+    % up). However, everything above about 0.8 is outliers. 
+    
+    data(2) = 1 - ( data(2) - 1) / 9.5;
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 else

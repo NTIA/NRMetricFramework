@@ -50,7 +50,7 @@ This repository does not contain images and videos. See the [subjective datasets
 - [valid_region_search_nosafety.m](ValidRegionSearchNoSafety.md)
 
 ## Subjective Test Analysis
-- [analyze_lab2lab.m](AnalyzeLb2Lab.md)
+- [analyze_lab2lab.m](AnalyzeLab2Lab.md)
 
 ## NR Metrics and Reports 
 This repository includes (1) code for NR metrics developed by various organizations, and (2) reports that analyze their performance. 
@@ -61,31 +61,34 @@ Generally, 1-star metrics are very innacurate,
 4-star metrics are as accurate as one person, and
 5-star metrics are as accurate as a 6 person pilot test.
 
-### Our NR Metrics 
+### NR Metric Sawatch 
 
 The [Sawatch](ReportSawatch.md) NR metric was developed by NTIA using the NRMetricFramework repository. Sawatch estimates mean opinion score (MOS) via a linear combination of other NR metric parameters that supply root cause analysis (RCA). An online demo of Sawatch version 2 is available [here](https://vqwt.its.bldrdoc.gov/login.php).
 
 Metric Name|Goal|[Rating](Report.md)|Notes
 -----------|----|------|-----
-[Sawatch](ReportSawatch.md) version 2|MOS|:star: :star: :star:|NR metric training method demonstrated
-[Sawatch](ReportSawatch.md) version 1|MOS|:star: :star:|NR metric training method demonstrated
+[Sawatch](ReportSawatch.md) version 3|MOS|:star: :star: :star:|NR metric training method demonstrated
 
 Metric Name|Metric Group|Goal|[Rating](Report.md)
 -----------|------------|----|------
-White Level|[Auto Enhancement](ReportAutoEnhancement.md)|RCA|:star: :star: :star:
-Black Level|[Auto Enhancement](ReportAutoEnhancement.md)|RCA|:star: :star:
-Blockiness|[Blockiness](ReportBlockiness.md)|RCA|:star: :star:
-Unsharp|[Blur](ReportBlur.md)|RCA|:star: :star: :star:
-Viqet-Sharpness|[Blur](ReportBlur.md)|RCA|:star: :star: :star:
-Fine Detail|[Fine Detail](ReportFineDetail.md)|RCA|:star: :star: :star:
-PanIPS|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star:
-Color Noise|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
-Super Saturation|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
-Pallid|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
+S-WhiteLevel|[Auto Enhancement](ReportAutoEnhancement.md)|RCA|:star: :star: :star:
+S-BlackLevel|[Auto Enhancement](ReportAutoEnhancement.md)|RCA|:star: :star:
+S-Blockiness|[Blockiness](ReportBlockiness.md)|RCA|:star: :star:
+S-Blur|[Blur](ReportBlur.md)|RCA|:star: :star: :star:
+S-FineDetail|[Fine Detail](ReportFineDetail.md)|RCA|:star: :star: :star:
+S-ColorNoise|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
+S-SuperSaturated|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
+S-Pallid|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
+S-PanSpeed|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star:
+S-Jiggle|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star:
+S-dipIQ|[dipIQ](ReportdipIQ.md)|MOS|:star: :star:
 
-### Other Organizations' NR Metrics
+
+### Other NR Metrics
 
 The following pages provide objective and factual information on the performance of NR metrics from other organizations. These reports analyze the metric's performance on diverse media from modern camera systems. This is often outside of the metric's intended scope. See [Introduction](Report.md) for details. 
+
+This section also includes NR metrics we developed that are not included in the current version of NR metric Sawatch.
 
 Metric Name|Goal|[Rating](Report.md)|Notes
 -----------|----|------|------
@@ -108,19 +111,21 @@ Metric Name|Goal|[Rating](Report.md)|Impairment|Notes
 [ADMD](ReportADMD.md)|RCA|:star:|Uneven illumination| 
 [AGWN](ReportAGWN.md)|RCA|:star:|Noise|
 [CPBD](ReportCPBD.md)|RCA|:star: :star:|Blur/Sharpness|
+[dipIQ](ReportDipIQ.md)|RCA|:question:|Coding|dipIQ is intended for ORD, not RCA
 [Entropy_Noise](ReportEntropyNoise.md)|RCA|:star:|Noise|
 [HVS-MaxPol](ReportHVSMaxPol.md)|RCA|:star: :star:|Blur/Sharpness|4 variants, trained on 7 datasets, outliers prevent :star: :star: :star: rating
 [JNB](ReportJNB.md)|RCA|:star: :star:|Blur/Sharpness|Performance marred by resolution dependencies 
 [MaxPol](ReportMaxPol.md)|RCA|:star: :star:|Blur/Sharpness|Aka Synthetic-MaxPol, invalid values prevent :star: :star: :star: rating
+[Munsell_Red](ReportMunsellRed.md)|RCA|:star:|Red present|Complex relationship between metric and datasets
 [NR-PWN](ReportNRPWN.md)|RCA|:star: :star:|Noisiness|Performance marred by dataset dependencies
 [TDME](ReportTdme.md)|RCA|:star: :star: :star:|Contrast enhancement|
 [TDMEC](ReportTdmec.md)|RCA|:star: :star: :star:|Contrast enhancement|
+[Viqet-Sharpness](ReportBlur.md)|RCA|:star: :star: :star:|Blur Sharpness|
 
 
 Metric Name|Goal|[Rating](Report.md)|Notes
 -----------|----|------|------
-[dipIQ](ReportDipIQ.md)|ORD|:star: :star:|NR metric training method, statistics for ORD proposed
-
+[dipIQ](ReportDipIQ.md)|ORD|:question:|NR metric training method, statistics for ORD proposed
 
 ## Acknowledgements
 

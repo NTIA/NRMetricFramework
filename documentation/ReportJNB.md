@@ -24,23 +24,26 @@ This algorithm was not able to yield viable data for every image in the datasets
 ## Analysis
 The authors report 0.932 Pearson correlation between JNB and MOS for Gaussian blur and 0.881 Pearson correlation between JNB and MOS for JPEG2000 blur. These analyses use private datasets.
 
-The expected performance of JNB in [[22]](Publications.md) is as follows. "As the blurriness increases, the sharpness metric should decrease monotonically." We observe this behavior (i.e., JNB decreases for lower quality images). The correlation values are internally consistent (i.e., similar magnitude) but lower than observed in the alternate sharpness / blurriness metric, [blur](ReportBlur.md).
-
-The data are broadly scattered around a line. We expect this shape when RCA parameter detects a dominant factor (i.e., always relevant). Compare the scatter of blue dots (for the current dataset) with the green dots (that show the overall response of all datasets). 
+The expected performance of JNB in [[22]](Publications.md) is as follows. "As the blurriness increases, the sharpness metric should decrease monotonically." We observe this behavior (i.e., JNB decreases for lower quality images). The correlation values are internally consistent (i.e., similar magnitude) but lower than observed in the alternate sharpness/blurriness metric, [blur](ReportBlur.md).
 
 The scatter plots for different datasets have strongly different slopes when JNB is fitted to MOS. Compare the red lines that fit the current data (in blue). For example, the CCRIQ dataset contains 4K and HD images, and JNB yields very different values for these image resolutions. The bottom of this page splits the CCRIQ dataset into HD and 4K subsets, to visually demonstrate this issue.
 ```
---------------------------------------------------------------
 1) JNB 
-bid              corr =  0.18  rmse =  1.00  percentiles [ 2.78, 6.82,10.02,13.45,34.21]
-ccriq            corr =  0.21  rmse =  1.00  percentiles [ 3.88,13.01,21.14,32.46,108.51]
-cid2013          corr =  0.17  rmse =  0.88  percentiles [ 5.68,13.61,16.11,19.23,  NaN]
-C&V              corr =  0.15  rmse =  0.71  percentiles [ 5.38, 7.70, 9.84,12.93,17.45]
-its4s2           corr =  0.16  rmse =  0.73  percentiles [ 2.27, 9.09,12.20,15.81,40.31]
-LIVE-Wild        corr =  0.32  rmse =  0.78  percentiles [ 0.68, 2.29, 2.98, 3.69, 7.85]
+bid              corr =  0.18  rmse =  1.00  false decisions =  28%  percentiles [ 2.78, 6.82,10.02,13.45,34.21]
+ccriq            corr =  0.21  rmse =  1.00  false decisions =  29%  percentiles [ 3.88,13.01,21.14,32.46,108.51]
+cid2013          corr =  0.17  rmse =  0.88  false decisions =  23%  percentiles [ 5.68,13.61,16.11,19.23,  NaN]
+C&V              corr =  0.15  rmse =  0.71  false decisions =  25%  percentiles [ 5.38, 7.70, 9.84,12.93,17.45]
+its4s2           corr =  0.16  rmse =  0.73  false decisions =  25%  percentiles [ 2.27, 9.09,12.20,15.81,40.31]
+LIVE-Wild        corr =  0.32  rmse =  0.78  false decisions =  22%  percentiles [ 0.68, 2.29, 2.98, 3.69, 7.85]
+its4s3           corr =  0.05  rmse =  0.76  false decisions =  28%  percentiles [ 3.66, 9.76,12.65,17.02,  NaN]
+its4s4           corr =  0.13  rmse =  0.87  false decisions =  30%  percentiles [ 5.88,10.34,13.86,19.54,32.49]
+konvid1k         corr =  0.12  rmse =  0.64  false decisions =  23%  percentiles [ 1.59, 3.47, 4.67, 6.20,  NaN]
+its4s            corr =  0.17  rmse =  0.76  false decisions =  26%  percentiles [ 2.38, 5.78, 7.35, 9.31,  NaN]
+AGH-NTIA-Dolby   corr =  0.10  rmse =  1.12  false decisions =  38%  percentiles [ 4.12, 5.97, 7.61, 9.68,  NaN]
+vqegHDcuts       corr =  0.10  rmse =  0.89  false decisions =  29%  percentiles [ 5.06, 9.82,11.71,14.05,  NaN]
 
-average          corr =  0.20  rmse =  0.85
-pooled           corr =  0.01  rmse =  0.88  percentiles [ 0.68, 4.57,10.85,16.15,  NaN]
+average          corr =  0.15  rmse =  0.84
+pooled           corr =  0.05  rmse =  0.87  percentiles [ 0.68, 5.87,10.01,14.11,  NaN]
 ```
 ![](images/report_JNB.png)
 

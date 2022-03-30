@@ -8,7 +8,8 @@ Goal | Metric Name|Rating
 -----|------------|------
 RCA  | MaxPol | :star: :star: 
 
-__R&D Potential__: MaxPol produces invalid results and outliers for a few images. These issues prevent a :star: :star: :star: rating.  
+__R&D Potential__: If the invalid results and outliers produced by MaxPol for certain images could be resolved, this metric could have a :star: :star: :star: rating for the User Generated Content (UGC) use case.
+  
 
 ## Algorithm Summary
 
@@ -29,9 +30,9 @@ In [[43]](Publications.md), the authors provide an overall assessment of 0.9735 
 and 0.9412 Pearson Correlation between MaxPol and MOS for the TID2013 [[34]](Publications.md).
 The authors also perform a noise sensitivity analysis. 
 
-This report evaluates MaxPol using six image quality datasets that contain camera impairments. 
-The scatter plots have a lower triangle shape (i.e., narrow range of values for high quality, wide range of values for low quality). We expect this shape when an impairment occurs sporadically. This meets our expectations for a sharpness metric.
+For the UGC use case, the scatter plots have a lower triangle shape (i.e., narrow range of values for high quality, wide range of values for low quality). We expect this shape when an impairment occurs sporadically. This meets our expectations for a sharpness metric.
 The CID2013 and C&V scatter plots lack this lower triangle shape but fall within the area of the other datasets. 
+MaxPol is very inaccurate for the broadcaster use case (datasets ITS4S, AGH/NTIA/Dolby, and vqegHDcuts).
 
 MaxPol has two problems. First, some media failed to produce valid estimates. We assigned not-a-number (NaN) to these media. Second, CID2013 has an outlier at MaxPol = 100. These issues prevent a :star: :star: :star: rating.
 ```
@@ -45,8 +46,11 @@ LIVE-Wild        corr =  0.35  rmse =  0.76  percentiles [-226.35,-207.03,-200.5
 its4s3           corr =  0.46  rmse =  0.65  percentiles [-224.82,-208.06,-198.12,-182.25,  NaN]
 its4s4           corr =  0.57  rmse =  0.72  percentiles [-221.35,-204.76,-193.58,-183.17,  NaN]
 konvid1k         corr =  0.25  rmse =  0.58  percentiles [-229.33,-202.89,-191.54,-170.99,  NaN]
+its4s            corr =  0.11  rmse =  0.77  percentiles [-230.36,-208.07,-199.85,-190.49,  NaN]
+AGH-NTIA-Dolby   corr =  0.09  rmse =  1.08  percentiles [-215.94,-203.91,-196.26,-179.50,  NaN]
+vqegHDcuts       corr =  0.16  rmse =  0.87  percentiles [-229.32,-204.99,-195.92,-183.64,  NaN]
 
-average          corr =  0.38  rmse =  0.75
-pooled           corr =  0.33  rmse =  0.78  percentiles [-229.33,-207.23,-198.48,-184.85,  NaN]
+average          corr =  0.31  rmse =  0.79
+pooled           corr =  0.20  rmse =  0.85  percentiles [-230.36,-206.90,-198.06,-184.84,  NaN]
 ```
 ![](images/report_maxpol.png)

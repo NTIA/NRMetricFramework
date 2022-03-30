@@ -1,8 +1,10 @@
-function [blocks] = divide_100_blocks(rows, cols, extra)
+function [blocks] = divide_100_blocks(rows, cols, extra_row, extra_col)
 % divide_100_blocks
 %   Choose blocks that divide an image / video
 % SYNTAX
-%   [blocks] = divide_100_blocks(rows, cols, cvr)
+%   [blocks] = divide_100_blocks(rows, cols)
+%   [blocks] = divide_100_blocks(rows, cols, extra)
+%   [blocks] = divide_100_blocks(rows, cols, extra_row, extra_col)
 % SEMANTICS
 %  The idealized goal is to divide the image into 100 squares. This
 %  function makes compromises, based on the realities of an uneven valid
@@ -13,8 +15,11 @@ function [blocks] = divide_100_blocks(rows, cols, extra)
 % Input variables
 %   'rows'
 %   'cols'          Size of the image displayed on the monitor.
-%   'extra'         Extra number of pixels, for length and height, to add
-%                   around all blocks.
+%   'extra_row'     Extra number of pixels, above and below, must be available
+%                   around all blocks. Defaults to 0.
+%   'extra_col'     Extra number of pixels, left and right, must be available
+%                   around all blocks. Defaults to 0.
+%   'extra'         Special case: extra_row = extra_col.
 %
 % Output variables
 %   'blocks'            An array length N, each element a structure 
@@ -25,7 +30,28 @@ function [blocks] = divide_100_blocks(rows, cols, extra)
 %   'blocks().bottom'   Bottom row of the block
 %   'blocks().right'    Right column of the block
 
+    % Check input arguments. Default to zero extra pixels above/below and
+    % left/right.
+    if nargin == 3
+        extra_col = extra_row;
+    elseif nargin == 2
+        extra_col = 0;
+        extra_row = 0;
+    end
+    if nargin < 2
+        error('Must specify number of rows and columns in the image');
+    end
+    
+    if rows < 20 || cols < 20 || extra_row < 0 || extra_col < 0
+        error('Invalid request');
+    end
+    
+
 %% ------------------------------------------------------------------------
+    % discard the extra rows and columns from the total
+    rows = rows - 2 * extra_row;
+    cols = cols - 2 * extra_col;
+
     % Find number of pixels per side of a box that would divide image into 100 boxes 
     box_pixels = sqrt((rows * cols) / 100); 
     
@@ -58,24 +84,24 @@ function [blocks] = divide_100_blocks(rows, cols, extra)
     num_vert = option(want).num_vert;
     
     % figure out pixels per block
-    qrow = floor((rows - extra)/num_vert);
-    qcol = floor((cols - extra)/num_horiz);
+    qrow = floor(rows/num_vert);
+    qcol = floor(cols/num_horiz);
     
 %% ------------------------------------------------------------------------
 
     blk = 1;
     for cnt1=0:num_vert-1
         for cnt2=0:num_horiz-1
-            blocks(blk).top    = 1 + extra + qrow * cnt1;
-            blocks(blk).left   = 1 + extra + qcol * cnt2;
-            blocks(blk).bottom = 1 + extra + qrow * (cnt1+1) - 1;
-            blocks(blk).right  = 1 + extra + qcol * (cnt2+1) - 1;
+            blocks(blk).top    = 1 + extra_row + qrow * cnt1;
+            blocks(blk).left   = 1 + extra_col + qcol * cnt2;
+            blocks(blk).bottom = 1 + extra_row + qrow * (cnt1+1) - 1;
+            blocks(blk).right  = 1 + extra_col + qcol * (cnt2+1) - 1;
 
             if cnt1 == num_vert-1
-                blocks(blk).bottom = rows - extra;
+                blocks(blk).bottom = rows + extra_row;
             end
             if cnt2 == num_horiz-1
-                blocks(blk).right = cols - extra;
+                blocks(blk).right = cols + extra_col;
             end
             blocks(blk).pixels = (blocks(blk).right - blocks(blk).left + 1) * ...
                 (blocks(blk).bottom - blocks(blk).top + 1);
@@ -86,9 +112,12 @@ function [blocks] = divide_100_blocks(rows, cols, extra)
 
 %% ------------------------------------------------------------------------
 
+    
+
 %     % debug print
 %     fprintf('Image %d x %d\n', rows, cols);
-%     fprintf('Extra = %d\n', extra);
+%     fprintf('Extra_row = %d\n', extra_row);
+%     fprintf('Extra_col = %d\n', extra_col);
 %     
 %     num_blocks = num_vert * num_horiz;
 %     for blk = 1:num_blocks

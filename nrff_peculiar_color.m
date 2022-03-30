@@ -37,9 +37,9 @@ elseif strcmp(mode, 'feature_names')
 % create NR parameter names (mean over time)
 elseif strcmp(mode, 'parameter_names')
 
-    data{1} = 'ColorNoise';
-    data{2} = 'SuperSaturated';
-    data{3} = 'Pallid';
+    data{1} = 'S-ColorNoise';
+    data{2} = 'S-SuperSaturated';
+    data{3} = 'S-Pallid';
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,6 +133,10 @@ elseif strcmp(mode, 'pars')
         % negative trend for other datasets).
         data(1) = min(data(1), 0.90);
     end
+    
+    % Scale from native range to [0..1], where 0 = high quality and 1 = low quality.
+    % Thus, we must divide by the 
+    data(1) = 1 - data(1) / 0.9; 
 
     
     data(2) = mean(sat(:));

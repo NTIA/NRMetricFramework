@@ -99,3 +99,11 @@ assessment metrics," _Adv. Mod. Radioelectronics_, 10, 30–45 (2009).
 
 [45] Jayant Kumar, Peng Ye and D. Doermann. "A Dataset for Quality Assessment of Camera Captured Document Images." International Workshop on Camera-Based Document Analysis and Recognition (CBDAR), pp. 39-44, August 2013.
 
+[46] Margaret H. Pinson, "[ITS4S: A Video Quality Dataset with Four-Second Unrepeated Scenes](https://www.its.bldrdoc.gov/publications/details.aspx?pub=3194)," NTIA Technical Memo TM-18-532, February 2018. 
+
+[47] Margaret H. Pinson; Samuel Elting, "ITS4S4: A Video Quality Study of Camera Pans," NTIA Technical Memo TM-20-545, December 2019.
+
+[48] Margaret H. Pinson; Stephen Wolf, "A new standardized method for objectively measuring video quality," _IEEE Transactions on Broadcasting_, vol.50, no.3, pp. 312-322, Sept. 2004 doi: 10.1109/TBC.2004.834028 
+
+[49]  Margaret H. Pinson, "[A missing factor in objective video quality models: A study of color](https://www.its.bldrdoc.gov/publications/details.aspx?pub=2786)," Ninth International Workshop on Video Processing and Quality Metrics for Consumer Electronics - VPQM 2015, Chandler, AZ, February 5-6, 2015.
+ 

@@ -25,7 +25,7 @@ elseif strcmp(mode, 'feature_names')
 % create NR parameter names (mean over time)
 elseif strcmp(mode, 'parameter_names')
 
-    data{1} = 'blockiness';
+    data{1} = 'S-Blockiness';
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,6 +113,14 @@ elseif strcmp(mode, 'pars')
     end
     
     data(1) = mean(hold1); 
+    
+    % Scale from native range to [0..1], where 0 = sharp and 1 = maximum blur.
+    % minimum value is zero (0), meaning high quality
+    % maximum observed value is 0.21 for AGH/NTIA/Dolby dataset
+    % round this up for scaling, and invert. Thus, multiply by 4.5 instead
+    % of dividing by 0.2222 repeating.
+    data(1) = data(1) * 4.5;
+
    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
