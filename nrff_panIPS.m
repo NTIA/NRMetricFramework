@@ -8,300 +8,377 @@ function [data] = nrff_panIPS(type, varargin)
 %   if the image travels all the way across the 1920 pixels it will have a
 %   horizontal IPS value of 1.
 %
-%   Parameter #7, PanSpeed, is the most robust estimation of pan quality.
-%   Parameter #8, PanSpeedNN, is an alternative that includes a neural
-%                 network. Performance is inferior to PanSpeed.
-%   Parameters #1 to #6 are other estimates of pan speed and jiggle that
-%                 fed into the development of PanSpeed and PanSpeedNN
+%   Parameter #1, PanSpeed, is the original estimation of pan quality.
+%   Parameter #3, PanSpeed2, is an updated estimation of pan quality that
+%                 is designed to complement parameter #2, Jiggle.
 %
 % SYNTAX & SEMANTICS
 %   See 'calculate_NRpars' for interface specifications.
 %
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% overall name of this group of NR features
-if strcmp(type, 'group')
-    data = 'panIPS';
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % overall name of this group of NR features
+    if strcmp(type, 'group')
+        data = 'panIPS';
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% create NR feature names
-elseif strcmp(type, 'feature_names') 
-   
-    data{1} = 'VertShift';
-    data{2} = 'HorizShift';
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % create NR feature names
+    elseif strcmp(type, 'feature_names') 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% create NR parameter names
-elseif strcmp(type, 'parameter_names')
-   
-	data = {'Pan-PrimaryMean', 'Pan-SecondaryMean', 'Pan-PrimaryStD', 'Pan-PrimaryMin',...
-        'Pan-PrimaryMedian', 'Pan-DPrimaryMean', 'PanSpeed', 'PanSpeedNN'};
-    
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% color space
-elseif strcmp(type, 'luma_only')
-    data = true;
+        data{1} = 'VertShift2';
+        data{2} = 'HorizShift2';
+        data{3} = 'VertBlocks';
+        data{4} = 'HoriBlocks';
+        data{5} = 'TrustBlocks';
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% calculate with overlapping two frames
-elseif strcmp(type, 'read_mode')
-    data = 'ti';
 
-        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-elseif strcmp(type, 'pixels')
-    fps = varargin{1};
-    if isnan(fps)
-        fps = 0;
-    end
-    y = varargin{2};
-    
-    y1 = y(:,:,1);
-    y2 = y(:,:,2);
-    
-    [row,col,frames] = size(y);
-    if frames ~= 2
-        error('This feature must be given exactly 2 frames in the "pixels" function call');
-    end
-    
-    %Divide frame one into three portions and calculate meaningful values
-    row6 = round(row/6);
-    col6 = round(col/6);
-    
-    vt1 = y1(1*row6,:);
-    ht1 = y1(:,1*col6);
-    vmean1 = mean(vt1);
-    vst1 = std(vt1);
-    vmed1 = median(vt1);
-    hmean1 = mean(ht1);
-    hst1 = std(ht1);
-    hmed1 = median(ht1);
 
-    vt2 = y1(2*row6,:);
-    ht2 = y1(:,2*col6);
-    vmean2 = mean(vt2);
-    vst2 = std(vt2);
-    vmed2 = median(vt2);
-    hmean2 = mean(ht2);
-    hst2 = std(ht2);
-    hmed2 = median(ht2);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % create NR parameter names
+    elseif strcmp(type, 'parameter_names')
 
-    vt3 = y1(3*row6,:);
-    ht3 = y1(:,3*col6);
-    vmean3 = mean(vt3);
-    vst3 = std(vt3);
-    vmed3 = median(vt3);
-    hmean3 = mean(ht3);
-    hst3 = std(ht3);
-    hmed3 = median(ht3);
-    
-    vt4 = y1(4*row6,:);
-    ht4 = y1(:,4*col6);
-    vmean4 = mean(vt4);
-    vst4 = std(vt4);
-    vmed4 = median(vt4);
-    hmean4 = mean(ht4);
-    hst4 = std(ht4);
-    hmed4 = median(ht4);
-    
-    vt5 = y1(5*row6,:);
-    ht5 = y1(:,5*col6);
-    vmean5 = mean(vt5);
-    vst5 = std(vt5);
-    vmed5 = median(vt5);
-    hmean5 = mean(ht5);
-    hst5 = std(ht5);
-    hmed5 = median(ht5);
-    
-    %Calculate the same values for entire second frame
-    Nvmean = mean(y2,2);
-    Nvstd = std(y2,0,2);
-    Nvmed = median(y2,2);
-    Nhmean = mean(y2,1);
-    Nhstd = std(y2,0,1);
-    Nhmed = median(y2,1);
-    
-    %Find the positions of the values associated with first frame in the
-    %second frame. Note, the weights should be 2*mean + 3*std + 2*median.
-    [~,vpos1] = min(2*abs(Nvmean(:) - vmean1) + 3 * abs(Nvstd(:) - vst1) +...
-        + 2 * abs(Nvmed(:) - vmed1));
-    [~,hpos1] = min(2*abs(Nhmean(:) - hmean1) + 3 * abs(Nhstd(:) - hst1) +...
-        2 * abs(Nhmed(:) - hmed1));
-    [~,vpos2] = min(2*abs(Nvmean(:) - vmean2) + 3 * abs(Nvstd(:) - vst2) +...
-        + 2 * abs(Nvmed(:) - vmed2));
-    [~,hpos2] = min(2*abs(Nhmean(:) - hmean2) + 3 * abs(Nhstd(:) - hst2) +...
-        2 * abs(Nhmed(:) - hmed2));
-    [~,vpos3] = min(2*abs(Nvmean(:) - vmean3) + 3 * abs(Nvstd(:) - vst3) +...
-        + 2 * abs(Nvmed(:) - vmed3));
-    [~,hpos3] = min(2*abs(Nhmean(:) - hmean3) + 3 * abs(Nhstd(:) - hst3) +...
-        2 * abs(Nhmed(:) - hmed3));
-    [~,vpos4] = min(2*abs(Nvmean(:) - vmean4) + 3 * abs(Nvstd(:) - vst4) +...
-        + 2 * abs(Nvmed(:) - vmed4));
-    [~,hpos4] = min(2*abs(Nhmean(:) - hmean4) + 3 * abs(Nhstd(:) - hst4) +...
-        2 * abs(Nhmed(:) - hmed4));
-    [~,vpos5] = min(2*abs(Nvmean(:) - vmean5) + 3 * abs(Nvstd(:) - vst5) +...
-        + 2 * abs(Nvmed(:) - vmed5));
-    [~,hpos5] = min(2*abs(Nhmean(:) - hmean5) + 3 * abs(Nhstd(:) - hst5) +...
-        2 * abs(Nhmed(:) - hmed5));
-    
-    %Calculate the IPS value from the change and take the median value of
-    %the three
-    iv = zeros(5,1);
-    ih = zeros(5,1);
-    iv(1,1) = (row6-vpos1)*fps/row;
-    iv(2,1) = (2*row6-vpos2)*fps/row;
-    iv(3,1) = (3*row6-vpos3)*fps/row;
-    iv(4,1) = (4*row6-vpos4)*fps/row;
-    iv(5,1) = (5*row6-vpos5)*fps/row;
-    ih(1,1) = (col6-hpos1)*fps/col;
-    ih(2,1) = (2*col6-hpos2)*fps/col;
-    ih(3,1) = (3*col6-hpos3)*fps/col;
-    ih(4,1) = (4*col6-hpos4)*fps/col;
-    ih(5,1) = (5*col6-hpos5)*fps/col;
-    
-    bigv = abs(iv(:,1)) > 3;
-    bigh = abs(ih(:,1)) > 3;
-    
-    iv(bigv == 1) = NaN;
-    ih(bigh == 1) = NaN;
-    
-    data{1} = nanmedian(iv);
-    data{2} = nanmedian(ih);
-    
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-elseif strcmp(type, 'pars')
-    
-    feature_data = varargin{1,1};
+        data = {'S-PanSpeed', 'S-Jiggle'};
 
-    % rename features with meaningful names
-    vert = feature_data{1};
-    horiz = feature_data{2};
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % color space
+    elseif strcmp(type, 'luma_only')
+        data = true;
 
-    % turn off warning for 0-by-0 matrix returning NaN
-    warning('off','MATLAB:mode:EmptyInput');
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % calculate with overlapping two frames
+    elseif strcmp(type, 'read_mode')
+        data = 'ti';
 
-    % Remove noise if value should be zero
-    if nanmedian(vert) == 0
-        vert(:) = 0;
-    end
-    
-    if nanmedian(horiz) == 0
-        horiz(:) = 0;
-    end
-    
-    % Remove outliers from data
-    TF = isoutlier(horiz, 'quartiles');
-    horiz(TF == 1) = NaN;
-    TF = isoutlier(vert, 'quartiles');
-    vert(TF == 1) = NaN;
-    
-    %Calculate stats in horizontal and vertical direction
-    HorizMean = transpose(nanmean(abs(horiz)));
-    VertMean = transpose(nanmean(abs(vert)));
-    HorizStD = transpose(nanstd(horiz));
-    VertStD = transpose(nanstd(vert));
-    HorizMin = HorizMean - HorizStD;
-    VertMin = VertMean - VertStD;
-    HorizMedian = transpose(nanmedian(horiz));
-    VertMedian = transpose(nanmedian(vert));
 
-    %Calculate the derivatives of the stats
-    Dhoriz = diff(horiz);
-    Dvert = diff(vert);
-    
-    DHorizMean = transpose(nanmean(abs(Dhoriz)));
-    DVertMean = transpose(nanmean(abs(Dvert)));
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    elseif strcmp(type, 'pixels')
+        fps = varargin{1};
+        y = varargin{2};
 
-    %Transfer horizontal values into primary and secondary directions
-    PrimaryMean = (HorizMean.^2 + VertMean.^2).^(1/2);
-    PrimaryStD = (HorizStD.^2 + VertStD.^2).^(1/2);
-    PrimaryMin = (HorizMin.^2 + VertMin.^2).^(1/2);
-    PrimaryMedian = (HorizMedian.^2 + VertMedian.^2).^(1/2);
-    DPrimaryMean = (DHorizMean.^2 + DVertMean.^2).^(1/2);
+        y1 = y(:,:,1);
+        y2 = y(:,:,2);
 
-    acalc = @(x,y) x.*sin(atan(y./x)).*(x~=0);
-
-    SecondaryMean = acalc(HorizMean,VertMean);
-    
-    %Necessary Parameters
-    data(1,1) = PrimaryMean;
-    data(1,2) = SecondaryMean;
-    data(1,3) = PrimaryStD;
-    data(1,4) = PrimaryMin;
-    data(1,5) = PrimaryMedian;
-    data(1,6) = DPrimaryMean;
-    
-    
-    %Quality Predictions
-    [LinearQuality, NeuralQuality] = predictQuality(PrimaryMin,...
-        PrimaryMedian,DPrimaryMean);
-    data(1,7) = LinearQuality;
-    data(1,8) = NeuralQuality;
-    
-    % replace NaN with no impairment.
-    for cnt=1:6
-        if isnan(data(cnt))
-            data(cnt) = 0;
+        [~,~,frames] = size(y);
+        if frames ~= 2
+            error('This feature must be given exactly 2 frames in the "pixels" function call');
         end
+
+        % Calculate alignment using 100 blocks, random subsampling of pixels
+        [vertIPS, horizIPS, vert_blocks, horiz_blocks, trust_blocks] = AlignImages(y1, y2, fps);
+
+        data{1} = vertIPS;
+        data{2} = horizIPS;
+        data{3} = vert_blocks;
+        data{4} = horiz_blocks;
+        data{5} = trust_blocks;
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    elseif strcmp(type, 'pars')
+
+        feature_data = varargin{1};
+        fps = varargin{2};
+
+        % this is an image, so FPS is undefined. 
+        % Return "no motion" and "no jiggle".
+        if isnan(fps)
+            data(1,1:2) = 0;
+            return;
+        end
+
+        % rename features with meaningful names
+        frame_vert2  = feature_data{1};
+        frame_horiz2 = feature_data{2};
+        block_vert   = feature_data{3}; % subscripts: (frames, 1, blocks)
+        block_horiz  = feature_data{4}; % subscripts: (frames, 1, blocks)
+        block_trust  = feature_data{5}; % subscripts: (frames, 1, blocks)
+
+        % Compute jiggle from the updated horizontal & vertical shifts
+
+        % calculating over 0.2 seconds of frames at a time
+        % but make sure it is a multiple of 2 and at least 4 frames.
+        addF = ceil(fps / 5);   
+        addF = max(addF, 4);
+        addF = addF + mod(addF,2);
+        totalF = size(frame_horiz2,1);
+        total = ceil(totalF / addF);
+
+        meanV = zeros(1,total);
+        meanH = zeros(1,total);
+        meanV2 = zeros(1,total);
+        meanH2 = zeros(1,total);
+
+        stdHV = zeros(1,total);
+
+        % for each 0.2 second, compute a different estimate
+        for cntS = 1:total
+            frame1 = 1 + (cntS-1) * addF;
+            frameN = addF + (cntS-1) * addF;
+            frameN = min(totalF, frameN);
+
+            % Estimate pan speed using average horizontal and vertical
+            % motion. NaN shifts are ignored.
+
+            meanV(cntS) = nanmean(frame_vert2(frame1:frameN));
+            meanH(cntS) = nanmean(frame_horiz2(frame1:frameN));
+
+            segV = block_vert(frame1:frameN,:);
+            segH = block_horiz(frame1:frameN,:);
+            segT = block_trust(frame1:frameN,:);
+            tmpV = ones(1,size(segH,2));
+            tmpH = ones(1,size(segH,2));
+            for cntB = 1:size(segH,2)
+                tmp = segT(:,cntB);
+                want = tmp < 0.05;
+                tmpV(cntB) = nanmean(segV(want,cntB));
+                tmpH(cntB) = nanmean(segH(want,cntB));
+            end
+            meanV2(cntS) = st_statistic('between25%75%', tmpV);
+            meanH2(cntS) = st_statistic('between25%75%', tmpH);
+
+            % estimate jiggle based on standard deviation of horizontal and
+            % vertical motion. 
+
+            % But ... we need to eliminate the impact of frames digitally repeated 
+            % frame rate conversions. Compression can add noise to repeated frames, 
+            % which will cause stdHV to be erroneously high (e.g., time history of 
+            % [0.1 5 0.2 6 0.1 5 0.1 5 0.2 5 0.1 6]. 
+
+            % Start by eliminating situations where there is too little data.
+            % Need 4 frames to get 2 sequential values, combining horizontal
+            % and vertical then yields enough values to compute standard deviation. 
+            if (frameN - frame1 + 1) < 4
+                stdHV(cntS) = nan;
+                break;
+            end
+
+            % compute std three ways: every frame, every other frame starting
+            % on frame 1, and every other frame starting on frame 2.
+            % This will only catch 2x frame reductions. It will fail on slower
+            % frame speed reductions, and 3-2 pulldown.
+            segH2 = frame_horiz2(frame1:2:frameN);
+            segH3 = frame_horiz2(frame1+1:2:frameN);
+
+            segV2 = frame_vert2(frame1:2:frameN);
+            segV3 = frame_vert2(frame1+1:2:frameN);
+
+            option2 = nanstd([ segH2 - mean(segH2); segV2 - mean(segV2) ]);
+            option3 = nanstd([ segH3 - mean(segH3); segV3 - mean(segV3) ]);
+
+            % choose among estimates.
+            stdHV(cntS) = max(option2, option3);    
+
+        end
+
+        data(1,2) = st_statistic('below50%', stdHV);
+
+        % Replace undefined parameters with zero (no jiggle)
+        if isnan(data(1,2))
+            data(1,2) = 0;
+        end
+
+        % if the features contains only nan, then there is no motion. 
+        if isnan(nanmean(meanH)) || isnan(nanmean(meanV))
+            data(1,1) = 0;
+        else
+            % calculate pan speed as euclidean distance, but weight the horizontal
+            % more than the vertical, and use only the 50% slowest of above estimates. 
+            temp = sqrt( 2 * st_statistic('below50%', abs(meanH))^2 + ...
+                st_statistic('below50%', abs(meanV))^2);
+            data(1,1) = sqrt(temp / sqrt(fps));
+        end
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    else
+        error('Mode not recognized. Aborting.');
     end
-    if isnan(data(7))
-        data(7) = 0.94884970353605 * 3.34 + 1.5; % approximately 4.67;
+end
+
+
+
+
+function [vertIPS, horizIPS, iv, ih, itrust] = AlignImages(y1, y2, fps)
+% This code efficiently aligns images y1 and y2 (subsequent frames).
+% Also requires the frame rate (fps).
+%
+% Returns the vertical and horizontal shift in pixels (try_row and try_col)
+% and also the vertical and horizontal shift in image per second (vertIPS
+% and horizIPS). Identical images are ignored, because these can result
+% from 3-2 pulldown or frame rate conversions, which perceptually do not
+% appear as movement. The remaining portions of the video are used as the
+% basis of calculation. Note that for analog systems, these situations can
+% produce small differences that will not be detected by this simple test,
+% and therefore the overall metric can be "misled" to conclude more jiggle
+% than is actually present. 
+%
+% return value "trust" analyzes the reliability of the shift estimate.
+
+    % compute size of these images. Assume check performed already on y2
+    % size being equal to y1 size.
+    [row,col] = size(y1);
+    
+    % figure out how far of a shift we will try to detect. Based on studies
+    % of bodycams moving quickly, we expect objects to move up to 
+    % the full screen each 1/3 second. 
+    max_col_shift = ceil(col * 3 / fps);
+    max_row_shift = ceil(row * 3 / fps);
+    
+    % limit these maximums, for very low frame rate video (e.g., 1 fps)
+    max_col_shift = min(max_col_shift, floor(col / 4));
+    max_row_shift = min(max_row_shift, floor(row / 4));
+
+    % discarding a border of that size, divide the rest of the image into
+    % 100 roughly equal sized blocks.
+    [blocks] = divide_100_blocks(row, col, max_row_shift, max_col_shift);
+
+    % If this is an image, fps == 0. Handle this special case.
+    if isnan(fps)
+        vertIPS = 0;
+        horizIPS = 0;
+        iv = zeros(1,length(blocks));
+        ih = zeros(1,length(blocks));
+        itrust = zeros(1,length(blocks));
+        return;
     end
-    if isnan(data(8))
-        data(8) = 4.42;
+
+    % new algorithm to compute shift of each block 
+    [ihpixel, ivpixel, itrust] = spatial_registration_block(y1, y2, blocks, max_col_shift, max_row_shift);
+
+    % scale for image per second
+    iv = ivpixel .* fps ./ row;
+    ih = ihpixel .* fps ./ col;
+    
+    % Take the median value of the block estimates.
+    vertIPS = nanmedian(iv);
+    horizIPS = nanmedian(ih);
+
+end
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [h_shift, v_shift, trust_blocks] = spatial_registration_block(y1, y2, blocks, max_col_shift, max_row_shift)
+% calculate the horizontal shift (h_shift) and vertical shift (v_shift)
+% estimate for approximately 100 blocks (blocks) of two subsequent images 
+% (y1 and y2). The maximum shift searched is max_col_shift horizontally and
+% max_row_shift vertically.
+%
+% The returned shift estimates can be nan. This occurs if y1 and y2 are
+% digitally identical, or for regions where there is too little texture.
+% 
+% returned value "trust" is a fraction that indicates reliability of the
+% shift, based on how much smaller the figure of merit is for the best
+% shift examined, compared to the figure of merit for the worst shift
+% examined.
+
+    h_shift = zeros(1, length(blocks));
+    v_shift = zeros(1, length(blocks));
+    trust_blocks = zeros(1, length(blocks));
+    
+    % Compute spatial registration for each block of one image.
+    for cntB = 1:length(blocks)
+        % random search.
+        best_col = 0;
+        best_row = 0;
+        best_value = inf;
+        worst_value = -inf;
+
+        values = zeros(2*max_col_shift+1,2*max_row_shift+1);
+        values(:,:) = NaN;
+
+        % choose 0.2% of pixels at random from this block in image y1. 
+        % Keep at least 20 pixels, to ensure robust calculation
+        % this approx the 0.2% of pixels expected in a block from 
+        % HDTV (1920 x 1080) frames.
+        list = randperm(blocks(cntB).pixels);
+        keep_num = max(20, round(length(list)/500));
+        list = list(1:keep_num); 
+
+        % extract these 0.2% pixels from y1
+        this_block = y1(blocks(cntB).top:blocks(cntB).bottom,blocks(cntB).left:blocks(cntB).right);        
+        y1_pixels = this_block(list);
+        
+        % if there is too little spread of pixel values, then don't use
+        % this block. Still video when compressed is observed to have
+        % std(y) values around 1.1, The default threshold (5) is chosen to
+        % be generously above that.
+        if std(y1_pixels) < 5
+            v_shift(cntB) = nan;
+            h_shift(cntB) = nan;
+            trust_blocks(cntB) = 0;
+            continue;
+        end
+        
+
+        % try to find optimal alignment in 500 tries.
+        random_tries = 500;
+        loop = 1;
+        while loop <= random_tries
+
+            % Always start with (0,0) shift, to make sure this likely
+            % alignment is checked.
+            if loop == 1
+                try_col = 0;
+                try_row = 0;
+
+            % for the first 20% of tries, use a flat distribution
+            % to randomly search over all possibilities.
+            elseif loop < random_tries / 5
+                try_col = round( -max_col_shift + (2 * max_col_shift + 2) * rand );
+                try_row =  round( -max_row_shift + (2 * max_col_shift + 2) * rand );
+                
+            % Then, weight more near best result found so far.  
+            else
+                try_col = best_col + round( 2 * randn );
+                try_row = best_row + round( 2 * randn );
+            end
+
+            % If this point is out of the legal range, choose again.
+            if abs(try_col) > max_col_shift || abs(try_row) > max_row_shift 
+                continue;
+            end
+            
+            % check whether this shift has been computed already.
+            if ~isnan( values(try_col + max_col_shift + 1, try_row + max_row_shift + 1) )
+                loop = loop + 1;
+                continue;
+            end
+
+            % extract the shifted 0.2% pixels from y2
+            this_block = y2(try_row+(blocks(cntB).top:blocks(cntB).bottom),...
+                try_col+(blocks(cntB).left:blocks(cntB).right));  
+            y2_pixels = this_block(list);
+
+            % compute the standard deviation of the difference between
+            % pixel sets. This is the figure of merit for finding optimal
+            % shift.
+            curr_value = std( y1_pixels - y2_pixels );
+            values(try_col + max_col_shift + 1, try_row + max_row_shift + 1) = curr_value;
+
+            % Keep track of the best and worst shift found.
+            if curr_value < best_value
+                best_col = try_col;
+                best_row = try_row;
+                best_value = curr_value;
+            elseif curr_value > worst_value
+                worst_value = curr_value;
+            end
+
+            loop = loop + 1;
+        end
+
+        v_shift(cntB) = best_row;
+        h_shift(cntB) = best_col;
+        
+        % compute the trustworthiness of this shift, based on the figure of
+        % merit for the best and worst shifts found. Avoid small divisors
+        % exploding this trust estimate.
+        trust_blocks(cntB) = best_value / max(1, worst_value); 
+    
     end
     
-    for cnt=1:length(data)
-    end
-    
-    % turn on warning for 0-by-0 matrix returning NaN
-    warning('on','MATLAB:mode:EmptyInput');
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-else
-    error('Mode not recognized. Aborting.');
-end
 end
 
 
-function [LQuality, NQuality] = predictQuality(pmin,pmed,dpm)
-% Normalize Inputs
-pmin = (pmin/1.40625).^(0.5);
-pmed = (pmed/1.775).^(0.5);
-dpm = dpm/0.9751738202;
 
-% Calculate Linear Quality
-lnq = -0.604179930075768*pmin-0.223849446288641*pmed...
-    -0.285468123932075*dpm + 0.94884970353605;
-
-% Calculate Neural Quality
-% Declare Constants
-tansig = @(n) 2./(1 + exp(-2*n)) - 1;
-
-% Declare constants
-bias1 = [-3.1347922649972059794;3.7038189823761369368;1.9383579789823972561;-3.0988236950766618882;2.177894159837903576;1.720094013802780708;-0.35251774905806787519;-0.138959535300914927;-0.16570668805449922933;0.015759194963006928347;1.3421026190717677551;0.12740487569771280496;-2.0573966098053082519;-3.5101774426799110529;2.8034396449727210232;3.969314941073709857];
-weights1 = [3.5671461262933452652 0.065218799567553664698 -0.61685071400501489958;-0.046405599843009126548 2.3594865503118604977 1.7856820525382857134;-0.98623428972404925119 -2.6916059979987800865 -2.0244310437956509752;2.7751797214200371045 -0.55427250298391206318 -2.0982853533867542595;-2.4709524567081695423 -1.4429503108716144055 -3.2902999358758462378;-2.3225487882660020844 3.5482098606938605734 0.9498235641628882675;-3.296850150384603495 -1.5526248521941181657 1.2796799421884210712;2.3374410035803254715 -2.7756793235473979919 -0.49143408027799012627;-2.5435529629202640045 1.5998010368311130769 -1.886462050211862751;-2.3279693338046292261 -1.4466313041444072152 -2.39663307227767719;0.073877720545727318391 3.6148167624419551558 0.30471158265414227673;2.7116268920397224029 -2.2515576485868180612 -1.9241797166194944957;-2.0428143601828678833 2.5198606187941825496 -1.5929982321391205069;-2.8015070158530521738 -0.050887120748909546453 -2.5304758400888793801;0.82982836248299673976 2.3509607139176269541 2.654870500589652238;2.9965148571608897221 2.4006711217962650728 2.4527298112041808764];
-
-bias2 = -0.19906189095081011642;
-weights2 = [-0.38378084367706521984 1.4774368627611402793 -0.93914726080990873491 0.68920453255421376682 1.279188325212890609 -1.6514198718533388277 0.43671155315939624852 -1.0331492420564793999 -0.71381495914883918985 0.37914589959271338682 0.13005596698555690893 0.52912375092692387479 -0.52238387390894880369 1.4006488878055392 -0.35410327711760830605 1.0943732368000742561];
-
-% Solve network
-X = [pmin,pmed,dpm];
-X = X';
-X1 = X.*[2;2.14405497643192;2] - 1;
-
-L1 = tansig(bias1 + weights1*X1);
-L2 = bias2 + weights2*L1;
-
-Y = (L2+1)/2;
-nnq = Y';
-
-% Denormalize Outputs
-LQuality = lnq*3.34 + 1.5;
-NQuality = nnq*3.34 + 1.5;
-end

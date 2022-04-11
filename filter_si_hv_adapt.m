@@ -82,6 +82,15 @@ function [si, hv, hvb, angle] = filter_si_hv_adapt(y, filter_size, extra, vararg
     %  is given by: w(x) = k*(x/c)*exp{-(1/2)*(x/c)^2}, where x = {-6, -5, ..., 5, 6}, 
     %  and k is a normalization constant chosen such that this filter produces the same 
     %  amplitude response on an H V edge as the Sobel filter.
+    
+    % Lines 95 to 105 contain optimized code. When re-implementing this
+    % function in another programming language, we recommend you replace
+    % lines 95 to 105 with the following code. This performs the same
+    % function, differing only by a small amount of rounding error.
+    %
+    % filter_mask = filter_h(filter_size);
+    % horiz = conv2(y,filter_mask,'same');
+    % vert = conv2(y,filter_mask','same');
 
     %  Generate the filter_size long filter mask, in one dimension.
     filter_mask = filter_h(filter_size);

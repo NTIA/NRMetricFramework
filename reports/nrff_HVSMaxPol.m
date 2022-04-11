@@ -43,25 +43,32 @@ function [data] = nrff_HVSMaxPol(mode, varargin)
             % scores 1 and 2 used the 'natural' form and scores 3 and 4 used
             % the 'synthetic' form
 
-            % scores 1 and 3 were used with one kernel and scores 2 and 4 were
-            % used with two kernels
-            y = varargin{2};
-            load 'HVS_MaxPol_kernel.mat';
-            params_HVS_MaxPol.kernel_sheets = selected_sheets;
-            params_HVS_MaxPol.type = 'natural';
-            params_HVS_MaxPol.numKernel = 1;
-            score_1 = HVS_MaxPol(y, params_HVS_MaxPol);
-            params_HVS_MaxPol.numKernel = 2;
-            score_2 = HVS_MaxPol(y, params_HVS_MaxPol);
-            params_HVS_MaxPol.type = 'synthetic';
-            params_HVS_MaxPol.numKernel = 1;
-            score_3 = HVS_MaxPol(y, params_HVS_MaxPol);
-            params_HVS_MaxPol.numKernel = 2;
-            score_4 = HVS_MaxPol(y, params_HVS_MaxPol);
-            data{1,1} = score_1;
-            data{1,2} = score_2;
-            data{1,3} = score_3;
-            data{1,4} = score_4;
+            try
+                % scores 1 and 3 were used with one kernel and scores 2 and 4 were
+                % used with two kernels
+                y = varargin{2};
+                load 'HVS_MaxPol_kernel.mat';
+                params_HVS_MaxPol.kernel_sheets = selected_sheets;
+                params_HVS_MaxPol.type = 'natural';
+                params_HVS_MaxPol.numKernel = 1;
+                score_1 = HVS_MaxPol(y, params_HVS_MaxPol);
+                params_HVS_MaxPol.numKernel = 2;
+                score_2 = HVS_MaxPol(y, params_HVS_MaxPol);
+                params_HVS_MaxPol.type = 'synthetic';
+                params_HVS_MaxPol.numKernel = 1;
+                score_3 = HVS_MaxPol(y, params_HVS_MaxPol);
+                params_HVS_MaxPol.numKernel = 2;
+                score_4 = HVS_MaxPol(y, params_HVS_MaxPol);
+                data{1,1} = score_1;
+                data{1,2} = score_2;
+                data{1,3} = score_3;
+                data{1,4} = score_4;
+            catch
+                data{1,1} = nan;
+                data{1,2} = nan;
+                data{1,3} = nan;
+                data{1,4} = nan;
+            end
         case 'pars'
             feature_data = varargin{1,1};
             data(1) = mean(feature_data{1});

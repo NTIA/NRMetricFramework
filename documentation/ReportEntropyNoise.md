@@ -29,16 +29,22 @@ NRFF Group entropy_noise
 
 --------------------------------------------------------------
 1) entropy_noise 
+bid              corr = -0.00  rmse =  1.01  false decisions =  35%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+ccriq            corr =  0.00  rmse =  1.02  false decisions =  39%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+cid2013          corr =  0.00  rmse =  0.90  false decisions =  35%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+C&V              corr =  0.00  rmse =  0.72  false decisions =  30%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+its4s2           corr =  0.00  rmse =  0.74  false decisions =  31%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+LIVE-Wild        corr = -0.00  rmse =  0.82  false decisions =  32%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+its4s3           corr = -0.00  rmse =  0.76  false decisions =  32%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+its4s4           corr = -0.00  rmse =  0.88  false decisions =  35%  percentiles [-0.00,-0.00,-0.00, 0.00, 0.00]
+konvid1k         corr = -0.00  rmse =  0.64  false decisions =  29%  percentiles [-0.00,-0.00,-0.00, 0.00, 0.00]
+its4s            corr = -0.00  rmse =  0.77  false decisions =  33%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+AGH-NTIA-Dolby   corr =  0.00  rmse =  1.13  false decisions =  37%  percentiles [-0.00,-0.00,-0.00, 0.00, 0.00]
+vqegHDcuts       corr = -0.00  rmse =  0.89  false decisions =  33%  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
 
-bid              corr = -0.00  rmse =  1.01  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
-ccriq            corr =  0.00  rmse =  1.02  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
-cid2013          corr =  0.00  rmse =  0.90  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
-C&V              corr =  0.00  rmse =  0.72  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
-its4s2           corr =  0.00  rmse =  0.74  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
-LIVE-Wild        corr = -0.00  rmse =  0.82  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
-
-average          corr = -0.00  rmse =  0.87
+average          corr = -0.00  rmse =  0.86
 pooled           corr = -0.00  rmse =  0.88  percentiles [-0.00,-0.00, 0.00, 0.00, 0.00]
+
 ```
 ![](images/report_entropy_noise.png)
 

@@ -29,7 +29,7 @@ elseif strcmp(mode, 'feature_names')
 % create NR parameter names (mean over time)
 elseif strcmp(mode, 'parameter_names')
 
-    data{1} = 'FineDetail';
+    data{1} = 'S-FineDetail';
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +75,12 @@ elseif strcmp(mode, 'pars')
     
     % Pearson correlation squared, so R-squared
     data(1) = ( nanmean(squeeze(feature_data{1})) )^2;
+    
+    % Minimum observed value is 0.01 for vqegHDcuts (high quality)
+    % maximum observed value is 1.0 for cid2013
+    % no rescaling needed. Already in range [0..1] where 0 = high quality
+    % and 1 = low quality
+    
 
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

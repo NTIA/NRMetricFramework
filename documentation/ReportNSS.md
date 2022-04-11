@@ -31,47 +31,63 @@ The authors report 0.9096 Pearson correlation between NSS_CID and MOS for the CI
 
 NSS CID2013, NSS_CSIQ, and NSS_TID do not respond well to diverse content and camera impairments. The correlations are low and metric values are associated with the full range of MOSs.
 ```
---------------------------------------------------------------
-1) nss_cid
-bid              corr =  0.17  rmse =  1.00  percentiles [ 2.06, 2.24, 2.42, 2.49, 2.54]
-ccriq            corr =  0.12  rmse =  1.01  percentiles [ 2.06, 2.11, 2.32, 2.47, 2.54]
-cid2013          corr =  0.03  rmse =  0.90  percentiles [ 2.06, 2.29, 2.45, 2.51,  NaN]
-C&V              corr =  0.20  rmse =  0.70  percentiles [ 2.06, 2.28, 2.41, 2.49, 2.54]
-its4s2           corr =  0.17  rmse =  0.73  percentiles [ 2.06, 2.22, 2.41, 2.49, 2.54]
-LIVE-Wild        corr =  0.21  rmse =  0.80  percentiles [ 2.06, 2.26, 2.42, 2.49, 2.54]
+1) nss_cid 
+bid              corr =  0.17  rmse =  1.00  false decisions =  32%  percentiles [ 2.06, 2.24, 2.42, 2.49, 2.54]
+ccriq            corr =  0.12  rmse =  1.01  false decisions =  32%  percentiles [ 2.06, 2.11, 2.32, 2.47, 2.54]
+cid2013          corr =  0.03  rmse =  0.90  false decisions =  33%  percentiles [ 2.06, 2.29, 2.45, 2.51,  NaN]
+C&V              corr =  0.20  rmse =  0.70  false decisions =  25%  percentiles [ 2.06, 2.28, 2.41, 2.49, 2.54]
+its4s2           corr =  0.17  rmse =  0.73  false decisions =  26%  percentiles [ 2.06, 2.22, 2.41, 2.49, 2.54]
+LIVE-Wild        corr =  0.21  rmse =  0.80  false decisions =  27%  percentiles [ 2.06, 2.26, 2.42, 2.49, 2.54]
+its4s3           corr =  0.25  rmse =  0.73  false decisions =  23%  percentiles [ 2.06, 2.10, 2.30, 2.45,  NaN]
+its4s4           corr =  0.17  rmse =  0.87  false decisions =  29%  percentiles [ 2.06, 2.28, 2.40, 2.46, 2.53]
+konvid1k         corr =  0.31  rmse =  0.61  false decisions =  20%  percentiles [ 2.06, 2.19, 2.36, 2.46, 2.54]
+its4s            corr =  0.05  rmse =  0.77  false decisions =  30%  percentiles [ 2.06, 2.21, 2.37, 2.48,  NaN]
+AGH-NTIA-Dolby   corr =  0.00  rmse =  1.13  false decisions =  37%  percentiles [ 2.06, 2.18, 2.34, 2.44,  NaN]
+vqegHDcuts       corr =  0.12  rmse =  0.89  false decisions =  29%  percentiles [ 2.06, 2.16, 2.34, 2.46,  NaN]
 
-average          corr =  0.15  rmse =  0.86
-pooled           corr =  0.16  rmse =  0.87  percentiles [ 2.06, 2.22, 2.41, 2.49,  NaN]
+average          corr =  0.15  rmse =  0.84
+pooled           corr =  0.13  rmse =  0.87  percentiles [ 2.06, 2.19, 2.38, 2.48,  NaN]
 ```
 ![](images/report_nss_cid.png)
 
 ```
---------------------------------------------------------------
-2) nss_csiq
-bid              corr =  0.16  rmse =  1.00  percentiles [ 0.61, 0.63, 0.65, 0.70, 0.74]
-ccriq            corr =  0.10  rmse =  1.01  percentiles [ 0.62, 0.63, 0.68, 0.73, 0.74]
-cid2013          corr =  0.01  rmse =  0.90  percentiles [ 0.62, 0.62, 0.64, 0.69,  NaN]
-C&V              corr =  0.18  rmse =  0.71  percentiles [ 0.62, 0.63, 0.65, 0.69, 0.74]
-its4s2           corr =  0.16  rmse =  0.73  percentiles [ 0.61, 0.63, 0.65, 0.71, 0.74]
-LIVE-Wild        corr =  0.20  rmse =  0.80  percentiles [ 0.61, 0.63, 0.65, 0.70, 0.74]
+2) nss_csiq 
+bid              corr =  0.16  rmse =  1.00  false decisions =  40%  percentiles [ 0.61, 0.63, 0.65, 0.70, 0.74]
+ccriq            corr =  0.10  rmse =  1.01  false decisions =  39%  percentiles [ 0.62, 0.63, 0.68, 0.73, 0.74]
+cid2013          corr =  0.01  rmse =  0.90  false decisions =  36%  percentiles [ 0.62, 0.62, 0.64, 0.69,  NaN]
+C&V              corr =  0.18  rmse =  0.71  false decisions =  34%  percentiles [ 0.62, 0.63, 0.65, 0.69, 0.74]
+its4s2           corr =  0.16  rmse =  0.73  false decisions =  34%  percentiles [ 0.61, 0.63, 0.65, 0.71, 0.74]
+LIVE-Wild        corr =  0.20  rmse =  0.80  false decisions =  38%  percentiles [ 0.61, 0.63, 0.65, 0.70, 0.74]
+its4s3           corr =  0.25  rmse =  0.73  false decisions =  40%  percentiles [ 0.61, 0.64, 0.68, 0.73,  NaN]
+its4s4           corr =  0.15  rmse =  0.87  false decisions =  40%  percentiles [ 0.62, 0.64, 0.65, 0.69, 0.74]
+konvid1k         corr =  0.29  rmse =  0.61  false decisions =  37%  percentiles [ 0.62, 0.64, 0.66, 0.71, 0.74]
+its4s            corr =  0.06  rmse =  0.77  false decisions =  34%  percentiles [ 0.61, 0.63, 0.66, 0.71,  NaN]
+AGH-NTIA-Dolby   corr =  0.00  rmse =  1.13  false decisions =  36%  percentiles [ 0.62, 0.64, 0.68, 0.72,  NaN]
+vqegHDcuts       corr =  0.12  rmse =  0.89  false decisions =  37%  percentiles [ 0.61, 0.64, 0.67, 0.72,  NaN]
 
-average          corr =  0.13  rmse =  0.86
-pooled           corr =  0.15  rmse =  0.87  percentiles [ 0.61, 0.63, 0.65, 0.71,  NaN]
+average          corr =  0.14  rmse =  0.85
+pooled           corr =  0.12  rmse =  0.87  percentiles [ 0.61, 0.63, 0.66, 0.71,  NaN]
+
 ```
 ![](images/report_nss_csiq.png)
 
 ```
---------------------------------------------------------------
-3) nss_tid
-bid              corr =  0.21  rmse =  0.99  percentiles [ 4.52, 4.57, 4.65, 4.85, 5.03]
-ccriq            corr =  0.12  rmse =  1.01  percentiles [ 4.52, 4.62, 4.74, 4.98, 5.03]
-cid2013          corr =  0.03  rmse =  0.90  percentiles [ 4.53, 4.57, 4.61, 4.72,  NaN]
-C&V              corr =  0.19  rmse =  0.71  percentiles [ 4.52, 4.61, 4.66, 4.75, 5.03]
-its4s2           corr =  0.19  rmse =  0.73  percentiles [ 4.52, 4.58, 4.65, 4.85, 5.03]
-LIVE-Wild        corr =  0.22  rmse =  0.80  percentiles [ 4.52, 4.58, 4.65, 4.81, 5.03]
+3) nss_tid 
+bid              corr =  0.21  rmse =  0.99  false decisions =  41%  percentiles [ 4.52, 4.57, 4.65, 4.85, 5.03]
+ccriq            corr =  0.12  rmse =  1.01  false decisions =  40%  percentiles [ 4.52, 4.62, 4.74, 4.98, 5.03]
+cid2013          corr =  0.03  rmse =  0.90  false decisions =  34%  percentiles [ 4.53, 4.57, 4.61, 4.72,  NaN]
+C&V              corr =  0.19  rmse =  0.71  false decisions =  33%  percentiles [ 4.52, 4.61, 4.66, 4.75, 5.03]
+its4s2           corr =  0.19  rmse =  0.73  false decisions =  35%  percentiles [ 4.52, 4.58, 4.65, 4.85, 5.03]
+LIVE-Wild        corr =  0.22  rmse =  0.80  false decisions =  38%  percentiles [ 4.52, 4.58, 4.65, 4.81, 5.03]
+its4s3           corr =  0.25  rmse =  0.73  false decisions =  40%  percentiles [ 4.52, 4.63, 4.79, 5.00,  NaN]
+its4s4           corr =  0.15  rmse =  0.87  false decisions =  40%  percentiles [ 4.53, 4.60, 4.68, 4.81, 5.03]
+konvid1k         corr =  0.29  rmse =  0.61  false decisions =  37%  percentiles [ 4.52, 4.62, 4.71, 4.88, 5.03]
+its4s            corr =  0.08  rmse =  0.77  false decisions =  34%  percentiles [ 4.52, 4.60, 4.70, 4.90,  NaN]
+AGH-NTIA-Dolby   corr =  0.02  rmse =  1.13  false decisions =  37%  percentiles [ 4.53, 4.64, 4.74, 4.95,  NaN]
+vqegHDcuts       corr =  0.12  rmse =  0.89  false decisions =  36%  percentiles [ 4.52, 4.63, 4.74, 4.95,  NaN]
 
-average          corr =  0.16  rmse =  0.86
-pooled           corr =  0.17  rmse =  0.87  percentiles [ 4.52, 4.58, 4.66, 4.86,  NaN]
+average          corr =  0.16  rmse =  0.84
+pooled           corr =  0.13  rmse =  0.87  percentiles [ 4.52, 4.60, 4.69, 4.91,  NaN]
 ```
 ![](images/report_nss_tid.png)
 

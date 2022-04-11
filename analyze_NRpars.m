@@ -10,7 +10,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
 %   This analysis intentionally omits verification stimuli.
 %
 % Input Parameters:
-%   nr_dataset          Data struction. Each describes an entire dataset (name, file location, ...)
+%   nr_dataset          Data structure. Each describes an entire dataset (name, file location, ...)
 %   base_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
@@ -28,6 +28,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
 %                   Category 2 cannot be selected, this analysis is
 %                   inherently part of the training process. 
 %                   nr_dataset must contain only one dataset.
+%   'false',        Print the estimated percent of false decisions            
 %   'info',         List category options for the dataset(s) but don't analyze.
 %   'outlier',      List the worst outliers
 %   'par', N,       Only analyze the Nth parameter (identified by number)
@@ -42,6 +43,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
     do_category = nan;
     do_outlier = false;
     do_merge = false;
+    do_false = false;
     
     preproc_message = '';
 
@@ -62,6 +64,9 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             do_sqrt = true;
             cnt = cnt + 1;
             preproc_message = [preproc_message ' square root'];
+        elseif strcmpi(varargin{cnt},'false')
+            do_false = true;
+            cnt = cnt + 1;
         elseif strcmpi(varargin{cnt},'square')
             do_square = true;
             cnt = cnt + 1;
@@ -242,12 +247,12 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             subnum = ceil(length(nr_dataset) / 3); 
             for dcnt = 1:length(nr_dataset)
                 subplot(3, subnum, dcnt);
-                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
+                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, do_false);
             end
         else
             do_subplot = false;
             for dcnt = 1:length(nr_dataset)
-                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
+                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, do_false);
             end
         end
 
@@ -256,7 +261,9 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
         fprintf('average          corr = %5.2f  rmse = %5.2f\n', mean(corr,'omitnan'), mean(rmse,'omitnan'));
         if length(nr_dataset) ~= 1
             do_subplot = false;
-            analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message);
+            % Don't print false decisions even if requested. The statistic 
+            % invalid for pooled datasets.
+            analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, false);
             fprintf('\n\n');
         end
         
@@ -273,12 +280,12 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
                 subnum = ceil(length(options) / 3); 
                 for ccnt = 1:length(options)
                     subplot(3, subnum, ccnt);
-                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message);
+                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false);
                 end
             else
                 do_subplot = false;
                 for ccnt = 1:length(options)
-                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message);
+                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false);
                 end
             end
         end
@@ -296,7 +303,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             fprintf('Outliers\n\n');
             fprintf('%d) %s %s\n', pcnt, NRpars(1).par_name{pcnt}, preproc_message);
             for dcnt = 1:length(nr_dataset)
-                analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, false, false, false, true, all_datasets, NRpars_all, 2, nan, preproc_message);
+                analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, false, false, false, true, all_datasets, NRpars_all, 2, nan, preproc_message, do_false);
             end
  
             if ~isnan(do_category)
@@ -305,7 +312,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
                     fprintf('\n\n');
                     fprintf('Outliers by %s = %s\n\n', nr_dataset.category_name{do_category}, options(ccnt));
                     analyze_par_dataset(nr_dataset, NRpars, pcnt, ...
-                        false, false, false, true, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message);
+                        false, false, false, true, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false);
                 end
             end
 
@@ -315,7 +322,7 @@ end
 
 
 function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_print, do_plot, do_subplot, do_outliers, ...
-    all_dataset, all_NRpars, is_category, is_level, preproc_message)
+    all_dataset, all_NRpars, is_category, is_level, preproc_message, do_false)
 
     % pick off training media for this parameter and dataset
     subset = [one_dataset.media(:).category2] == categorical({'train'});
@@ -396,8 +403,14 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         values = sort(one_NRpars.data(pcnt,subset),'ascend');
         offset = max(1, round([0 0.25 0.5 0.75 1] * length(values)));
         values = values(offset);
-        fprintf('%-15s  corr = %5.2f  rmse = %5.2f  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', test_name, ...
-            corr, rmse, values(1), values(2), values(3), values(4), values(5)); 
+        if do_false
+            fr = false_decisions(ydata, xdata(:,2));
+            fprintf('%-15s  corr = %5.2f  rmse = %5.2f  false decisions = %3d%%  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', test_name, ...
+                corr, rmse, round(fr * 100), values(1), values(2), values(3), values(4), values(5)); 
+        else
+            fprintf('%-15s  corr = %5.2f  rmse = %5.2f  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', test_name, ...
+                corr, rmse, values(1), values(2), values(3), values(4), values(5)); 
+        end
     end
 
     if do_plot

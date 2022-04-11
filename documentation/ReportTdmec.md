@@ -1,4 +1,4 @@
-# Report on Transform Domain Measure of Enhancement Color(TDMEC)
+# Report on Transform Domain Measure of Enhancement Color (TDMEC)
 
 _Go to [Report.md](Report.md) for an introduction to this series of NR metric reports, including their purpose, important warnings, the rating scale, and details of the statistical analysis._ 
 
