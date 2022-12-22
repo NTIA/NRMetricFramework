@@ -154,7 +154,7 @@ function nr_dataset = make_empty_dataset(dataset_name, display_rows, display_col
 
     %% ------------------------------------------------------------------------
     % establish basic structure. Fill out detail later.
-    nr_dataset.test = dataset_name;
+    nr_dataset.dataset_name = dataset_name;
     nr_dataset.path = ' ';
     nr_dataset.media = media;
     nr_dataset.is_mos = true;
@@ -164,7 +164,7 @@ function nr_dataset = make_empty_dataset(dataset_name, display_rows, display_col
     nr_dataset.category_name = category_name;
     nr_dataset.miscellaneous = {};
     nr_dataset.sujson_file = '';
-    nr_dataset.version = 1.0;
+    nr_dataset.version = 2.0;
 
 end
 
@@ -174,8 +174,46 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
         directory = [directory '\'];
     end
     nr_dataset.path = directory;
-    file_list = dir(directory);
-    
+    % iterate through all sub-folders and files in the directory
+    root_file_list = dir(directory); 
+    file_list = [];
+    for cnt=1:length(root_file_list)
+        if root_file_list(cnt).isdir
+
+            if isequal(root_file_list(cnt).name , '.') || isequal(root_file_list(cnt).name , '..')
+                continue;
+            end
+
+            sub_folder_list = dir([directory root_file_list(cnt).name]);
+                        
+            for cnt2 = 1:length(sub_folder_list)
+                           
+                file_name = append(root_file_list(cnt).name, '\', sub_folder_list(cnt2).name);
+                if isequal(sub_folder_list(cnt2).name , '.') || isequal(sub_folder_list(cnt2).name , '..') || sub_folder_list(cnt2).isdir
+                    continue;
+                end
+                end_element = length(file_list) + 1;
+                
+                file_list(end_element).name = file_name;
+                file_list(end_element).folder = sub_folder_list(cnt2).folder;
+                file_list(end_element).date = sub_folder_list(cnt2).date;
+                file_list(end_element).bytes = sub_folder_list(cnt2).bytes;
+                file_list(end_element).isdir = sub_folder_list(cnt2).isdir;
+                file_list(end_element).datenum = sub_folder_list(cnt2).datenum;
+
+            end
+        else
+            %add logic to add the file to the file_list struct
+            end_element = length(file_list) + 1;
+            file_list(end_element).name = root_file_list(cnt).name;
+            file_list(end_element).folder = root_file_list(cnt).folder;
+            file_list(end_element).date = root_file_list(cnt).date;
+            file_list(end_element).bytes = root_file_list(cnt).bytes;
+            file_list(end_element).isdir = root_file_list(cnt).isdir;
+            file_list(end_element).datenum = root_file_list(cnt).datenum;
+        end
+    end
+
     default_media = nr_dataset.media(1);
     
     fprintf('Initializing new dataset from media in %s\n', directory);
@@ -190,11 +228,11 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
     
     media_num = 1;
     for cnt=1:length(file_list)
-        % ignore directories
+        % ignore directories in sub-folders
         if file_list(cnt).isdir
             continue;
         end
-        
+        file_path = [nr_dataset.path file_list(cnt).name]; 
         can_read = false;
         
         % initialize valid rgion
@@ -206,7 +244,7 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
         
         % is this an image?
         try
-            y = imread([directory '\' file_list(cnt).name]);
+            y = imread(file_path); 
             can_read = true;
         catch
         end
@@ -214,7 +252,7 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
         % yes. Fill in rest of image info
         if can_read
             nr_dataset.media(media_num) = default_media;
-            nr_dataset.media(media_num).file = strtrim(file_list(cnt).name);
+            nr_dataset.media(media_num).file = strtrim(file_list(cnt).name); 
             nr_dataset.media(media_num).start = 1;
             nr_dataset.media(media_num).stop = 1;
             nr_dataset.media(media_num).fps = nan;
@@ -263,8 +301,8 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
                 throw('not AVI');
             end
 
-            info = read_avi('info',[directory '\' file_list(cnt).name]);
-            y = read_avi('YCbCr',[directory '\' file_list(cnt).name], 'frames',1,1);
+            info = read_avi('info',file_path);
+            y = read_avi('YCbCr',file_path, 'frames',1,1);
             can_read = true;
         catch
         end
@@ -312,7 +350,7 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
 
         % is this a video that we'll read with MATLAB function VideoReader?
         try
-            v = VideoReader([directory '\' file_list(cnt).name]);
+            v = VideoReader(file_path);
             can_read = true;
         catch
         end
@@ -333,12 +371,13 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             start = round(v.CurrentTime * v.FrameRate);
             stop = start;
 
-            is_valid = true;
+            is_valid = false; 
             % Check for frame. Noted duration may be wrong. Also, function
             % "hasFrame" says "yes" when it should say "no" on the last
             % frame, when looping by +1 frame (read twice). 
             maxwindow_vec = ones(4,1);
             while hasFrame(v) && v.CurrentTime + 1/v.FrameRate < v.Duration
+                is_valid = true; 
                 rgb = readFrame(v);
                 stop = stop + 1;
                 
@@ -371,10 +410,10 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             
             % record end condition
             % This should theoretically ignore the first and last frame
-            % This is because matlab occasionally loses the first and last
+            % This is because MATLAB occasionally loses the first and last
             % frame so ignore them.
-            nr_dataset.media(media_num).start = start + 1/v.FrameRate;
-            nr_dataset.media(media_num).stop = stop - 1/v.FrameRate;
+            nr_dataset.media(media_num).start = ceil(start + 1/v.FrameRate);
+            nr_dataset.media(media_num).stop = floor(stop - 1/v.FrameRate);
             nr_dataset.media(media_num).fps = v.FrameRate;
 
             % record valid region 
@@ -386,10 +425,15 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
             % make sure can read the first and last image, using this
             % structure
             try
+                start = nr_dataset.media(media_num).start;
                 read_media ('frames', nr_dataset, media_num, start, start);
+
+                stop = nr_dataset.media(media_num).stop;
                 read_media ('frames', nr_dataset, media_num, stop, stop);
             catch
-                error('file %s duration mismatch, critical file read error', [directory '\' file_list(cnt).name]);
+                %error('file %s duration mismatch, critical file read error', [directory file_list(cnt).name]);
+                warning('File %s cannot be read; discarding', file_list(cnt).name);
+                continue;
             end
 
             
@@ -422,16 +466,17 @@ function nr_dataset = import_dataset_new(directory, nr_dataset)
     
     
 
-    % note file name, best guess at clip name(File name blank in blank datasets)
+    % note file name, best guess at clip name(File name blank in blank
+    % datasets) 
     for media_num = 1:length(nr_dataset.media)
         fname = nr_dataset.media(media_num).file;
         if ~isempty(fname)
             locn = strfind(fname,'.');
             locn = locn(length(locn));
-            if locn > length(nr_dataset.test) && strcmpi(fname(1:length(nr_dataset.test)), nr_dataset.test)
+            if locn > length(nr_dataset.dataset_name) && contains(fname, nr_dataset.dataset_name)
                 nr_dataset.media(media_num).name = strtrim(fname(1:locn-1));
             else
-                nr_dataset.media(media_num).name = strtrim([nr_dataset.test '_' fname(1:locn-1)]);
+                nr_dataset.media(media_num).name = strtrim([nr_dataset.dataset_name '_' fname(1:locn-1)]);
             end
             
         end
@@ -460,13 +505,13 @@ function nr_dataset = import_dataset_spreadsheet(spreadsheet, nr_dataset)
     % read Dataset
     
     [~,~,raw] = xlsread(spreadsheet,'Dataset');
-    if ~strcmp(raw{1,1},'test') || ~strcmp(raw{2,1},'path') || ~strcmp(raw{3,1},'is_mos') || ...
+    if ~strcmp(raw{1,1},'dataset_name') || ~strcmp(raw{2,1},'path') || ~strcmp(raw{3,1},'is_mos') || ...
             ~strcmp(raw{4,1},'mos range') || ~strcmp(raw{5,1},'raw_mos range') || ...
             ~strcmp(raw{6,1},'miscellaneous') || ~strcmp(raw{7,1},'sujson_file') || ~strcmp(raw{8,1},'version')
         error('Spreadsheet format incorrect, page "Dataset". ');
     end
 
-    nr_dataset.test = raw{1,2};
+    nr_dataset.dataset_name = raw{1,2};
     nr_dataset.path = raw{2,2};
     if nr_dataset.path(length(nr_dataset.path)) ~= '\'
         nr_dataset.path = [nr_dataset.path '\'];

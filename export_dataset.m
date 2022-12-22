@@ -223,8 +223,8 @@ function export_dataset(nr_dataset, filename)
     % write high level summary of whole test
     
     clear xlsdata;
-    xlsdata{1,1} = 'test';
-    xlsdata{1,2} = nr_dataset.test;
+    xlsdata{1,1} = 'dataset_name';
+    xlsdata{1,2} = nr_dataset.dataset_name;
     xlsdata{2,1} = 'path';
     xlsdata{2,2} = nr_dataset.path;
     xlsdata{3,1} = 'is_mos';

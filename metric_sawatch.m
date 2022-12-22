@@ -152,8 +152,11 @@ function [data] = metric_sawatch(mode, varargin)
             % clip lower end at zero. Anything below that is likely an
             % outlier. 
             NRpars.data(12,:) = max(0.0, sawatch);
+
+            % Note version number
+            NRpars.version = 2;
             
-            save([base_dir '\group_sawatch\NRpars_sawatch_' NRpars.test '.mat'], 'NRpars');
+            save([base_dir '\group_sawatch\NRpars_sawatch_' NRpars.dataset_name '.mat'], 'NRpars');
         end
         
         % return the metric data

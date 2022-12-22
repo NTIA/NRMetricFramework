@@ -17,9 +17,10 @@ The following MAT files contain MATLAB variables that describe datasets. Scroll 
 * `iqa_camera.mat` = image datasets for camera capture
 * `vqa_camera.mat` = video datasets for camera capture
 * `vqa_broadcast.mat` = video datasets for broadcast applications
-* `diqa_ocr.mat` = document image datasets for optical character recognition
 
 These variables let you run commands on entire datasets. Each variable includes a path to the directory where the media are stored. You must download the media and **update that path**. See the [dataset structure](DatasetStructure.md) for details.
+
+MATLAB script `load_vars.m` will load these dataset variables, add the .\reports\ directory to the MATLAB path, and create three variables that aggregate datasets from each category (`iqa_cam_ds`, `vqa_cam_ds`, and `vqa_bc_ds`). This script also creates variable `base_dir` as the path where features should be saved. You will need to change this line of code to the appropriate location on your computer system.
 
 *** 
 
@@ -93,6 +94,18 @@ The Institute for Telecommunication Sciences Four Second Dataset Two (its4s2) su
     * Category 7 = subject matter topics (14 options)
     * Category 8 = session (15 session themes)
 
+***
+
+### KonIQ-10k Database
+
+The KonIQ-10k dataset contains 10,373 photographs with a large variety of impairments, subject matter, and scene characteristics. 
+The crowdsourced subject seems to have been inadequately screened. High quality MOSs in particular crushed; MOS rarely exceeds 4.0 and scatter plots show a curved shape indicating nonlinearity.
+* [Publication](https://arxiv.org/abs/1910.06180)
+* [Download](http://database.mmsp-kn.de/koniq-10k-database.html)
+* Rigorous experiment design&mdash;images selected by objective criteria
+* Diverse subject matter
+* **Suboptimal** (MOSs are very noisy and crushed above good=4.0)
+* MATLAB variable: koniq10k_dataset
 
 ***
 
@@ -104,6 +117,15 @@ Referred to as **livewild** for brevity, this dataset contains diverse bitmap an
 * Diverse subject matter
 * MATLAB variable: livewild_dataset
     * No categories available
+
+### MUI2018 Dataset
+This dataset contains 72 ultrasounds rated by medical experts. The original MOSs are on a [0..100] scale. Like the Livewild dataset, we mapped them linearly to [1..5] to simplify plotting. SAMVIQ protocol, 3 radiologists, reference images with 5 denoising algorithms, four criteria assessed (Diagnostic, Textures, Edges, Contrast).
+* [Publication](https://iopscience.iop.org/article/10.1088/1361-6560/aadbc9/pdf)
+* [Download](https://drive1.demo.renater.fr/index.php/s/jFR5J6j3fWFAet4)
+* Exploratory experiment design
+* Task specific subject matter: ultrasounds
+* MATLAB variable mui2018_dataset
+	* Category 5 = denoising
 
 ***
 
@@ -136,8 +158,10 @@ The its4s4 dataset evaluates a single impairment: camera pans. This challenge da
 
 ***
 
-### **konvid1k**
-The konvid1k dataset contains a large number of video sequences that include the whole spectrum of available video content and all types of distortions. 
+### KoNViD-1K Database
+
+The KonNViD-1k dataset contains a large number of video sequences that include the whole spectrum of available video content and all types of distortions. 
+
 * [Publication1](http://database.mmsp-kn.de)
 * [Publication2](https://ieeexplore.ieee.org/document/7965673)
 * [Download](http://database.mmsp-kn.de/konvid-1k-database.html)
@@ -147,6 +171,31 @@ The konvid1k dataset contains a large number of video sequences that include the
 * **Suboptimal** (videos filmed 2004 to 2014, lower quality than contemporary cameras)
 * MATLAB variable: konvid1k_dataset
     * No categories available
+	
+***
+
+### KoNViD-150K-B Database 
+
+The KoNViD-150K dataset consists of two parts: A and B. 
+
+KoNViD-150K-B contains 1,565 videos, each 5 s duration and rated by at least 89 subjects.
+Our analysis of the individual ratings indicates that subjects were inadequately screened.
+Our MOSs exclude: (1) subjects with <= 0.6 Pearson correlation to the average of other all subjects; (2) subjects who scored excellent=5, good=4, or fair=3 for the 30 lowest quality media; 
+and (3) subjects who scored anything other than bad=1 for a fully black media.
+After this screening, the number of ratings per media ranges from 7 to 60.
+
+KoNViD-150K-B is distributed in mp4 format, but MATLAB will not read these files. We converted all of these mp4 files to uncompressed AVI. 
+
+* [Publication](https://ieeexplore.ieee.org/document/9423997)
+* [Download](http://database.mmsp-kn.de/konvid-150k-vqa-database.html)
+* Rigorous experiment design&mdash;images selected by objective criteria
+* Diverse subject matter
+* **Suboptimal** (needs improved subject screening)
+* MATLAB variable: konvid1kb_dataset
+
+KoNViD-150K-A has a very large set of media, each rated by 5 subjects. The proposal is intriguing.
+We are not currently using this part of the dataset, due to the subject screening issues observed in part B. 
+
 
 ***
 
@@ -167,12 +216,11 @@ The its4s dataset contains a simplified adaptive streaming bitrate ladder. The f
     * Category 5 = scene (4 broad categories that describe scene lighting) 
     * Category 6 = system (original plus five compression bitrates)
 
-### **vqegHDcuts** and **vqegHDcutsPublic**
+### vqegHDcuts Dataset
 This faux dataset was created from the Video Quality Experts Group (VQEG) HDTV tests. To better match the optimal criteria at the top of this page, each sequence was cut whenever the content or camera motion changed. The MOS of the entire sequence was assigned to each segment, which adds error to the MOSs. Sequences containing transmission errors were omitted. 
 
 Dataset variable `vqegHDcuts_dataset` includes media that are only available to people who participated in the original VQEG HD test. Dataset variable `vqegHDcutspublic_dataset` includes only media that are publicly available. 
-* [Publication #1](https://www.its.bldrdoc.gov/vqeg/projects/hdtv/hdtv.aspx)
-* [Publication #2](https://www.its.bldrdoc.gov/publications/details.aspx?pub=3235)
+* [Publication #1 and #2](https://vqeg.org/projects/hdtv/)
 * Download VQEG HD datasets from the Consumer Digital Video Library (CDVL, www.cdvl.org); key word search "vqeghd"
 * Conventional experiment design
 * Diverse subject matter
@@ -182,7 +230,21 @@ Dataset variable `vqegHDcuts_dataset` includes media that are only available to 
     * Category 1 = camera capture vs compression
     * Category 3 = codec (mpeg2, avc, or unknown)
 
-### **AND**
+### vqegHD Dataset
+This dataset contains the Video Quality Experts Group (VQEG) HDTV tests. Unlike vqegHDcuts, this dataset contains the full video as viewed and rated. Sequences containing transmission errors were omitted. Comparisons between vqegHD with vqegHDcuts can provide insights into temporal integration. 
+
+Dataset variable `vqegHDcuts_dataset` includes media that are only available to people who participated in the original VQEG HD test. Dataset variable `vqegHDcutspublic_dataset` includes only media that are publicly available. 
+* [Publication #1 and #2](https://vqeg.org/projects/hdtv/)
+* Download VQEG HD datasets from the Consumer Digital Video Library (CDVL, www.cdvl.org); key word search "vqeghd"
+* Conventional experiment design
+* Diverse subject matter
+* **Suboptimal** (scene reuse, faux MOSs)
+* MATLAB variable: vqegHDcuts_dataset (not publicly available)
+* MATLAB variable: vqegHDcutspublic_dataset
+    * Category 1 = camera capture vs compression
+    * Category 3 = codec (mpeg2, avc, or unknown)
+
+### AGH / NTIA / Dolby
 The AGH / NTIA / Dolby (AND) dataset was designed to evaluate experiment designs with unrepeated scenes. This dataset contains MPEG2, AVC, and HEVC encodings, each at three different bitrates.
 * [Publication](https://link.springer.com/article/10.1007/s41233-019-0026-4)
 * Download from [CDVL](https://cdvl.org/members-section/view-file/?id=2957)
@@ -193,17 +255,63 @@ The AGH / NTIA / Dolby (AND) dataset was designed to evaluate experiment designs
     * Category 1 = camera capture vs compression
     * Category 6 = codec and bitrate 
 
+### YoukuV1K Dataset
+This dataset contains 1072 internet videos from Youku, the leading Chinese video hosting service platform. The Youku-V1K dataset represents real-world distortions in this service.
+* [Publication](https://dl.acm.org/doi/10.1145/3474085.3475486)
+* Download from [here](https://jingnantes.github.io/acmmm21-youku-v1k/)
+* Experiment design uses a rigorous algorithm to choose videos
+* Diverse subject matter
+* **Suboptimal** (temporal changes in quality)
+* MATLAB variable: youkuv1k_dataset 
+
 ***
 
-## Document Image Quality Assessment (DIQA) for Optical Character Recognition (OCR) 
-These datasets contain photographs of documents. MOSs are inferred from optical character recognition (OCR) success rates. These faux MOSs are insensitive to some impairments. 
+## Simulated MOSs
+These datasets contain simulated MOSs, from full reference (FR) metrics or other algorithmic strategies.  
 
-**Load** `diqa_ocr.mat` for [dataset structure](DatasetStructure.md) variables
+**Load** `simulated.mat` for [dataset structure](DatasetStructure.md) variables
 
-### **DIQA**
-The document image quality analysis (DIQA) dataset contains photographs of documents. Simulated MOSs are calculated by comparing the truth data (actual text) with text produced by OCR algorithms. Three versions of this dataset are available, from each of three different OCR algorithms.
-* Publication [[45]](Publications.md)
-* [Media](https://lampsrv02.umiacs.umd.edu/projdb/project.php?id=73)
+### **VCRDCI**
+The VMAF Compression Ratings that Disregard Camera Impairments (VCRDCI) dataset uses VMAF to create simulated MOSs.
+See the [VCRDCI Report](ReportVCRDCI.md) for more information on this experimental dataset.
+* Publication pending
+* Download from [CDVL](https://cdvl.org/members-section/view-file/?id=2957)
+* Full matrix experiment design with resolutions and bitrates used by adaptive bitrate services
+* Intended as training data for an NR metric that analyzes compression impairments but ignores camera impairments  
+* Diverse subject matter 
+* MATLAB variable: vcrdci_dataset
+
+**Warning:** after downloading the VCRDCI dataset, the videos must be converted to uncompressed AVI files. Instructions are included in the CDVL zip file.
+
+***
+
+## Computer Vision Datasets
+
+
+### CalAster Datasets
+The CalAster dataset contains 1490 images from phones (see the white paper). 
+The images are intended for object recognition algorithms trained with the Coco dataset. 
+No subjective testing MOSs are available. 
+However, there are simulated MOS values which contain an exploratory algorithm that indicates the likelihood that computer vision will succeed. 
+
+* White paper that describes what is distributed on CDVL with the dataset
+* Download from [CDVL](https://cdvl.org/members-section/view-file/?id=3031)
+* Three impairment levels: 
+	* Original
+	* Motion blur (moving camera) 
+	* Focus blur (close object used to fool the camera's focusing algorithm)
+* Diverse subject matter
+* MATLAB variable: and_dataset
+    * Category 5 = Impairment 
+
+### DIQA Datasets ==> No Longer Available
+
+The Document Image Quality Assessment (DIQA) for Optical Character Recognition (OCR) dataset is no longer available for download. `diqa_ocr.mat` remains in this repository for backward compatibility only.
+
+The document image quality analysis (DIQA) dataset contains photographs of documents. Simulated MOSs are calculated by comparing the truth data (actual text) with text produced by OCR algorithms. Three versions of this dataset exist, from each of three different OCR algorithms.
+* Publication = "DIQA: Document Image Quality Assessment Datasets," by 
+Jayant Kumar, Peng Ye, David Doermann (2014)
+* Media not available
 * Rigorous experiment design—identical document photographed repeatedly
 * Black text on white paper, surface occasionally visible in the background
 * MATLAB variable: **diqaF_dataset** = FineReader OCR

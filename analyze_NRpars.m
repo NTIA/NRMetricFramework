@@ -100,7 +100,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
         elseif strcmpi(varargin{cnt},'info')
             fprintf('\nAvailable categories for analysis:\n');
             for dcnt = 1:length(nr_dataset)
-                fprintf('Dataset %s\n', nr_dataset(dcnt).test);
+                fprintf('Dataset %s\n', nr_dataset(dcnt).dataset_name);
                 options = unique([nr_dataset(dcnt).media(:).category1]);
                 options = options(~isundefined(options));
                 if length(options) > 1
@@ -331,7 +331,7 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
             subset = subset & [one_dataset.media(:).category1] == is_level;
             test_name = is_level;
         case 2
-            test_name = one_dataset.test;
+            test_name = one_dataset.dataset_name;
         case 3
             subset = subset & [one_dataset.media(:).category3] == is_level;
             test_name = is_level;
@@ -403,12 +403,17 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         values = sort(one_NRpars.data(pcnt,subset),'ascend');
         offset = max(1, round([0 0.25 0.5 0.75 1] * length(values)));
         values = values(offset);
+        if do_subplot
+            fprintf('%-15s  ', test_name);
+        else
+            fprintf('                 ');
+        end
         if do_false
             fr = false_decisions(ydata, xdata(:,2));
-            fprintf('%-15s  corr = %5.2f  rmse = %5.2f  false decisions = %3d%%  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', test_name, ...
+            fprintf('corr = %5.2f  rmse = %5.2f  false decisions = %3d%%  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', ...
                 corr, rmse, round(fr * 100), values(1), values(2), values(3), values(4), values(5)); 
         else
-            fprintf('%-15s  corr = %5.2f  rmse = %5.2f  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', test_name, ...
+            fprintf('corr = %5.2f  rmse = %5.2f  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', ...
                 corr, rmse, values(1), values(2), values(3), values(4), values(5)); 
         end
     end
@@ -463,19 +468,21 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
             xlabel([one_NRpars.par_name{pcnt} preproc_message],'interpreter','none');
         end
         ylabel('MOS', 'interpreter','none');
-        title(test_name, 'interpreter','none');
+        if do_subplot
+            title(test_name, 'interpreter','none');
+        end
     end
     
     if do_outliers
         residuals = (w(1) + w(2) * one_NRpars.data(pcnt,subset)) - [one_dataset.media(subset).mos];
         [~,order] = sort(residuals,'descend');
         len = length(residuals);
-        want = min(10,0.1 * len);
+        want = round(min(10,0.1 * len));
         tmp = 1:length(one_dataset.media);
         subsetnum = tmp(subset);
         for cnt=[1:want (len-want+1):len]
             num = subsetnum(order(cnt));
-            fprintf(' mos %4.2f  par %6.3f  stimuli %d = %s\n', one_dataset.media((num)).mos, ...
+            fprintf('[%s] mos %4.2f  par %6.3f  stimuli %d = %s\n', one_dataset.test, one_dataset.media((num)).mos, ...
                 one_NRpars.data(pcnt,(num)), (num), one_dataset.media((num)).file);
         end
     end

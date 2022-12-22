@@ -1,4 +1,5 @@
 # MATLAB Variable That Describe Dataset
+_Version 2.0_
 
 Most functions in this repository operate on datasets. For this to happen, we need a variable that describes an entire dataset. This age describes the format of these MATLAB variables. The software is designed so that most users will not need to manually modify these dataset variables. However, it is wise to understand what information is recorded and how the software expects to interact with these variables.
 
@@ -92,7 +93,7 @@ Dataset CCRIQ contains two sets of MOSs for each image, because each image was r
 
 Field Name | Description
 --- | --- 
-test	|The name of the test
+dataset_name	|The name of the dataset
 path|	The absolute file path to the directory that contains the media in this dataset (images or videos)
 media | Vector of media structs, one for each media in the directory (see Table 2)
 is_mos|	Boolean flag stating whether mean opinion scores (MOS) are available for the dataset
@@ -149,3 +150,8 @@ category6 | Categorical value for category #6, levels chosen by user
 category7 | Categorical value for category #7, levels chosen by user  
 category8 | Categorical value for category #8, levels chosen by user  
 
+## Version Changes 
+
+Version 2 changed the Table 1 field's name from 'test' to 'dataset_name'. 
+The field name 'test' caused confusion during debugging. 
+This change impacts several functions and all saved data (NRpars and dataset variables). 

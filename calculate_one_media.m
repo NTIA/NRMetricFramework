@@ -49,7 +49,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
         tmp = [tmp sprintf('- returned value not recognized; ''all'', ''si'', or ''ti'' expected\n\n')];
 
         tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
-        tmp = [tmp sprintf('- dataset %s, media number %d\n', nr_dataset.test, media_num)];
+        tmp = [tmp sprintf('- dataset %s, media number %d\n', nr_dataset.datatset_name, media_num)];
         tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
         tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
 
@@ -149,7 +149,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
                     tmp = [tmp sprintf('- Media marked as an interlaced image; this is impossible\n\n')];
                     
                     tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
-                    tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
+                    tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.dataset_name, media_num)];
                     tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                     tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
 
@@ -191,7 +191,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
                         length(this_frame), length(feature_function('feature_names')))];
 
                     tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
-                    tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
+                    tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.dataset_name, media_num)];
                     tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                     tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
 
@@ -213,7 +213,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
                             tmp = [tmp sprintf('- feature %d changes in size from one frame to the next. Check frame %d.\n\n', pcnt, cnt)];
 
                             tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
-                            tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
+                            tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.dataset_name, media_num)];
                             tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                             tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
 
@@ -225,7 +225,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
                             tmp = [tmp sprintf('- feature %d contains three (3) or more dimensions; it must have no more than two dimensions\n\n', pcnt)];
 
                             tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
-                            tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
+                            tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.dataset_name, media_num)];
                             tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                             tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
 
@@ -257,7 +257,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
                 catch
                     tmp = sprintf('Error reported by ''read_media'' function:\n\n%s\n\n', lasterr);
                     tmp = [tmp sprintf('Error occured when ''calculate_NRpars'' tried to read:\n') ];
-                    tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
+                    tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.dataset_name, media_num)];
                     tmp = [tmp sprintf('- frames %d to %d\n', start(cnt), stop(cnt))];
                     tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
                     tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
@@ -357,7 +357,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
         tmp = [tmp sprintf('- %d parameters returned by ''pars'' mode\n\n', length(par_data))];
         
         tmp = [tmp sprintf('Function ''calculate_NRpars'' was calculating features for the following media:\n') ];
-        tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.test, media_num)];
+        tmp = [tmp sprintf('- dataset %s media number %d\n', nr_dataset.dataset_name, media_num)];
         tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
         tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
         
@@ -386,7 +386,7 @@ function data = load_data(subdir, feature, nr_dataset, media_num)
     if ~exist(name,'file')
         tmp = sprintf('Error in ''calculate_NRpars'':\n');
         tmp = [tmp sprintf('- reading feature %s\n', feature)];
-        tmp = [tmp sprintf('- dataset %s\n', nr_dataset.test)];
+        tmp = [tmp sprintf('- dataset %s\n', nr_dataset.dataset_name)];
         tmp = [tmp sprintf('- media file %s\n', nr_dataset.media(media_num).file)];
         tmp = [tmp sprintf('- directory %s\n', nr_dataset.path)];
         tmp = [tmp sprintf('- parameter status file says this feature has been calculated\n')];
@@ -436,7 +436,15 @@ function save_data(data, is_path, feature_name, media_name)
     if ~exist([is_path '\features\' feature_name],'dir')
         mkdir([is_path '\features\'], feature_name);
     end
-
+    % If the media are in sub-folders, then put the feature files in these same sub-folders
+    if contains(media_name, '\') 
+        filename_parts = strsplit(media_name,'\');
+        
+        full_path = strcat(is_path, '\features\', feature_name, '\', string(filename_parts(1)));
+        if ~exist(full_path,'dir')
+           mkdir(strcat(is_path, '\features\'), strcat(feature_name, '\',  string(filename_parts(1))));
+       end
+    end
     % Write feature file
     save (name_mat, 'data');
 

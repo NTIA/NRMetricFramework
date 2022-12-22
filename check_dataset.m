@@ -12,9 +12,16 @@ function status = check_dataset(nr_dataset)
 %   Return status = false if problems are found.
 
 
-
-if isfield(nr_dataset,'version') && nr_dataset.version == 1    
-    status = check_dataset_ver1 (nr_dataset);
+current_version = 2;
+if isfield(nr_dataset,'version') && nr_dataset.version == current_version    
+    status = check_dataset_core (nr_dataset);
+elseif isfield(nr_dataset,'version') && nr_dataset.version < current_version
+    if nr_dataset.version == 1
+        fprintf('Obsolete (version 1) dataset variable detected. Field ".test" must be re-named ".dataset_name".')
+    else
+        fprintf('Obsolete dataset structure version detected. Unexpected errors will occur.');
+    end
+    status = false;
 else
     fprintf('Error: unknown dataset structure version detected; cannot check dataset variable validity.\n'); 
     status = false;
@@ -22,15 +29,14 @@ end
 
 return;
 
-
-function status = check_dataset_ver1 (nr_dataset)
+function status = check_dataset_core (nr_dataset)
 
 status = true;
 
 % check top level
 fields = fieldnames(nr_dataset);
 
-if ~strcmp(fields{1},'test') || ~strcmp(fields{2},'path') || ...
+if ~strcmp(fields{1},'dataset_name') || ~strcmp(fields{2},'path') || ...
         ~strcmp(fields{3},'media') || ~strcmp(fields{4},'is_mos') || ...
         ~strcmp(fields{5},'mos_range') || ~strcmp(fields{6},'raw_mos_range') || ...
         ~strcmp(fields{7},'category_list') || ~strcmp(fields{8},'category_name') || ...
@@ -40,9 +46,9 @@ if ~strcmp(fields{1},'test') || ~strcmp(fields{2},'path') || ...
     status = false;
 end
 
-% make sure there is a valid test name
-if ~ischar(nr_dataset.test) || length(nr_dataset.test) < 1 
-    fprintf('Error: field "test" must be a character array; 3 to 10 character length recommended\n\n');
+% make sure there is a valid dataset name
+if ~ischar(nr_dataset.dataset_name) || length(nr_dataset.dataset_name) < 1 
+    fprintf('Error: field "dataset_name" must be a character array; 3 to 10 character length recommended\n\n');
     status = false;
 end
 
