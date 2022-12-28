@@ -1,7 +1,7 @@
 # Demo #1: Download Datasets, Calculate NR Parameters, and Analyze Performance 
 
 This page demonstrates the workflow to run and analyze another developer's NR parameters.
-This is part one of a three part tutorial that demonstrates capabilities of the NRMetricFramework repository. 
+This is part one of a four part tutorial that demonstrates capabilities of the NRMetricFramework repository. 
 
 ### Definitions
 * **Mean Opinion Scores (MOS)** estimate overall quality; the usual range is [1..5] where 1 is bad and 5 is excellent.
@@ -205,14 +205,42 @@ pooled           corr =  0.54  rmse =  0.74  percentiles [ 1.00, 4.66, 5.51, 6.1
 
 Note that each dataset's MOSs are linearly scaled to [1..5] to simplify the statistics, plots, and pooling demonstrated above. 
 
-## Step 4. Modify and Repeat
+## Step 4. Export Parameters for Greater Flexibility
+Alternatively, you can export the NR parameters to either a spreadsheet or local variables. 
+This command exports the blur metrics for the CCRIQ dataset to file 'MetricValues.xls': 
+```
+>> export_NRpars(ccriq_dataset, base_dir, @nrff_blur, 'MetricValues.xls');
+```
+And this command exports the same information to local variables. 
+```
+>> [values, mos, par_name, media_name] = export_NRpars(ccriq_dataset, base_dir, @nrff_blur, 'MetricValues.xls');
+```
+Variable `values` has the metric values, `mos` the mean opinion scores, `par_name` the parameter names, and `media_name` the names of the media. 
+See the help for function [export_NRpars.m](export_NRpars.md) for details.
+
+Note that `export_NRpars.m` by default returns the __training media__ (approximately 90%).
+The remaining 10% must be held in reserve for metric verification (i.e., as a last calculation immediately before publishing a self-reported accuracy). 
+This verification data must not be used for machine learning training / testing cycles. 
+
+## Step 5. Modify and Repeat
 
 NR parameter analysis will reveal problems with the NR features and NR parameters. For example, [analyze_NRpars.m](AnalyzeNRpars.md) provides options to apply a square or square root before analysis, to remove non-linearities. 
 
 If this provides satisfactory results, the square or square root function can be added to the NR parameter calculation to update the parameters. For an example, see the `nrff_blur.m` code, mode `'pars'`.
 
-To re-calculate NR parameters without re-calculating NR features, delete the NR parameter files.
+To re-calculate NR parameters without re-calculating NR features, we need to delete the NR parameter files. 
+We will use function [update_NRpars.m](UpdateNRpars.md) with option 'update_pars'.
+To erase the NR parameter files that we created in Step 2 ('NRpars_blur_ccriq.mat'), execute
+```
+update_NRpars(base_dir, @nrff_blur, 'update_pars');
+```
+The NR parameter files can be erased manually. 
+Navigate to `base_dir` and then NR parameter's sub-directory.
+The naming convention for NR parameters is NRpars_<group>_<dataset_name>.mat, where <group> is the name of the NR parameter group and <dataset_name> is the name of the dataset (e.g., ccriq). 
 
+We recommend only erasing the NR feature files if the feature function changes. 
+NR parameters are fast to calculate, but NR features are slow to calculate. 
+NR features must be erased manually, by deleting the `features` sub-directory.
 
 ## Appendix. NR Features for Programmers
 

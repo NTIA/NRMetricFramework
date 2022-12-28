@@ -107,3 +107,6 @@ assessment metrics," _Adv. Mod. Radioelectronics_, 10, 30–45 (2009).
 
 [49]  Margaret H. Pinson, "[A missing factor in objective video quality models: A study of color](https://www.its.bldrdoc.gov/publications/details.aspx?pub=2786)," Ninth International Workshop on Video Processing and Quality Metrics for Consumer Electronics - VPQM 2015, Chandler, AZ, February 5-6, 2015.
  
+[50] P. Tandon, M. Afonso, J. Sole, and L. Krasula, “CAMBI: Contrast-aware Multiscale Banding Index,” Picture Coding Symposium  2021.
+
+[51] L. Krasula, "Contrast aware multiscale banding index (aka CAMBI)," VQEG_NORM_2021_205_CAMBI, 2021, Available: https://vqeg.org/meetings-home/meeting-files/, in 2021_12_UniversityOfSurry_online. 

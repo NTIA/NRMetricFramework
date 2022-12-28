@@ -147,7 +147,9 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
     end
     
     % Check whether this is an NR metric instead of an NR parameter.
-    % If so, call its calculate function ('compose' mode) and return.
+    % (The difference is that NR parameters calculate values from media
+    % files, while NR metrics combine the results from other NR parameters.)
+    % If this is an NR metric, call its calculate function ('compose' mode) and return.
     tslice_mode = feature_function('read_mode');
     if strcmp(tslice_mode,'metric')
         % this is a metric instead of an NR parameter. Calculate as follows
@@ -162,7 +164,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         base_dir = [base_dir '\'];
     end
     subdir = [base_dir 'group_' feature_function('group') '\'];
-    parfile = [subdir 'NRpars_' feature_function('group') '_' nr_dataset.test '.mat'];
+    parfile = [subdir 'NRpars_' feature_function('group') '_' nr_dataset.dataset_name '.mat'];
     
     if ~exist(subdir)
         mkdir(subdir);
@@ -188,7 +190,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
         NRpars.media_name = cell(1,length(nr_dataset.media));
         NRpars.data = nan(length(NRpars.par_name), length(nr_dataset.media));
         NRpars.computed = false(1,length(nr_dataset.media));
-        NRpars.test = nr_dataset.test;
+        NRpars.dataset_name = nr_dataset.dataset_name;
 
         for cnt=1:length(nr_dataset.media)
             NRpars.media_name{cnt} = nr_dataset.media(cnt).name;
@@ -247,8 +249,10 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 
     % keep track of progress
     fprintf('Progress %s NR features, dataset %s, directory %s:\n', ...
-        feature_function('group'), nr_dataset.test, subdir);
-    fprintf(['\n' repmat('.',1,max(size(nr_dataset.media))) '\n\n']);
+        feature_function('group'), nr_dataset.dataset_name, subdir);
+    fprintf('%d of %d media files already calculated\n', ...
+        length(nr_dataset.media) - length(clip_list), length(nr_dataset.media))
+    fprintf(['\n' repmat('.',1,length(clip_list)) '\n\n']);
 
     if ~parallel_stimuli
 

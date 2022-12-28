@@ -12,11 +12,13 @@ This repository does not contain images and videos. See the [subjective datasets
 - [Demo #1](Demo1.md) — get started
 - [Demo #2](Demo2.md) — code NR parameters
 - [Demo #3](Demo3.md) — train NR metrics
+- [Demo #4](Demo4.md) — create new subjective dataset variable
 
 ## References
 - [Dataset Structure](DatasetStructure.md) — variables that describe subjective datasets
 - [Publications](Publications.md) — papers that describe this repository 
 - [Subjective Datasets](SubjectiveDatasets.md) — list of subjective datasets for no reference metric research
+- [Updates](Updates.md) — release notes; updates that change code behavior 
 - [Wishlist](Wishlist.md) — future capabilities that are desired but not yet implemented
 
 ## Main Functions
@@ -110,6 +112,8 @@ Metric Name|Goal|[Rating](Report.md)|Impairment|Notes
 -----------|----|------|---------|------
 [ADMD](ReportADMD.md)|RCA|:star:|Uneven illumination| 
 [AGWN](ReportAGWN.md)|RCA|:star:|Noise|
+[AllBorderWeight](ReportBorder.md)|RCA|:star:|Contours, borders|
+[BorderWeight](ReportBorder.md)|RCA|:star:|Contours, borders|
 [CPBD](ReportCPBD.md)|RCA|:star: :star:|Blur/Sharpness|
 [dipIQ](ReportDipIQ.md)|RCA|:question:|Coding|dipIQ is intended for ORD, not RCA
 [Entropy_Noise](ReportEntropyNoise.md)|RCA|:star:|Noise|

@@ -2,6 +2,9 @@
 
 This page identifies functions that are desired but not yet implemented. See [Demo #1](Demo1.md) for definitions.
 
+## Open source NR metric trained on the VCRDCI dataset
+Our goal in creating the VCRDCI dataset was to provide training data for an NR metric that predicts the quality impact of compression, but ignores all other impairments. 
+It must be faster and more accurate than NR metric [dipIQ](ReportDipIQ.md).
 
 ## Python Implementation
 

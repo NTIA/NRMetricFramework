@@ -61,9 +61,14 @@ The weighted parameter values are subtracted from 6.2. This yields estimated MOS
 ## Speed and Conformity
 The underlying algorithms were selected for fast run-speed. Conformity is ensured by running the code provided by this repository. 
 
+NR parameter dipIQ runs slowly enough to be problematic (__9×__ as long to run as the benchmark metric, [nrff_blur.m](ReportBlur.md)).
+We created the [VCRDCI dataset](SubjectiveDatasets.md) to provide training data for a replacement metric. 
+
 ## Analysis
 
-Sawatch is evaluated using four types of datasets:
+### Training Datas
+
+Sawatch was trained using four types of datasets:
 * Image quality datasets with camera impairments (BID, CCRIQ, CID2013, C&V, ITS4S2, and LIVE-Wild)
 * Video quality datasets with camera impairments (ITS4S3, ITS4S4, and KonViD-1K)
 * Video quality datasets with broadcast content and compression (ITS4S, AGh-NTIA-Dolby, and vqegHDcuts) 
@@ -102,6 +107,26 @@ pooled           corr =  0.35  rmse =  0.82  percentiles [ 0.00, 2.63, 3.21, 3.8
 
 ![](images/report_sawatch_version3.png)
 
+### Evaluation Datasets
+We evaluated the performance of Sawatch Version 3 on two new IQA datasets with camera impairments (KonIQ-10K and MUI2018), one new VQA dataset with camera impairments (KoNViD-150K-B) and one new VQA dataset with compression artifacts (YokuV1K).
+Averaged over these four evaluation datasets, the accuracy of Sawatch version 3 is 0.68 Person correlation. 
+Sawatch version 3 performs similarly on the 12 training dataset (0.61 correlation average).
+This similarity between training performance (0.61 correlation) and evaluation performance (0.68 correlation) demonstrates a desirable level of stability.
+
+MUI2018 examines a medical use case (greyscale ultrasound images).
+While MUI2018 has the lowest accuracy of the evaulation datasets (0.56 correlation), this is within the range of correlations for the training datasets (0.40 to 0.73).
+Medical and other niche use cases may require a different parameter weighting to calculate MOS. 
+```
+12) Sawatch version 3 
+KonIQ10k         corr =  0.69  rmse =  0.40  false decisions =   6%  percentiles [ 1.07, 3.25, 3.82, 4.26, 5.61]
+MUI2018          corr =  0.56  rmse =  0.68  false decisions =  16%  percentiles [ 2.62, 3.74, 3.93, 4.03, 4.18]
+KoNViD-150K-B    corr =  0.68  rmse =  0.44  false decisions =   8%  percentiles [ 0.00, 2.85, 3.34, 3.72, 4.90]
+YoukuV1K         corr =  0.77  rmse =  0.58  false decisions =   8%  percentiles [ 0.33, 2.08, 2.72, 3.25, 5.21]
+
+average          corr =  0.68  rmse =  0.52
+                 corr =  0.62  rmse =  0.48  percentiles [ 0.00, 3.09, 3.67, 4.16, 5.61]
+```
+![](images/report_sawatch_version3_evaluation.png)
 
 ## Confidence Intervals
 
