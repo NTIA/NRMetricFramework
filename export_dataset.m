@@ -3,12 +3,13 @@ function export_dataset(nr_dataset, filename)
 %   Export dataset into an XLS file, to be reviewed and checked
 % SYNTAX
 %   export_dataset(nr_dataset, filename)
-%       -nr_dataset is the output of import_dataset.m
-%       -filename is the location (absolute path) to the file you want to
+% SEMANTICS
+%   "nr_dataset" is the output of import_dataset.m
+%   "filename" is the location (absolute path) to the file you want to
 %       write the dataset to. If the file doesn't exist, the file will be
 %       created. If an extension is not specified, the default .xls
 %       extension will be used. 
-% SEMANTICS
+% 
 %   Export dataset 'nr_dataset' to MS-Excel file 'filename'
 %   Intended to help the user easily review and understand the dataset categories
 %   If 'nr_dataset' is empty (i.e., []), export an empty dataset.

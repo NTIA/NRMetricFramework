@@ -2,55 +2,32 @@ function [nr_dataset] = append_dataset(existing_dataset)
 % IMPORT_NR_DATASET
 %   Append an NR dataset with new files in the same directory as the orignal dataset
 % SYNTAX
-%   
 %   [nr_dataset] = append_dataset(existing_dataset)
-%   ??[nr_dataset] = import_dataset(directory, dataset_name, display_rows, display_cols)
+%
 % SEMANTICS
-% When the first input variable is an Excel spreadsheet, load the described
+% Input variable 'existing_dataset' is either an Excel spreadsheet produced
+% by 'import_dataset.m' or a dataset variable produced by 'import_dataset.m'
+%
+% When 'existing_dataset' is an Excel spreadsheet, load the described
 % the dataset.  
 %
-% When the first input variable is a directory,create a new dataset based
+% When 'existing_dataset' is a directory,create a new dataset based
 % using the images and videos in that directory. Some values will be
-% defaults, so it the dataset structure (returned) should be checked. 
+% defaults, so it the dataset structure (returned) should be checked.
+% See 'import_dataset.m'
 %
-% 'dataset_name' is the name of the new dataset. This should be a short
-% string (e.g., 8 characters). Specify the name in single quotes, otherwise
-% the program will note run (ie. 'test_ds')
-%
-% 'display_rows' and 'display_cols' specify the display area on the
-% monitor. That is, the image or video was up-sampled or down-sampled to
-% this region during the subjective test. Media processing will include
-% this resizing. If not specified, the exact image size will be used, which
-% is only valid if pixel-for-pixel display was used. 
+% After the dataset is loaded (or created), look in the directory specified
+% for this dataset. Append new media files to the dataset variable. 
 %
 % The return value ('nr_dataset') describes one subjective test, designed
 % to train NR metrics.  
 %
-% See also 'export_dataset.m'
+% See also 'import_dataset.m'
 
     
     %% ------------------------------------------------------------------------
-    %check if existing_dataset is a variable, spreadsheet or directory
-    %if variable with expected fields
-        %proceed
-    %if spreadsheet
-        %tell user to import it as a variable first using import_dataset
-    %if directory
-        %tell user to import it as a variable first
-    
-    
-    
-    
-               
     nr_dataset = import_dataset_append(existing_dataset);
-        
-    % It's a file, so we assume a spreadsheet. read dataset
-    
-    %else
-        %error('Input variable must be either a directory of images and videos');
-    %end
-    
-    
+
     % check imported dataset
     check_dataset(nr_dataset);
     
@@ -59,10 +36,10 @@ end
 function nr_dataset = import_dataset_append(nr_dataset)
 
    
-    directory = nr_dataset.path
+    directory = nr_dataset.path;
     
     %iterate through all sub folders and files in the directory
-    root_file_list = dir(directory); %RG_EDIT edits start here
+    root_file_list = dir(directory); 
     file_list = [];
     for cnt=1:length(root_file_list)
         if root_file_list(cnt).isdir
@@ -87,11 +64,6 @@ function nr_dataset = import_dataset_append(nr_dataset)
                 file_list(end_element).bytes = sub_folder_list(cnt2).bytes;
                 file_list(end_element).isdir = sub_folder_list(cnt2).isdir;
                 file_list(end_element).datenum = sub_folder_list(cnt2).datenum;
-               % if isequal(file_list , "")
-               %     file_list(1) = file_name;
-               % else
-               %     file_list(end+1) = file_name;
-               % end
 
             end
         else
@@ -118,7 +90,7 @@ function nr_dataset = import_dataset_append(nr_dataset)
         fprintf('All media will be scaled to the display area of %d rows x %d columns\n\n', ...
             default_media.image_rows, default_media.image_cols);
     end
-    %media_num = 1
+
     %get how many files are in exisitng dataset and set as media_num
     media_num = length(nr_dataset.media);
     for cnt=1:length(file_list)
@@ -143,7 +115,7 @@ function nr_dataset = import_dataset_append(nr_dataset)
         file_path = [nr_dataset.path file_list(cnt).name]; %RG_EDIT
         can_read = false;
         
-        % initialize valid rgion
+        % initialize valid region
         top = nan;
         bottom = nan;
         left = nan;
@@ -339,7 +311,6 @@ function nr_dataset = import_dataset_append(nr_dataset)
                 stop = nr_dataset.media(media_num).stop;
                 read_media ('frames', nr_dataset, media_num, stop, stop);
             catch
-                %error('file %s duration mismatch, critical file read error', [directory file_list(cnt).name]);
                 warning('File %s cannot be read; discarding', file_list(cnt).name); %RG_edit
                 continue;
             end

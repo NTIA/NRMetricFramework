@@ -79,6 +79,8 @@ function [data] = nrff_cpbd(mode, varargin)
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true;             
         case 'pixels'
             y = varargin{2};
             metric_cpbd = CPBD_compute(y);

@@ -48,7 +48,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     max_mos = 5;
     % organize dataset information
     for cntD=1:length(nr_dataset)
-        data(cntD).test = nr_dataset(cntD).test;
+        data(cntD).dataset_name = nr_dataset(cntD).dataset_name;
         data(cntD).subset = [nr_dataset(cntD).media(:).category2] == categorical({'train'});
         data(cntD).mos = [nr_dataset(cntD).media( data(cntD).subset ).mos];
         
@@ -56,7 +56,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         min_mos = min(min_mos,min(data(cntD).mos));
         
         if max_mos > 5.5 || min_mos < 0.5 || sum(isnan(data(cntD).mos)) > 0  || sum(isinf(data(cntD).mos)) > 0
-            error('Function compromise_NRpars requires all dataset MOSs to be defined on the scale [5..1]; check dataset %s', nr_dataset(cntD).test); 
+            error('Function compromise_NRpars requires all dataset MOSs to be defined on the scale [5..1]; check dataset %s', nr_dataset(cntD).dataset_name); 
         end 
     end
     
@@ -90,7 +90,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
             
             % figure parameter offset 
             if parinfo(cntP).parnum < 1 || parinfo(cntP).parnum > length(NRpars.par_name)
-                error('Requested parameter number does not exist for parameter group %s dataset %s', parinfo(cntP).feature_function('group'), parinfo(cntP).parnum, data(cntD).test);
+                error('Requested parameter number does not exist for parameter group %s dataset %s', parinfo(cntP).feature_function('group'), parinfo(cntP).parnum, data(cntD).dataset_name);
             end
             
             % record parameter data for later
@@ -141,7 +141,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     
     % create 'pooled' dataset
     num_datasets = length(data) + 1;
-    data(num_datasets).test = 'pooled';
+    data(num_datasets).dataset_name = 'pooled';
     data(num_datasets).mos = [];
     data(num_datasets).parvalue = [];
     for cntD = 1:num_datasets
@@ -171,7 +171,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         if sum(want) < length(want)
             need_warning = true;
         end
-        fprintf('%5d of %d media in %s\n', discard, keep + discard, data(cntD).test);
+        fprintf('%5d of %d media in %s\n', discard, keep + discard, data(cntD).dataset_name);
     end
     fprintf('\n');
     
@@ -230,7 +230,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
     end
     fprintf('\n');
     for cntD = 1:num_datasets
-        fprintf('%20s  ', data(cntD).test);
+        fprintf('%20s  ', data(cntD).dataset_name);
         
         for cntP = 1:num_pars
             data(cntD).corr(cntP) = corr(data(cntD).mos', data(cntD).parvalue(cntP,:)');
@@ -255,7 +255,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
 
         data(cntD).weights = x\y;
         
-        fprintf('%20s  ', data(cntD).test);
+        fprintf('%20s  ', data(cntD).dataset_name);
         for cntP = 1:num_pars
             fprintf('%6.2f * par%d +', data(cntD).weights(cntP), cntP);
         end
@@ -303,7 +303,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
                 hold off;
             end
             
-            legend_labels{cntD} = data(cntD).test;
+            legend_labels{cntD} = data(cntD).dataset_name;
         end
         legend(legend_labels, 'location','eastoutside');
     end

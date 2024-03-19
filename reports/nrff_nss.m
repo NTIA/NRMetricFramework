@@ -60,6 +60,8 @@ switch mode
         data = true;
     case 'read_mode'
         data = 'si';
+    case 'parallelization'
+        data = true; 
     case 'pixels'
         load nss_CID2013.mat
         CID_dis_matrix = Data; %renaming to create data convention

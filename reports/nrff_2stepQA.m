@@ -62,6 +62,8 @@ function [data] = nrff_2stepQA(mode, varargin)
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             try
                 load 2stepQA_modelparameters.mat

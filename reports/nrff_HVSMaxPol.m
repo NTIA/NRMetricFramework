@@ -39,6 +39,8 @@ function [data] = nrff_HVSMaxPol(mode, varargin)
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             % scores 1 and 2 used the 'natural' form and scores 3 and 4 used
             % the 'synthetic' form

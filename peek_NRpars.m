@@ -23,7 +23,7 @@ function peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value,
     % load the parameters. This will calculate them, if not yet computed. 
     for dcnt = 1:length(nr_dataset)
         fprintf('-------------------------------------------------------\n');
-        fprintf('Dataset %s\n\n', nr_dataset(dcnt).test);
+        fprintf('Dataset %s\n\n', nr_dataset(dcnt).dataset_name);
         
         fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
         NRpars = calculate_NRpars(nr_dataset(dcnt), base_dir, 'none', feature_function);

@@ -23,6 +23,8 @@ function [data] = nrff_tdmec(mode, varargin)
             data = false;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             % Img: input color image
             % return: TDMEC measure of enhancement in DCT domain
