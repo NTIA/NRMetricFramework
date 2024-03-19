@@ -5,6 +5,25 @@ This updates our download count, which helps us quantify the value of this repos
 
 This page has release notes and identifies updates that will change the code's behavior.
 
+
+## NR Metric Framework Version 4.0
+
+The fourth release of the NR Metric Framework includes the following changes:
+
+- Updated dataset structure to allow media files to be organized into sub-folders
+- Dataset structure version updated to Version 2; users must run update_NRpars.m 
+- New datasets available: KonIQ-10k, MUI2018, KoNViD-1K, KoNViD-150K-B, YoukuV1K, VCRDCI, CalAster, and COCRID
+- Replaced export_NRpars.m to match input parameters of other functions
+- New convenience function `load_vars.m` loads all dataset structures
+- New Demo #4, describing how to create a dataset structure
+- New function `update_NRpars.m`
+- New function `residuals_NRpars.m` 
+- New function `nrff_motion_search.m` which interfaces with the motion_search algorithm [GitHub repository](https://github.com/facebookresearch/motion-search)
+- New tutorial on machine learning for image and video quality assessment
+- Add 'parallelization' query to no reference feature functions (NRFF); set to 'false' if calculate_NRpars.m must not run in parallel for this NRFF
+- Added validation data, to check results when porting NR metric Sawatch to another language
+- Bug fixes
+
 ## NR Metric Framework Version 3.0
 
 The third release of the NR Metric Framework includes the following changes:

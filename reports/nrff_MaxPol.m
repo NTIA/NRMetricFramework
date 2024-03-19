@@ -39,6 +39,8 @@ function [data] = nrff_MaxPol(mode, varargin)
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             y.data = varargin{2}; %.data added to follow syntax of writer of MaxPol.m
             load('MaxPol_kernel.mat');

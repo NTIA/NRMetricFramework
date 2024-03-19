@@ -45,7 +45,8 @@ The Blurred Image Database (BID) contains 582 photographs with camera impairment
 The Consumer Content Resolution and Image Quality Dataset (CCRIQ) explores the relationship between camera type, scene composition, and monitor resolution. The systematic experiment design is extremely valuable for detecting NR parameter biases.
 * [Publication 1](https://www.its.bldrdoc.gov/publications/details.aspx?pub=2820)
 * [Publication 2](https://www.its.bldrdoc.gov/publications/details.aspx?pub=3172)
-* Download from the Consumer Digital Video Library (CDVL, www.cdvl.org); key word search "ccriq"
+* Download from the Consumer Digital Video Library (CDVL, www.cdvl.org); key word search "ccriq". 
+* Use the images in the "Primary_study" sub-directory.
 * Rigorous experiment design&mdash;identical scene compositions photographed with multiple cameras
 * Carefully balanced subject matter
 * MATLAB variable: ccriq_dataset
@@ -96,15 +97,20 @@ The Institute for Telecommunication Sciences Four Second Dataset Two (its4s2) su
 
 ***
 
-### KonIQ-10k Database
+### KonIQ-10k Database ==> Limited Value
 
 The KonIQ-10k dataset contains 10,373 photographs with a large variety of impairments, subject matter, and scene characteristics. 
-The crowdsourced subject seems to have been inadequately screened. High quality MOSs in particular crushed; MOS rarely exceeds 4.0 and scatter plots show a curved shape indicating nonlinearity.
+The training and screening techniques used by this crowdsourced dataset produce atypical MOSs. 
+Additional screening cannot correct this characteristic. 
+The atypical MOS response strongly impacts MOS > 3.5 and SOS. 
+Consequently, the response of an NR metric to the KonIQ-10K dataset may be misleading.  
+
 * [Publication](https://arxiv.org/abs/1910.06180)
 * [Download](http://database.mmsp-kn.de/koniq-10k-database.html)
 * Rigorous experiment design&mdash;images selected by objective criteria
 * Diverse subject matter
 * **Suboptimal** (MOSs are very noisy and crushed above good=4.0)
+* **Warning** Atypical MOS response; confirm results with another dataset 
 * MATLAB variable: koniq10k_dataset
 
 ***
@@ -286,23 +292,54 @@ See the [VCRDCI Report](ReportVCRDCI.md) for more information on this experiment
 ***
 
 ## Computer Vision Datasets
+These datasets contain media intended for computer vision applications. 
+The success rates of computer vision are used in lieu of MOSs.
 
+**Load** `cv.mat` for [dataset structure](DatasetStructure.md) variables
 
-### CalAster Datasets
-The CalAster dataset contains 1490 images from phones (see the white paper). 
-The images are intended for object recognition algorithms trained with the Coco dataset. 
+### CalAster Datasets ==> Limited Value
+The CalAster dataset contains three image quality levels, created from phones: 
+sharp (as the camera intended), 
+focus (finger briefly blocks camera to cause a focus error), 
+and motion (moving phone). 
 No subjective testing MOSs are available. 
-However, there are simulated MOS values which contain an exploratory algorithm that indicates the likelihood that computer vision will succeed. 
+Instead, MOS analyzes the accuracy of object recognition using three algorithms that were trained on the Coco dataset. 
+RAW_MOS is set to Threat Score (TS), aka Critical Success Index (CSI) = hits / (hits + false alarms + misses) = TP / (TP + FP + FN). 
+RAW_MOS is calculated as the average TS across three object recognition algorithms. 
+MOS is TS linearly scaleed to [1..5]. 
 
-* White paper that describes what is distributed on CDVL with the dataset
-* Download from [CDVL](https://cdvl.org/members-section/view-file/?id=3031)
+The object recognition algorithms perform poorly on this dataset. 
+This confounding variable limits the usability of the CalAster dataset. 
+Three dataset variables are available to demonstrate this issue.
+The **calaster_dataset** (high accuracy) variable contains only compositions where the sharp image has TS=1 (i.e., ideal response of object recognition on high quality images).
+**calasterMA_dataset** (medium accuracy) contains compositions where the sharp image has TS > 2/3 (on average).
+**calasterLA_dataset** (low accuracy) contains all compositions, including compositions where the sharp image has TS = 0 (for all three CV algorithms).
+
+* Download from CDVL (coming soon) will include a white paper that describes the dataset
 * Three impairment levels: 
 	* Original
 	* Motion blur (moving camera) 
 	* Focus blur (close object used to fool the camera's focusing algorithm)
 * Diverse subject matter
-* MATLAB variable: and_dataset
+* MATLAB variable: **calaster_dataset**
     * Category 5 = Impairment 
+    * Category 6 = Expected Objects
+
+***
+
+### COCRID Dataset
+
+The COCRID dataset contains 1025 photographs of documents. Optical character recognition (OCR) error rates are used in lieu of MOSs. No subjective testing MOSs are available.
+RAW_MOS contains Character Error Rate (CER), as calculated by the Levenshtein Distance.
+MOS is CER linearly scaled to [1..5]. 
+The COCRID dataset is highly recommended for NR metric research, because OCR works well when documents are photographed in good lighting.
+
+* Publication pending
+* Download from CDVL (coming soon)
+* Limited subject matter (images of documents)
+* MATLAB variable: **cocrid_dataset**
+
+*** 
 
 ### DIQA Datasets ==> No Longer Available
 

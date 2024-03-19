@@ -45,6 +45,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %   [parameter_names]   = feature_function('parameter_names')
 %   [bool]              = feature_function('luma_only')
 %   [read_mode]         = feature_function('read_mode')
+%   [parallelization]   = feature_function('parallelization')
 %   [feature_data]      = feature_function('pixels', fps, y)
 %   [feature1_data]     = feature_function('pixels', fps, y, cb, cr)
 %   [par_data]          = feature_function('pars', feature_data, fps, image_size);
@@ -75,6 +76,11 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %                   calculate temporal information. If interlaced, de-interlace  
 %                   and group pairs of fields of the same type.
 %       'all'       The entire stimuli 
+%
+% 'parallelization' = ability for nrff to be run with parallel options
+%
+%       false      will not work with parallel options
+%       true       will work with parallel options
 %
 % 'pixels' mode calculates these features on one tslice
 %   Input:
@@ -137,7 +143,8 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %                    NR metric
 
     warning('off','MATLAB:MKDIR:DirectoryExists');
-
+    
+    
     % if given multiple datasets, process them one after another
     if length(nr_dataset) > 1
         for cnt=1:length(nr_dataset)
@@ -161,45 +168,75 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 
     % calculate directory paths, NRpars file name
     if base_dir(length(base_dir)) ~= '\'
-        base_dir = [base_dir '\'];
+        base_dir = fullfile(base_dir,'\');
     end
-    subdir = [base_dir 'group_' feature_function('group') '\'];
-    parfile = [subdir 'NRpars_' feature_function('group') '_' nr_dataset.dataset_name '.mat'];
+    subdir = fullfile(base_dir, join(['group_', feature_function('group')]),'\');
+    parfile = fullfile(subdir,join(['NRpars_', feature_function('group'),'_', nr_dataset.dataset_name, '.mat']));
     
     if ~exist(subdir)
         mkdir(subdir);
     end
 
 
-    try
-        % Either load previously calculated NR parameters with this name, if any
-        load(parfile, 'NRpars');
-
-        % and make sure contents and order match the input variables
-        for cnt=1:length(nr_dataset.media)
-            if ~strcmp(NRpars.media_name{cnt}, nr_dataset.media(cnt).name)
-                fprintf('List of clips differs. Discarding and re-calculate NR parameters. Features retained\n\n');
-                error('recalculate NRpars');
-
-                % * * * add more robust error handling * * * 
+    if ~exist(parfile,'file')
+        % File did not exist. Initialize a new structure for parameters and
+        % save to parfile.
+        NRpars = new_NRpars(nr_dataset, parfile, feature_function);
+    else
+        try
+            % Load previously calculated NR parameters with this name
+            load(parfile, 'NRpars');
+    
+            % and make sure contents and order match the input variables
+            load_success = true;
+            for cnt=1:length(nr_dataset.media)
+                if ~strcmp(NRpars.media_name{cnt}, nr_dataset.media(cnt).name)
+                    load_success = false;
+                    break;
+                end
             end
-        end
-    catch
-        % or initialize structure for parameters, NRpars
-        NRpars.par_name = feature_function('parameter_names');
-        NRpars.media_name = cell(1,length(nr_dataset.media));
-        NRpars.data = nan(length(NRpars.par_name), length(nr_dataset.media));
-        NRpars.computed = false(1,length(nr_dataset.media));
-        NRpars.dataset_name = nr_dataset.dataset_name;
 
-        for cnt=1:length(nr_dataset.media)
-            NRpars.media_name{cnt} = nr_dataset.media(cnt).name;
-        end
+            % check if NRpars has the expected number of parameters
+            if length(NRpars.par_name) ~= length(feature_function('parameter_names'))
+                load_success = false;
+            end
 
-        % Save NR parameter structure
-        save (parfile, 'NRpars'); 
+            % check if NRpars has the expected number of media
+            if length(NRpars.media_name) ~= length([nr_dataset.media(:)])
+                load_success = false;
+            end
+
+            % If previous parameters don't match expectations, erase the
+            % NRpars file and recalculate. 
+            if ~load_success
+                warning('NRpars inconsistency detected. Discarding NRpars and re-calculating NRpars. Features retained');
+
+                update_NRpars(base_dir, feature_function, 'update_pars');
+                calculate_NRpars(nr_dataset, base_dir, parallel_mode, feature_function); 
+                return;
+            end
+        catch
+            % File existed but load failed. Initialize structure for
+            % parameters and overwrite the old file.
+            NRpars = new_NRpars(nr_dataset, parfile, feature_function);
+        end
     end
-
+    
+    % Check for parallel mode compatibility
+    try
+        parallelization = feature_function('parallelization');
+    catch
+        % If the 'parallelization' option is missing from
+        % @feature_function, it will throw an error. We will assume that
+        % parallel processing is possible, because this is usually the
+        % case. 
+        parallelization = true;
+    end
+    if ~parallelization &&  ~strcmp(parallel_mode, 'none') 
+        parallel_mode = 'none';
+        fprintf("Feature Function does not support parallelization\nTurning off parallel processing\n");
+    end
+    
     % interpret parallel mode as two variables
     if strcmpi(parallel_mode,'none')
         parallel_stimuli = false;
@@ -228,6 +265,8 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
     %           true if NR parameters were calculated and saved in NRpars.data
     %           false otherwise 
 
+    % turn off warnings that temporary variables will be cleared 
+    warning('off', 'MATLAB:mir_warning_maybe_uninitialized_temporary');
 
     % create list of NR features / NR parameters to be calculated
     temp = 1:length(nr_dataset.media);
@@ -318,6 +357,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
             end
             NRpars.data(:,clip_num) = values;
             NRpars.computed(clip_num) = true;
+            NRpars.version = 2;
 
             % Save NR parameters
             save (parfile, 'NRpars'); 
@@ -337,31 +377,36 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
             parallel_tslices = false;
         end
 
-        % Parallel loop to compute the features / parameters for all media
-        parfor cnt = 1:length(nr_dataset.media)
-            try
-                if ~computed(cnt)
-                    % calculate parameter for this clip
-                    data(cnt,:) = ...
-                        calculate_one_media(nr_dataset, cnt, base_dir, ...
-                        parallel_tslices, feature_function);
+        % Process in batches of 100, saving parameter results as we go
+        for curr_start = 1:100:length(nr_dataset.media)
+            curr_stop = min(curr_start + 99, length(nr_dataset.media));
+            % Parallel loop to compute the features / parameters for all media       
+            parfor cnt = curr_start:curr_stop
+                try
+                    if ~computed(cnt)
+                        % calculate parameter for this clip
+                        data(cnt,:) = ...
+                            calculate_one_media(nr_dataset, cnt, base_dir, ...
+                            parallel_tslices, feature_function);
+                    end
+                catch
+                    % delete parameter file, which may be the source of this error
+                    delete(parfile);
+                    error('fatal error: run without parallel processing for more information');
                 end
-            catch
-                % delete parameter file, which may be the source of this error
-                delete(parfile);
-                error('fatal error: run without parallel processing for more information');
+                fprintf('\b-\n');
             end
-            fprintf('\b-\n');
+
+            % Move NRpars data back into NRpars structure
+            % Note: there are only two dimensions to "data" so the shiftdim 
+            % call shifts the dimensions to the right by one, wrapping.
+            NRpars.data = shiftdim(data, 1);
+            NRpars.computed(:) = true;
+            NRpars.version = 2;
+
+            % Save NR parameters
+            save (parfile, 'NRpars'); 
         end
-
-        % Move NRpars data back into NRpars structure
-        % Note: there are only two dimensions to "data" so the shiftdim 
-        % call shifts the dimensions to the right by one, wrapping.
-        NRpars.data = shiftdim(data, 1);
-        NRpars.computed(:) = true;
-
-        % Save NR parameters
-        save (parfile, 'NRpars'); 
 
     end
     fprintf('\n');
@@ -369,3 +414,18 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 end
 
 
+% Initialize structure for parameters, NRpars
+function [NRpars] = new_NRpars(nr_dataset, parfile, feature_function) 
+    NRpars.par_name = feature_function('parameter_names');
+    NRpars.media_name = cell(1,length(nr_dataset.media));
+    NRpars.data = nan(length(NRpars.par_name), length(nr_dataset.media));
+    NRpars.computed = false(1,length(nr_dataset.media));
+    NRpars.dataset_name = nr_dataset.dataset_name;
+
+    for cnt=1:length(nr_dataset.media)
+        NRpars.media_name{cnt} = nr_dataset.media(cnt).name;
+    end
+
+    % Save NR parameter structure
+    save (parfile, 'NRpars'); 
+end

@@ -114,7 +114,7 @@ Sawatch version 3 performs similarly on the 12 training dataset (0.61 correlatio
 This similarity between training performance (0.61 correlation) and evaluation performance (0.68 correlation) demonstrates a desirable level of stability.
 
 MUI2018 examines a medical use case (greyscale ultrasound images).
-While MUI2018 has the lowest accuracy of the evaulation datasets (0.56 correlation), this is within the range of correlations for the training datasets (0.40 to 0.73).
+While MUI2018 has the lowest accuracy of the evaluated datasets (0.56 correlation), this is within the range of correlations for the training datasets (0.40 to 0.73).
 Medical and other niche use cases may require a different parameter weighting to calculate MOS. 
 ```
 12) Sawatch version 3 

@@ -138,16 +138,19 @@ function [y, cb, cr] = read_media (mode, nr_dataset, media_num, varargin)
             all_cb = image_scale(all_cb, image_rows, image_cols, false);
             all_cr = image_scale(all_cr, image_rows, image_cols, false);
         else
-            [all_y] = read_avi('YCbCr',[nr_dataset.path nr_dataset.media(media_num).file], ...
-                'frames', is_start, is_stop, '128');
-
+            try
+                [all_y] = read_avi('YCbCr',[nr_dataset.path nr_dataset.media(media_num).file], ...
+                    'frames', is_start, is_stop, '128');
+            catch
+                error('Failed to read frames %d to %d of file %s\n', is_start, is_stop, [nr_dataset.path nr_dataset.media(media_num).file])
+            end
             % scale to destination monitor
             all_y = image_scale(all_y, image_rows, image_cols, false);
         end
     elseif strcmpi(hold_suffix,'jpg') || strcmpi(hold_suffix, 'png') || strcmpi(hold_suffix, 'jpeg') || strcmpi(hold_suffix, 'bmp')
 
         % read
-        img1 = imread([nr_dataset.path nr_dataset.media(media_num).file]);
+        img1 = imread(fullfile(nr_dataset.path, nr_dataset.media(media_num).file));
 
         % scale to destination monitor
         img2 = image_scale(img1, image_rows, image_cols, false);

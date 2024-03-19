@@ -115,6 +115,8 @@ error(nargchk(2,19,nargin));
 try
     cnt=1;
     while cnt <= length(varargin),
+        % argin_type = 1 if parsing input option
+        argin_type = 1;
         if ~ischar(varargin{cnt}),
             error('parameter not recognized');
         end
@@ -151,6 +153,8 @@ try
             cnt = cnt + 3;
         else
             % assume file name is given
+            % argin_type = 0, means reading an AVI file structure
+            argin_type = 0;
             filename = varargin{cnt};
             [~,~,ext] = fileparts(filename);
             if isempty(ext)
@@ -171,8 +175,13 @@ try
 catch e
     
     fprintf('Reading video file %s\n', filename);
-    error(e.identifier, ...
-        'Unable to parse input arguments. Please check calling syntax.');
+    if argin_type
+        error(e.identifier, ...
+            'Unable to parse input arguments. Please check calling syntax for function read_avi.');
+    else
+        error(e.identifier, ...
+            'Unable read AVI file header information. Please check file structure with another program.');
+    end
 end
 
 % if frames were given for audio, convert frames to seconds

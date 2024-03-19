@@ -63,6 +63,7 @@ STANDARD SYNTAX
    [parameter_names]   = feature_function('parameter_names')
    [bool]              = feature_function('luma_only')
    [duration]          = feature_function('read_mode')
+   [parallelization]   = feature_function('parallelization')
    [feature_data]      = feature_function('pixels', fps, y)
    [feature1_data]     = feature_function('pixels', fps, y, cb, cr)
    [par_data]          = feature_function('pars', feature_data, fps, image_size);
@@ -93,6 +94,10 @@ STANDARD SEMANTICS
                    calculate temporal information. If interlaced, de-interlace  
                    and group pairs of fields of the same type.
        'all'       The entire stimuli 
+
+'parallelization' = ability for nrff to be run with parallel options
+      false      will not work with parallel options
+      true       will work with parallel options
 
  'pixels' mode calculates these features on one tslice
    Input:

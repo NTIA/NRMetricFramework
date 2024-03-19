@@ -30,6 +30,8 @@ function [data] = nrff_nr_pwn(mode, varargin)
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             y = varargin{2};
             NR_PWN_metric = compute_NR_PWN(y);

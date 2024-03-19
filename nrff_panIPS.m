@@ -49,6 +49,10 @@ function [data] = nrff_panIPS(type, varargin)
     elseif strcmp(type, 'read_mode')
         data = 'ti';
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % tell calculate_NRpars to use parallel_mode
+    elseif strcmp(type, 'parallelization')
+        data = true; 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     elseif strcmp(type, 'pixels')

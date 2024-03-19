@@ -37,6 +37,8 @@ elseif strcmp(mode, 'parameter_names')
     
     data{2} = 'S-BlackLevel'; % black level is too high; image whitewashed
     
+    data{3} = 'WhiteClipping'; % Fraction of image that is clipped white
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % color space
 elseif strcmp(mode, 'luma_only')
@@ -47,8 +49,11 @@ elseif strcmp(mode, 'luma_only')
 elseif strcmp(mode, 'read_mode')
     data = 'si';
 
-    
-    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tell calculate_NRpars to use parallel_mode
+elseif strcmp(mode, 'parallelization')
+    data = true; 
+       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 elseif strcmp(mode, 'pixels')
     fps = varargin{1};
@@ -67,8 +72,9 @@ elseif strcmp(mode, 'pixels')
     % will; fail.
     if max(col_max) <= 32
         % whole image is black; feature invalid
-        data{1} = nan;
-        data{2} = max(col_max);
+        data{1}(1) = nan;
+        data{1}(2) = 0;
+        data{1}(3) = nan;
     else
     
         min_col = 1;
@@ -96,9 +102,34 @@ elseif strcmp(mode, 'pixels')
         pixels = row*col;
         y_vector = sort(reshape(y_nbe,row*col,1));
 
-
+        % 98th percentile luma, indicating white level
         offset_98 = floor(pixels*0.98); 
-        data{1} = y_vector( offset_98 );
+        data{1}(1) = y_vector( offset_98 );
+
+        % Number of pixels clipped at white (235 or above)
+        % use "greater than 234" due to coding/decoding noise 
+        data{1}(2) = length(find(y_vector > 234)) / (row*col);
+
+        % Calculate how sharp edges are, adjacent to clipped white areas. 
+        % Again, use > 234 instead of 235, due to rounding by codecs
+        % Only look horizontally (for computational efficiency) for three
+        % pure white pixels next to two darker pixels.
+        extra = 2;
+
+        yn2 = y(extra+1:row-extra, extra+1-2:col-extra-2);
+        yn1 = y(extra+1:row-extra, extra+1-1:col-extra-1);
+        y0 = y(extra+1:row-extra, extra+1:col-extra);
+        y1 = y(extra+1:row-extra, extra+1+1:col-extra+1);
+        y2 = y(extra+1:row-extra, extra+1+2:col-extra+2);
+ 
+        want = [ find(yn2 > 234 & yn1 > 234 & y0 > 234 & y1 <= 233 & y2 <= 233 ); find(y2 > 234 & y1 > 234 & y0 > 234 & yn1 <= 233 & yn2 <= 233 )];
+
+        % Compute the average. Ignore the middle point (y0) which is by
+        % definition approximately 235. Clip this at zero, to ignore
+        % excursions above 235 (e.g., some videos clip white at 255) 
+        data{1}(3) = 235 - mean(y1(want) + y2(want) + yn1(want) + yn2(want))/4;
+        data{1}(3) = max(0, data{1}(3));
+
     end
     
     % take mean and standard deviation of the luma image
@@ -115,7 +146,7 @@ elseif strcmp(mode, 'pars')
 
     feature_data = varargin{1,1};
 
-    data(1) = nanmean(squeeze(feature_data{1}));
+    data(1) = nanmean(squeeze(feature_data{1}(:,1,1)));
     if isnan(data(1))
         data(1) = 235;
     end
@@ -146,7 +177,20 @@ elseif strcmp(mode, 'pars')
     
     % rescale to range [0..1] where 0 is no impairment
     data(2) = (20 - data(2)) / 20;
-    
+
+    % Compute the fraction of clipped white pixels
+    % Ignore (set to zero) if the adjacent edge energy is too strong,
+    % because these are probably computer graphics with a background set to
+    % white. "Too strong" is set to 15, based on observations from the
+    % training datasets. 
+    white_clip_frac = nanmean(squeeze(feature_data{1}(:,1,2)));
+    edge = nanmean(squeeze(feature_data{1}(:,:,3)));
+    if isnan(edge) % no solid edges, leave as-is
+        data(3) = white_clip_frac;
+    else
+        data(3) = 0;
+    end
+ 
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 else

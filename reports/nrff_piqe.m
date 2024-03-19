@@ -11,6 +11,8 @@ switch mode
         data = true;
     case 'read_mode'
         data = 'si';
+    case 'parallelization'
+        data = true; 
     case 'pixels'
         y = varargin{2}; %give grayscale since the algorithm will convert to grayscale regardless
         score = piqe(y); 

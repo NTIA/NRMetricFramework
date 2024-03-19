@@ -45,6 +45,11 @@ function [data] = nrff_munsell_red(mode, varargin)
 
         data = 'si';
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % tell calculate_NRpars to use parallel_mode
+    case 'parallelization'
+        
+        data = true; 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     case 'pixels'

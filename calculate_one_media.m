@@ -30,9 +30,14 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
     
     % locate subdirectory for this NRFF  
     if base_dir(length(base_dir)) ~= '\' && base_dir(length(base_dir)) ~= '/'
-        base_dir = [base_dir '\'];
+        base_dir = fullfile(base_dir,'\');
     end
-    subdir = [base_dir 'group_' feature_function('group') '\'];
+    subdir = fullfile(base_dir, join(['group_', feature_function('group')]),'\');
+    
+    % check dataset path has trailing backslash
+    if nr_dataset.path(length(nr_dataset.path)) ~= '\' && nr_dataset.path(length(nr_dataset.path)) ~= '/'
+        nr_dataset.path = fullfile(nr_dataset.path,'\');
+    end
 
 
     % constant. Number of frames to read at a time in parallel mode. This
@@ -422,7 +427,7 @@ function save_data(data, is_path, feature_name, media_name)
     end
 
     % Generate feature file name
-    name_mat = [ is_path '\features\' feature_name '\' media_name '.mat'];
+    name_mat = fullfile(is_path, '\features\', join([feature_name '\']), join([media_name, '.mat']));
 
     name_exists = exist(name_mat, 'file');
 
@@ -430,11 +435,11 @@ function save_data(data, is_path, feature_name, media_name)
     if ~exist(is_path,'dir')
         mkdir(is_path);
     end
-    if ~exist([is_path '\features\'],'dir')
-        mkdir([is_path '\features\']);
+    if ~exist(fullfile(is_path, '\features\'),'dir')
+        mkdir(fullfile(is_path, '\features\'));
     end
-    if ~exist([is_path '\features\' feature_name],'dir')
-        mkdir([is_path '\features\'], feature_name);
+    if ~exist(fullfile(is_path, '\features\', feature_name),'dir')
+        mkdir(fullfile(is_path, '\features\', feature_name));
     end
     % If the media are in sub-folders, then put the feature files in these same sub-folders
     if contains(media_name, '\') 

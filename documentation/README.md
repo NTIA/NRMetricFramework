@@ -13,6 +13,9 @@ This repository does not contain images and videos. See the [subjective datasets
 - [Demo #2](Demo2.md) — code NR parameters
 - [Demo #3](Demo3.md) — train NR metrics
 - [Demo #4](Demo4.md) — create new subjective dataset variable
+- _IEEE Transactions on Broadcasting_ [Why NR metrics for image and video quality lack accuracy and reproducibility](https://ieeexplore.ieee.org/document/9837932)
+- [Machine Learning: Tools](machine_learning/MachineLearningWorkflow.md) — predicting image and video quality with machine learning — new!
+- [Machine Learning: Feature Selection](machine_learning/MachineLearningWorkflow_FeatureSelection.md) — machine learning feature selection — new!
 
 ## References
 - [Dataset Structure](DatasetStructure.md) — variables that describe subjective datasets
@@ -26,8 +29,9 @@ This repository does not contain images and videos. See the [subjective datasets
 - [import_dataset.m](ImportDataset.md)
 - [calculate_NRpars.m](CalculateNRpars.md)
 - [compromise_NRpars.m](CompromiseNRpars.md)
-- [ci_NRpars.m and ci_calc.m](ConfidenceIntervals.md) - new!
-- [peek_NRpars.m](PeekNRpars.md) - new!
+- [ci_NRpars.m and ci_calc.m](ConfidenceIntervals.md)
+- [peek_NRpars.m](PeekNRpars.md)
+- [residual_NRpars.m](ResidualNRpars.md) — new!
 
 ## Exporting Functions
 - [export_dataset.m](ExportDataset.md)

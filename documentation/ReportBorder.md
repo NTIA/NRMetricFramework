@@ -31,7 +31,7 @@ Function `nrff_border.m` calculates two values: S-BorderWeight and S-AllBorderWe
     2) Applies a circular bitmask (5x5) to the image.
     3) Computes the weighted luma gradient in this circular bitmask.
     4) Groups the image into sections based on an allowed 5% gradient deviation between adjacent pixels.
-    5) Identifies large image sections which totalled are 75% of the image area.
+    5) Identifies large image sections which totaled are 75% of the image area.
     6) Pixels along borders of only adjacent large image sections are counted.
     7) Border pixel counts are then divided by their large section's area pixel count.
     8) Border weights are averaged for a value between 0 and 1.
@@ -73,7 +73,7 @@ This meets our expectations for contrast border weight problems.
 These are contradictory patterns, as if BorderWeight is detecting two contradictory characteristics (e.g., one associated with high quality and another associated with low quality).
 Further investigation would be needed to develop a reliable metric.
 ```text
-1) BorderWeight 
+1) BorderWeight
 bid              corr =  0.16  rmse =  1.00  false decisions =  38%  percentiles [ 0.00, 0.00, 0.01, 0.03, 0.19]
 ccriq            corr =  0.00  rmse =  1.02  false decisions =  34%  percentiles [ 0.00, 0.00, 0.01, 0.05, 0.24]
 cid2013          corr =  0.19  rmse =  0.88  false decisions =  40%  percentiles [ 0.00, 0.00, 0.02, 0.06, 0.14]
@@ -100,7 +100,7 @@ The correlations are low and AllBorderWeight values for values between 0.2 and 0
 There is no indication that AllBorderWeight responds to contours. 
 
 ```
-2) AllBorderWeight 
+2) AllBorderWeight
 bid              corr =  0.21  rmse =  0.99  false decisions =  29%  percentiles [ 0.00, 0.27, 0.36, 0.43, 0.59]
 ccriq            corr =  0.29  rmse =  0.98  false decisions =  29%  percentiles [ 0.00, 0.27, 0.37, 0.46, 0.64]
 cid2013          corr =  0.17  rmse =  0.89  false decisions =  34%  percentiles [ 0.00, 0.35, 0.43, 0.50, 0.58]

@@ -56,7 +56,11 @@ function [data] = nrff_agwn(mode, varargin)
         case 'read_mode'
 
             data = 'si';
-
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % tell calculate_NRpars to use parallel_mode
+        case 'parallelization'
+            data = true; 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         case 'pixels'

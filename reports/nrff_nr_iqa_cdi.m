@@ -51,6 +51,8 @@ switch mode
         data = true;
     case 'read_mode'
         data = 'si';
+    case 'parallelization'
+        data = true; 
     case 'pixels'
         y = varargin{2};
         data{1,1} = mean(mean(y));
@@ -67,11 +69,11 @@ switch mode
     case 'pars'
         feature_data = varargin{1,1};
         %mean of all of the feature data taken for video inputs
-        data(1) = mean(feature_data{1});
-        data(2) = mean(feature_data{2});
-        data(3) = mean(feature_data{3});
-        data(4) = mean(feature_data{4});
-        data(5) = mean(feature_data{5});
+        data(1) = nanmean(feature_data{1});
+        data(2) = nanmean(feature_data{2});
+        data(3) = nanmean(feature_data{3});
+        data(4) = nanmean(feature_data{4});
+        data(5) = nanmean(feature_data{5});
     otherwise
         error('Mode not recognized. Aborting.');
 end

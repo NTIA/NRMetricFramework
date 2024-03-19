@@ -34,6 +34,8 @@ function [data] = nrff_curvelet_QA(mode, varargin)
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             try
                 %NOTE: MAKE SURE ALL FILES IN \curvelet_QA and
