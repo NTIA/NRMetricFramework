@@ -15,16 +15,44 @@ See ["Open Software Framework for Collaborative Development of No Reference Imag
 
 ## Step 1. Organize Training Data
 
-Download and load the [subjective dataset](SubjectiveDatasets.md) CCRIQ into MATLAB. 
+Download the [subjective dataset](SubjectiveDatasets.md) CCRIQ. 
 
-In the code below, the user should update the path to match the directory the CCRIQ Dataset is downloaded into.
+Extract the dataset to your documents folder. For example, on a Windows computer the path to the dataset is as follows:
+
+'C:\Users\<username>\Documents\CCRIQ_distribution'
+
+This repository contains several variables that describe entire datasets. 
+Load the CCRIQ Dataset variable and print it, using the code below.
 
 ```matlab
 >> clear;
 >> load iqa_camera.mat;
->> ccriq_dataset.path = 'C:\nr_datasets\ccriq\';
+>> ccriq_dataset
+
+ccriq_dataset = 
+
+  struct with fields:
+
+     dataset_name: 'ccriq'
+             path: '\\itsvideo\Gold\All_Video_Tests\avi__ccriq\images\'
+            media: [1×784 struct]
+           is_mos: 1
+        mos_range: [1 5]
+    raw_mos_range: [1 5]
+    category_list: {1×8 cell}
+    category_name: {1×8 cell}
+    miscellaneous: {}
+      sujson_file: ''
+          version: 1
+```
+Update ccriq_dataset.path to be your environment's CCRIQ Dataset path.
+```matlab
+>> ccriq_dataset.path = 'C:\Users\<username>\Documents\CCRIQ_distribution';
 >> save iqa_camera.mat *_dataset;
 ```
+You used the wild card * because file `iqa_camera.mat` contains several variables, each describing a different dataset. 
+If you print variable `ccriq_dataset` again, only the path field will have changed. 
+If you see any other changes to the variable `ccriq_dataset`, download `iqa_camera.mat` from the GitHub repository and start Demo1 again. 
 
 ## Step 2. Calculate NR Features and NR Parameters
 

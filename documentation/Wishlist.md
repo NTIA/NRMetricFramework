@@ -2,9 +2,25 @@
 
 This page identifies functions that are desired but not yet implemented. See [Demo #1](Demo1.md) for definitions.
 
-## Open source NR metric trained on the VCRDCI dataset
+## Open source compression NR metric trained on the VCRDCI dataset
 Our goal in creating the VCRDCI dataset was to provide training data for an NR metric that predicts the quality impact of compression, but ignores all other impairments. 
 It must be faster and more accurate than NR metric [dipIQ](ReportDipIQ.md).
+
+## Open source camera noise NR metric trained on the ITSnoise dataset
+Our goal in creating the ITSnoise dataset was to provide training data for an NR metric that predicts the quality impact of noise produced by camera capture in low light, but ignores all other impairments. 
+
+## NR metric identifying the likelihood that H.264, H.265, and AV1 will yield signifantly different results
+While H.264, H.265, and AV1 are known to produce higher or lower quality at a given bitrate, the relationship among media is usually the same or similar.
+We are interested in a metric that would identify media that are likely to trigger atypical responses from one of these codecs.
+For example, this could be used to understand whether the lower cost of H.264 compression is adequate, or the higher cost of H.265 compression is justified because the quality will increase more than usual. 
+
+## Interpretability and Adequacy
+These terms were proposed by Dr. Jorge Caviedes of Arizona State University (ASU) during the December 2022 VQEG meeting, while describing subjective assessment of medical images.
+Interpretability assesses the ability of a professional to correctly interpret the media when performing a task (e.g., reach a medical diagnosis).
+Adequacy assesses whether the media captures the correct information (e.g., if using digital fingerprinting, does the image contain a full fingerprint). 
+
+The desired future capability is to predict these aspects of video quality for tasks.
+These factors may help explain media quality assessment for tasks. 
 
 ## Python Implementation
 

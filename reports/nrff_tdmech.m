@@ -22,6 +22,8 @@ function [data] = nrff_tdmech(mode, varargin)
             data = false;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             y = varargin{2};
             cb = varargin{3};

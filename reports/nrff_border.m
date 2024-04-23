@@ -55,6 +55,11 @@ elseif strcmp(mode, 'read_mode')
     data = 'si';
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tell calculate_NRpars to use parallel_mode
+elseif strcmp(mode, 'parallelization')
+    data = true; 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 elseif strcmp(mode, 'pixels')
     fps = varargin{1};
     y = varargin{2};

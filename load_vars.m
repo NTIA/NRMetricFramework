@@ -10,9 +10,10 @@ base_dir = '\\itsvideo\Gold\new_features';
 % load the Image Quality Analysis (IQA) datsets with camera impairments
 load iqa_camera.mat
 
-% Establish a variable that lists all IQA datasets with camera impairments
+% Establish a variable that lists IQA datasets with camera impairments
+% koniq10k_dataset excluded due to atypical MOS behavior
 iqa_cam_ds = [ bid_dataset ccriq_dataset cid2013_dataset cv_dataset ...
-    its4s2_dataset itsnoise_dataset koniq10k_dataset livewild_dataset mui2018_dataset ];
+    its4s2_dataset itsnoise_dataset livewild_dataset mui2018_dataset ];
 
 % load the Video Quality Analysis (VQA) datsets with camera impairments
 load vqa_camera.mat; 
@@ -32,11 +33,23 @@ load vqa_broadcast.mat;
 % who were involved in the VQEG HD tests. The extra videos cannot be distributed.
 vqa_bc_ds = [its4s_dataset and_dataset vqegHDcuts_dataset vqegHD_dataset youkuv1k_dataset];
 
-% Load the simulated datasets. This is currently just vcrdci_dataset
+% Load the simulated datasets. This is either the full VCRDCI dataset in 
+% variable vcrdci_all_dataset, or the VCRDCI dataset in three pieces
 load simulated.mat
 
+% Establish a variable that lists all three VCRDCI dataset variables.
+[sim_ds] = [vcrdci1_dataset vcrdci2_dataset vcrdci3_dataset];
 
-% Load computer vision datasets. Calaster_dataset, and the unavailable diqa datasets
+% Load computer vision datasets. Calaster_dataset (AP and AR version). 
+% The DIQA datasets (unavailable). COCRID dataset.
 load cv.mat
 
-[sim_ds] = [vcrdci1_dataset vcrdci2_dataset vcrdci3_dataset];
+% Establish a variable that lists the computer vision dataset;
+% diqaO_dataset, diqaF_dataset, and diqaT_dataset excluded because these
+% are not generally available. calasterMA_dataset and calasterLA_dataset are
+% excluded because they are only available to demonstrate the problems when a 
+% computer vision dataset contains content where the algorithm is likely to
+% fail on high quality images (a confounding factor).
+
+cv_ds = [ calaster_dataset cocrid_dataset ];
+

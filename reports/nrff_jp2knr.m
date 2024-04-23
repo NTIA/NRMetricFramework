@@ -49,6 +49,8 @@ function [data] = nrff_jp2knr(mode, varargin)
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             img = varargin{2};
             L = 4;

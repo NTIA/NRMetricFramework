@@ -22,6 +22,8 @@ switch mode
             data = true;
         case 'read_mode'
             data = 'si';
+        case 'parallelization'
+            data = true; 
         case 'pixels'
             y = varargin{2};
             sum_q_sigma_s = 0;

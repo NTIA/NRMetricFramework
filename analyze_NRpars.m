@@ -18,6 +18,8 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
 %   Optional parameters. Some options contradict others.
 %
 %   'clip',         Lower, upper, = clip the parameter values to lie between [lower..upper]  
+%   'raw',          Compare NR metric to the RAW_MOS data. 
+%                   Default behavior is to compare NR metric to MOS.
 %   'sqrt'          Square root parameter values before analysis
 %   'square'        Square parameter values before analysis
 %
@@ -44,7 +46,15 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
     do_outlier = false;
     do_merge = false;
     do_false = false;
-    
+    do_mos = true;
+
+    % Find MOS min and max values.
+    % Check if the datasets have the same range. 
+    % variable "mos_range" has two values: #1 is min, #2 is max
+    mos_range = reshape([nr_dataset(:).mos_range],2,length(nr_dataset));
+    mos_min = min(mos_range(1,:));
+    mos_max = max(mos_range(2,:));
+  
     preproc_message = '';
 
     cnt = 1;
@@ -76,6 +86,17 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             cnt = cnt + 1;
         elseif strcmpi(varargin{cnt},'outlier')
             do_outlier = true;
+            cnt = cnt + 1;
+        elseif strcmpi(varargin{cnt},'raw')
+            do_mos = false;
+            fprintf('Compare NR parameters to RAW_MOS\n')
+
+            % Find RAW_MOS min and max values.
+            % Check if the datasets have the same range. 
+            % variable "raw_mos_range" has two values: #1 is min, #2 is max
+            mos_range = reshape([nr_dataset(:).raw_mos_range],2,length(nr_dataset));
+            mos_min = min(mos_range(1,:));
+            mos_max = max(mos_range(2,:));
             cnt = cnt + 1;
         elseif strcmpi(varargin{cnt},'category') && cnt + 1 <=varargin_len
             do_category = varargin{cnt+1};
@@ -171,6 +192,13 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
         end
     end
 
+    % Check range of MOSs. If it differs among datasets, disable plotting.
+    if mos_min ~= max(mos_range(1,:)) || mos_max ~= min(mos_range(2,:))
+        warning('Disabling plots. Plotting only works correctly for datasets with identical MOS or RAW_MOS ranges')
+        do_plot = false;
+    end
+    
+
     % load the parameters. This will calculate them, if not yet computed. 
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
     for dcnt = 1:length(nr_dataset)
@@ -247,12 +275,12 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             subnum = ceil(length(nr_dataset) / 3); 
             for dcnt = 1:length(nr_dataset)
                 subplot(3, subnum, dcnt);
-                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, do_false);
+                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, do_false, do_mos, mos_min, mos_max);
             end
         else
             do_subplot = false;
             for dcnt = 1:length(nr_dataset)
-                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, do_false);
+                [corr(dcnt), rmse(dcnt)] = analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, do_false, do_mos, mos_min, mos_max);
             end
         end
 
@@ -263,7 +291,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             do_subplot = false;
             % Don't print false decisions even if requested. The statistic 
             % invalid for pooled datasets.
-            analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 2, nan, preproc_message, false);
+            analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 0, nan, preproc_message, false, do_mos, mos_min, mos_max);
             fprintf('\n\n');
         end
         
@@ -280,12 +308,12 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
                 subnum = ceil(length(options) / 3); 
                 for ccnt = 1:length(options)
                     subplot(3, subnum, ccnt);
-                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false);
+                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false, do_mos, mos_min, mos_max);
                 end
             else
-                do_subplot = false;
+                do_subplot = true;
                 for ccnt = 1:length(options)
-                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false);
+                    analyze_par_dataset(nr_dataset, NRpars, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false, do_mos, mos_min, mos_max);
                 end
             end
         end
@@ -303,7 +331,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
             fprintf('Outliers\n\n');
             fprintf('%d) %s %s\n', pcnt, NRpars(1).par_name{pcnt}, preproc_message);
             for dcnt = 1:length(nr_dataset)
-                analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, false, false, false, true, all_datasets, NRpars_all, 2, nan, preproc_message, do_false);
+                analyze_par_dataset(nr_dataset(dcnt), NRpars(dcnt), pcnt, false, false, false, true, all_datasets, NRpars_all, 2, nan, preproc_message, do_false, do_mos, mos_min, mos_max);
             end
  
             if ~isnan(do_category)
@@ -312,7 +340,7 @@ function analyze_NRpars(nr_dataset, base_dir, feature_function, varargin)
                     fprintf('\n\n');
                     fprintf('Outliers by %s = %s\n\n', nr_dataset.category_name{do_category}, options(ccnt));
                     analyze_par_dataset(nr_dataset, NRpars, pcnt, ...
-                        false, false, false, true, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false);
+                        false, false, false, true, all_datasets, NRpars_all, do_category, options(ccnt), preproc_message, do_false, do_mos, mos_min, mos_max);
                 end
             end
 
@@ -322,11 +350,13 @@ end
 
 
 function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_print, do_plot, do_subplot, do_outliers, ...
-    all_dataset, all_NRpars, is_category, is_level, preproc_message, do_false)
+    all_dataset, all_NRpars, is_category, is_level, preproc_message, do_false, do_mos, mos_min, mos_max)
 
     % pick off training media for this parameter and dataset
     subset = [one_dataset.media(:).category2] == categorical({'train'});
     switch is_category
+        case 0
+            test_name = 'pooled';
         case 1
             subset = subset & [one_dataset.media(:).category1] == is_level;
             test_name = is_level;
@@ -358,7 +388,7 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
         ylabel('MOS', 'interpreter','none');
         title(test_name, 'interpreter','none');
-        axis([0 1 1 5])
+        axis([0 1 mos_min mos_max])
         text(0.5, 3,'no data','HorizontalAlignment','center','color','r')
 
         corr = nan;
@@ -369,7 +399,11 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
     % organize data for linear regression
     xdata = ones(sum(subset),2);
     xdata(:,2) = one_NRpars.data(pcnt,subset);
-    ydata = [one_dataset.media(subset).mos]';
+    if do_mos
+        ydata = [one_dataset.media(subset).mos]';
+    else
+        ydata = [one_dataset.media(subset).raw_mos]';
+    end
 
     % skip if all data is NaN or Inf; need at least 2 elements
     if sum(~isnan(xdata(:,2)) & ~isinf(xdata(:,2))) < 2
@@ -377,7 +411,7 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         xlabel(one_NRpars.par_name{pcnt},'interpreter','none');
         ylabel('MOS', 'interpreter','none');
         title(test_name, 'interpreter','none');
-        axis([0 1 1 5])
+        axis([0 1 mos_min mos_max])
         text(0.5, 3,'no data','HorizontalAlignment','center','color','r')
             
         corr = nan;
@@ -403,11 +437,8 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         values = sort(one_NRpars.data(pcnt,subset),'ascend');
         offset = max(1, round([0 0.25 0.5 0.75 1] * length(values)));
         values = values(offset);
-        if do_subplot
-            fprintf('%-15s  ', test_name);
-        else
-            fprintf('                 ');
-        end
+        fprintf('%-15s  ', test_name);
+
         if do_false
             fr = false_decisions(ydata, xdata(:,2));
             fprintf('corr = %5.2f  rmse = %5.2f  false decisions = %3d%%  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', ...
@@ -424,15 +455,22 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         end
         
         train_set_all = [all_dataset.media(:).category2] == categorical({'train'});
-        plot(all_NRpars.data(pcnt,train_set_all), [all_dataset.media(train_set_all).mos], '.', 'MarkerSize', 3, 'Color',[0 0.8 0]);
+        if do_mos
+            train_set_mos = [all_dataset.media(train_set_all).mos];
+            subset_mos = [one_dataset.media(subset).mos];
+        else
+            train_set_mos = [all_dataset.media(train_set_all).raw_mos];
+            subset_mos = [one_dataset.media(subset).raw_mos];
+        end
+        plot(all_NRpars.data(pcnt,train_set_all), train_set_mos, '.', 'MarkerSize', 3, 'Color',[0 0.8 0]);
         hold on;
 
         % If plotting a sub-set of data, overlay subset in blue
-        if length([one_dataset.media(subset).mos]) < length([all_dataset.media(train_set_all).mos])
-            plot(one_NRpars.data(pcnt,subset), [one_dataset.media(subset).mos], '.b', 'MarkerSize', 6);
+        if length(subset_mos) < length(train_set_mos)
+            plot(one_NRpars.data(pcnt,subset), subset_mos, '.b', 'MarkerSize', 6);
         else
             % otherwise, just make data points larger and retain green color.
-            plot(one_NRpars.data(pcnt,subset), [one_dataset.media(subset).mos], '.', 'MarkerSize', 6, 'Color', [0 0.8 0]);
+            plot(one_NRpars.data(pcnt,subset), subset_mos, '.', 'MarkerSize', 6, 'Color', [0 0.8 0]);
         end
 
         % plot linear fit
@@ -444,14 +482,14 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
 
         hold off;
         
-        % specify axes. Assume [1..5] for MOS range.
+        % specify axes. 
         xmin = min(min(all_NRpars.data(pcnt,train_set_all)),min(one_NRpars.data(pcnt,subset)));
         xmax = max(max(all_NRpars.data(pcnt,train_set_all)),max(one_NRpars.data(pcnt,subset)));
         
-        ymin = min(min([all_dataset.media(train_set_all).mos]), min([one_dataset.media(subset).mos]));
-        ymin = min(ymin, 1);
-        ymax = max(max([all_dataset.media(train_set_all).mos]), max([one_dataset.media(subset).mos]));
-        ymax = max(ymax, 5);
+        ymin = min(min(train_set_mos), min(subset_mos));
+        ymin = min(ymin, mos_min);
+        ymax = max(max(train_set_mos), max(subset_mos));
+        ymax = max(ymax, mos_max);
         
         if xmin < xmax
             axis([xmin xmax ymin ymax]);
@@ -474,7 +512,13 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
     end
     
     if do_outliers
-        residuals = (w(1) + w(2) * one_NRpars.data(pcnt,subset)) - [one_dataset.media(subset).mos];
+        if do_mos
+            subset_mos = [one_dataset.media(subset).mos];
+        else
+            subset_mos = [one_dataset.media(subset).raw_mos];
+        end
+
+        residuals = (w(1) + w(2) * one_NRpars.data(pcnt,subset)) - subset_mos;
         [~,order] = sort(residuals,'descend');
         len = length(residuals);
         want = round(min(10,0.1 * len));
@@ -482,8 +526,13 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         subsetnum = tmp(subset);
         for cnt=[1:want (len-want+1):len]
             num = subsetnum(order(cnt));
-            fprintf('[%s] mos %4.2f  par %6.3f  stimuli %d = %s\n', one_dataset.test, one_dataset.media((num)).mos, ...
-                one_NRpars.data(pcnt,(num)), (num), one_dataset.media((num)).file);
+            if do_mos
+                fprintf('[%s] mos %4.2f  par %6.3f  stimuli %d = %s\n', one_dataset.test, one_dataset.media((num)).mos, ...
+                    one_NRpars.data(pcnt,(num)), (num), one_dataset.media((num)).file);
+            else
+                fprintf('[%s] mos %4.2f  par %6.3f  stimuli %d = %s\n', one_dataset.test, one_dataset.media((num)).raw_mos, ...
+                    one_NRpars.data(pcnt,(num)), (num), one_dataset.media((num)).file);
+            end
         end
     end
     

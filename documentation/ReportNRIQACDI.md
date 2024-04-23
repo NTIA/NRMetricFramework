@@ -52,7 +52,8 @@ AGH-NTIA-Dolby   corr =  0.09  rmse =  1.12  false decisions =  39%  percentiles
 vqegHDcuts       corr =  0.10  rmse =  0.89  false decisions =  30%  percentiles [26.50,76.63,92.71,109.11,169.74]
 
 average          corr =  0.19  rmse =  0.83
-pooled           corr =  0.14  rmse =  0.87  percentiles [16.00,78.62,101.14,121.27,233.89]```
+pooled           corr =  0.14  rmse =  0.87  percentiles [16.00,78.62,101.14,121.27,233.89]
+```
 ![](images/report_nr_iqa_cdi_mean.png)
 
 ### Standard Deviation ###
@@ -73,7 +74,8 @@ AGH-NTIA-Dolby   corr =  0.15  rmse =  1.11  false decisions =  32%  percentiles
 vqegHDcuts       corr =  0.02  rmse =  0.89  false decisions =  33%  percentiles [ 7.77,27.19,33.61,42.19,65.54]
 
 average          corr =  0.18  rmse =  0.84
-pooled           corr =  0.11  rmse =  0.87  percentiles [ 0.00,28.22,37.57,47.38,90.43]```
+pooled           corr =  0.11  rmse =  0.87  percentiles [ 0.00,28.22,37.57,47.38,90.43]
+```
 ![](images/report_nr_iqa_cdi_std.png)
 
 
