@@ -156,7 +156,7 @@ function [data] = metric_sawatch(mode, varargin)
             % Note version number
             NRpars.version = 2;
             
-            save([base_dir '\group_sawatch\NRpars_sawatch_' NRpars.dataset_name '.mat'], 'NRpars');
+            save(fullfile(base_dir, ['\group_sawatch\NRpars_sawatch_' NRpars.dataset_name '.mat']), 'NRpars');
         end
         
         % return the metric data

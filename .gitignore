@@ -2,3 +2,8 @@ script_front_to_back_test.m
 script_test_export_NRPars.m
 *.asv
 documentation/images/Thumbs.db
++vcrdci123_baseline_model/+ops/addOutputLabel.m
++vcrdci123_baseline_model/+ops/iExtractData.m
++vcrdci123_baseline_model/+ops/sortByLabel.m
++vcrdci123_baseline_model/+ops/sortByLabel.m
++vcrdci123_baseline_model/+ops/sortToTFLabel.m

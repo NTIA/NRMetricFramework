@@ -16,6 +16,7 @@ This repository does not contain images and videos. See the [subjective datasets
 - _IEEE Transactions on Broadcasting_ [Why NR metrics for image and video quality lack accuracy and reproducibility](https://ieeexplore.ieee.org/document/9837932)
 - [Machine Learning: Tools](machine_learning/MachineLearningWorkflow.md) — predicting image and video quality with machine learning — new!
 - [Machine Learning: Feature Selection](machine_learning/MachineLearningWorkflow_FeatureSelection.md) — machine learning feature selection — new!
+- [Validation](Validation.md) — validation data for NR metric [Sawatch](ReportSawatch.md) — new!
 
 ## References
 - [Dataset Structure](DatasetStructure.md) — variables that describe subjective datasets
@@ -104,6 +105,7 @@ Metric Name|Goal|[Rating](Report.md)|Notes
 [JP2KNR](ReportJP2KNR.md)|MOS|:star:|Code produces errors, content dependencies, possible inspiration for RCA 
 [LBP](ReportLBP.md)|MOS|:star:|Not intended for MOS estimation, possible inspiration for RCA
 [Log-BIQA](ReportLogBiqa.md)|MOS|:star:|
+[Motion-Search](ReportMotionSearch.md)|MOS|:star: :star:| Bitrate, error, encoding frames metric
 [NIQE](ReportNiqe.md)|MOS|:star: :star:|Re-training tools available
 [NR-IQA-CDI](ReportNRIQACDI.md)|MOS|:star:|Variants Mean, Standard deviation, and Skewness
 [NR-IQA-CDI](ReportNRIQACDI.md)|MOS|:star: :star:|Variants Kurtosis and Entropy: possible inspiration for RCA
@@ -133,7 +135,12 @@ Metric Name|Goal|[Rating](Report.md)|Impairment|Notes
 
 Metric Name|Goal|[Rating](Report.md)|Notes
 -----------|----|------|------
+[agh-vqis](ReportAgh-Vqis.md)|MOS|:question:| Team encountered technical difficulties
 [dipIQ](ReportDipIQ.md)|ORD|:question:|NR metric training method, statistics for ORD proposed
+[PatchVQ](ReportPatchVQ.md)|MOS|:question:| Team encountered technical difficulties in the desired environment
+[pyiqa](ReportPyiqa.md)|MOS|:question:| Team encountered technical difficulties
+[Rapique](ReportRapique.md)|MOS|:question:| Team encountered technical difficulties
+
 
 ## Acknowledgements
 

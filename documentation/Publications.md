@@ -110,3 +110,13 @@ assessment metrics," _Adv. Mod. Radioelectronics_, 10, 30–45 (2009).
 [50] P. Tandon, M. Afonso, J. Sole, and L. Krasula, “CAMBI: Contrast-aware Multiscale Banding Index,” Picture Coding Symposium  2021.
 
 [51] L. Krasula, "Contrast aware multiscale banding index (aka CAMBI)," VQEG_NORM_2021_205_CAMBI, 2021, Available: https://vqeg.org/meetings-home/meeting-files/, in 2021_12_UniversityOfSurry_online. 
+
+[52] J. Nawała, L. Janowski, M. Leszczuk. "Modeling of quality of experience in no-reference model," in Journal of Telecommunications and Information Technology, 2017.
+
+[53] Z. Ying, M. Mandal, D. Ghadiyaram and A.C. Bovik, "Patch-VQ: ‘Patching Up’ the Video Quality Problem," arXiv 2020.
+
+[54] C. Chen, J. Mo, "IQA-PyTorch: PyTorch Toolbox for Image Quality Assessment," 2022. [Online]. Available: https://github.com/chaofengc/IQA-PyTorch
+
+[55] Tu, Z., et al. "RAPIQUE: Rapid and accurate video quality prediction of user generated content," in IEEE Open Journal of Signal Processing, vol. 2, pp. 425–440, 2021.
+
+
