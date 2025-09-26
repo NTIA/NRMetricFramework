@@ -5,6 +5,12 @@ This updates our download count, which helps us quantify the value of this repos
 
 This page has release notes and identifies updates that will change the code's behavior.
 
+## NR Metric Framework Version 5.0
+
+The fifth release of the NR Metric Framework included the following changes:
+
+- Added partial analyses for new NR metrics AGH-VQIS, PatchVQ, Rapique, and PYIQA. All of these analyses encountered technical difficulties. 
+- Integrated MotionSearch GitHub repository, which calculates values for machine learning. 
 
 ## NR Metric Framework Version 4.0
 

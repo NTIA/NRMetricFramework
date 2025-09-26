@@ -103,7 +103,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
         if feature_function('luma_only')
             feature_data = feature_function('pixels', nr_dataset.media(media_num).fps, y); 
         else
-            feature_data = feature_function('pixels', nr_dataset.media(media_num).fps, y, cb, cr);
+            feature_data = feature_function('pixels', nr_dataset.media(media_num).fps, y, cb, cr,nr_dataset.path,nr_dataset.media(media_num).file);
         end
         
     elseif strcmp(tslice_mode, 'si') || strcmp(tslice_mode, 'ti')
