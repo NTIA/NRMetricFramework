@@ -45,7 +45,7 @@ Note:
 * `ci_calc.py` implements ci_calc.m in Python code.
 ```text
 SYNTAX
-  ci_NRpars(nr_dataset, base_dir, feature_function);
+  ci_NRpars(nr_dataset, data_dir, feature_function);
 SEMANTICS
   Estimate the confidence interval (CI) of an NR metric or parameter, 
   by comparing the conclusions reached by the model with conclusions 
@@ -59,7 +59,7 @@ Input Parameters:
   nr_dataset          Data structures, of datasets to be analyzed. If 2+
                       datasets are provided, then the datasets will be
                       weighted equally.
-  base_dir            Path to directory where NR features and NR parameters are stored.
+  data_dir            Path to directory where NR features and NR parameters are stored.
   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
                       adhere to the interface specified in calculate_NRpars.
 ```

@@ -2,9 +2,9 @@
  
 ## Usage
 
-Calculate Features is used to calculate NR features and NR parameters. Calculate Features takes a feature function, a [nr_dataset](DatasetStructure.md), and a feature_base_dir as arguments. The feature function must be formatted as specified in the above inline documentation otherwise the code will not properly run. See [Demo #1](Demo1.md) for definitions and see [Demo #2](Demo2.md) for a tutorial on writing feature functions. 
+Calculate Features is used to calculate NR features and NR parameters. Calculate Features takes a feature function, a [nr_dataset](DatasetStructure.md), and a feature_data_dir as arguments. The feature function must be formatted as specified in the above inline documentation otherwise the code will not properly run. See [Demo #1](Demo1.md) for definitions and see [Demo #2](Demo2.md) for a tutorial on writing feature functions. 
 
-'nr_dataset' is the output from [import_dataset](ImportDataset.md), which can be given as either a single dataset or an array of datasets, and the feature_base_dir is the directory where all the calculated features (and parameters) will be stored. 
+'nr_dataset' is the output from [import_dataset](ImportDataset.md), which can be given as either a single dataset or an array of datasets, and the feature_data_dir is the directory where all the calculated features (and parameters) will be stored. 
 
 ## Semantics
 
@@ -16,7 +16,7 @@ Calculate Features has several paths of execution depending on the flags given t
    Support tool to calculate a NR feature on all videos or images in a dataset.
  SYNTAX
    [NRpars] = calculate_NRpars(nr_dataset, ...
-       feature_base_dir, parallel_mode, feature_function);
+       feature_data_dir, parallel_mode, feature_function);
  SEMANTICS
    This function provides all support tools needed to calculate
    no-reference (NR) features and NR parameters.
@@ -27,7 +27,7 @@ Calculate Features has several paths of execution depending on the flags given t
 
  Input Parameters:
    nr_dataset = Data structure. Each describes an entire dataset (name, file location, ...)
-   feature_base_dir = Path to directory where NR features and NR parameters are stored.
+   feature_data_dir = Path to directory where NR features and NR parameters are stored.
 
    parallel_model =
        'none'      Linear calculation. Parallel processing toolbox avoided.
@@ -85,10 +85,10 @@ STANDARD SEMANTICS
  'luma_only' mode returns color space option
    Output
        bool = true for luminance only;  
-       bool = false if 'pixels' mode tales y, cb, and cr.
+       bool = false if 'pixels' mode takes y, cb, and cr.
 
  'read_mode' = Type of time-slice (tslice) that 'pixels' call takes as input
-               and returns one of the folowing types:
+               and returns one of the following types:
        'si'        1 frame, for spatial information (SI) features 
        'ti'        Overlapping series 2 frames (overlapping by 1F) to
                    calculate temporal information. If interlaced, de-interlace  
@@ -138,7 +138,7 @@ SYNTAX
   [feature_group]     = feature_function('group')
   [parameter_names]   = feature_function('parameter_names')
   [read_mode]         = feature_function('read_mode')
-  [par_data]          = feature_function('compose', nr_dataset, base_dir);
+  [par_data]          = feature_function('compose', nr_dataset, data_dir);
 SEMANTICS
   Where NRFF takes as input images or videos and outputs NR features and  
   NR parameters, this NR metric takes as input NR parameters and outputs

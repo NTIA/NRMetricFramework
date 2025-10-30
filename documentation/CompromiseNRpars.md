@@ -22,13 +22,13 @@ The function increments the coefficients in increments of 0.1. Namely a = [0, 0.
     Visualize differences among parameter weights for multiple datasets, to
     help find compromise weights for a linear model.
  SYNTAX
-    compromize_NRpars (nr_dataset, base_dir, do_scaling, ...
+    compromize_NRpars (nr_dataset, data_dir, do_scaling, ...
         feature_function1, parameter1, ispos1, ...
         feature_function2, parameter2, ispos2, ...
         feature_functionN, parameterN, isposN); 
  SEMANTICS
     "nr_dataset" = Data structure
-    "base_dir" = Path to directory where NR features and NR parameters are stored.
+    "data_dir" = Path to directory where NR features and NR parameters are stored.
     "do_scaling" = boolean. usually true, select false if parameters are
     already on a [0..1] scale. 
 

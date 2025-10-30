@@ -1,15 +1,16 @@
-function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
+function compromise_NRpars(nr_dataset, data_dir, do_scaling, varargin)
 % COMPROMISE
 %   Visualize differences among parameter weights for multiple datasets, to
 %   help find compromise weights for a linear model.
 % SYNTAX
-%   compromize_NRpars (nr_dataset, base_dir, do_scaling, ...
+%   compromize_NRpars (nr_dataset, data_dir, do_scaling, ...
 %       feature_function1, parameter1, ispos1, ...
 %       feature_function2, parameter2, ispos2, ...
 %       ... feature_functionN, parameterN, isposN); 
 % SEMANTICS
-%   "nr_dataset" = Data struction. Each describes an entire dataset (name, file location, ...)
-%   "base_dir" = Path to directory where NR features and NR parameters are stored.
+%   "nr_dataset" = Data structure or array of data structures. Each
+%                  describes an entire dataset (name, file location, ...) 
+%   "data_dir" = Path to directory where NR features and NR parameters are stored.
 %   "do_scaling" = boolean. usually true, select false if parameters are
 %   already on a [0..1] scale. 
 %
@@ -86,7 +87,7 @@ function compromise_NRpars(nr_dataset, base_dir, do_scaling, varargin)
         % load parameter data for all datasets
         for cntD = 1:length(data)
             % load all parameters for this dataset
-            NRpars = calculate_NRpars(nr_dataset(cntD), base_dir, 'none', parinfo(cntP).feature_function);
+            NRpars = calculate_NRpars(nr_dataset(cntD), data_dir, 'none', parinfo(cntP).feature_function);
             
             % figure parameter offset 
             if parinfo(cntP).parnum < 1 || parinfo(cntP).parnum > length(NRpars.par_name)

@@ -1,13 +1,13 @@
-function update_NRpars(base_dir, feature_function, action)
+function update_NRpars(data_dir, feature_function, action)
 %   This convenience function updates or erases parameter files. 
 % SYNTAX
-%    update_NRpars(base_dir, feature_function, action)
+%    update_NRpars(data_dir, feature_function, action)
 % SEMANTICS
 %   This convenience function helps the user update or erase parameter
 %   files. 
 %
 % Input Parameters:
-%   base_dir = Path to directory where NR features and NR parameters are stored.
+%   data_dir = Path to directory where NR features and NR parameters are stored.
 %
 %   feature_function = Function call to compute the feature. 
 %       This no-reference feature function (NRFF) must adhere to the
@@ -24,11 +24,11 @@ function update_NRpars(base_dir, feature_function, action)
 %                       updated. All NRpars.mat files must be updated.
 
     % Create a variable that has a path to this NRFF's directory
-    if base_dir(length(base_dir)) ~= '\'
-        base_dir = [base_dir '\'];
+    if data_dir(length(data_dir)) ~= '\'
+        data_dir = [data_dir '\'];
     end
     
-    nrff_dir = [base_dir 'group_' feature_function('group') '\'];
+    nrff_dir = [data_dir 'group_' feature_function('group') '\'];
 
     if ~exist(nrff_dir)
         error('NR parameter has not yet been calculated. Directory does not exist: %s', nrff_dir);

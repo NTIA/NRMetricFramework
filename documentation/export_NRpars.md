@@ -26,7 +26,7 @@ See [import_dataset](ImportDataset.md) and [Demo1](Demo1.md) for more details.
 %   manipulating NR parameters and NR features with other tools. 
 %
 % SYNTAX
-% [Mdata] = export_NRpars(nr_dataset, base_dir, feature_function, path);
+% [Mdata] = export_NRpars(nr_dataset, data_dir, feature_function, path);
 %   export_NRpars(...,'option');       % append options to above function call
 %
 % SEMANTICS
@@ -36,7 +36,7 @@ See [import_dataset](ImportDataset.md) and [Demo1](Demo1.md) for more details.
 %
 % Input Parameters:
 %   nr_dataset          Data structure. Must contain only one dataset.
-%   base_dir            Path to directory where NR features and NR parameters are stored.
+%   data_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature function (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %                       Must contain only one function. 

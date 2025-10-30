@@ -10,7 +10,7 @@ This function helps the metric developer understand the performance of the NR pa
 ## Inline Documentation
 ```text
 SYNTAX
-  analyze_NRpars(nr_dataset, base_dir, feature_function);
+  analyze_NRpars(nr_dataset, data_dir, feature_function);
   analyze_NRpars(...,'optional_parameter',value);
 
 SEMANTICS
@@ -19,7 +19,7 @@ SEMANTICS
 
 Input Parameters:
   nr_dataset         [Dataset structure](DatasetStructure.md) or vector containing 2+ [dataset structures](DatasetStructure.md)
-  base_dir           Path to directory where NR features and NR parameters are stored. See [calculate_NRfeatures.m](CalculateFeatures.md)
+  data_dir           Path to directory where NR features and NR parameters are stored. See [calculate_NRfeatures.m](CalculateFeatures.md)
   feature_function   Pointer to a no-reference feature functions (NRFF) that must adhere to the interface specified in calculate_features.
 
 Optional parameters, appended to the end of the function call. Some options contradict others.

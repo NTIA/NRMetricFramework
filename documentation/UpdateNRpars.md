@@ -11,16 +11,16 @@ NR parameter files can also be erased manually.
 
 ## Inline Documentation
 ```text
-function update_NRpars(base_dir, feature_function, action)
+function update_NRpars(data_dir, feature_function, action)
    This convenience function updates or erases parameter files. 
  SYNTAX
-    update_NRpars(base_dir, feature_function, action)
+    update_NRpars(data_dir, feature_function, action)
  SEMANTICS
    This convenience function helps the user update or erase parameter
    files. 
 
  Input Parameters:
-   base_dir = Path to directory where NR features and NR parameters are stored.
+   data_dir = Path to directory where NR features and NR parameters are stored.
 
    feature_function = Function call to compute the feature. 
        This no-reference feature function (NRFF) must adhere to the

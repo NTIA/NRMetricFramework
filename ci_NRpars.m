@@ -1,8 +1,8 @@
-function ci_NRpars(nr_dataset, base_dir, feature_function)
+function ci_NRpars(nr_dataset, data_dir, feature_function)
 % ci_NRpars
 %   Estimate the confidence interval (CI) of an NR parameter
 % SYNTAX
-%   ci_NRpars(nr_dataset, base_dir, feature_function, parnum);
+%   ci_NRpars(nr_dataset, data_dir, feature_function, parnum);
 % SEMANTICS
 %   Estimate the confidence interval (CI) of an NR metric or parameter, 
 %   by comparing the conclusions reached by the model with conclusions 
@@ -20,7 +20,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 %   nr_dataset          Data structures, of datasets to be analyzed. If 2+
 %                       datasets are provided, then the datasets will be
 %                       weighted equally.
-%   base_dir            Path to directory where NR features and NR parameters are stored.
+%   data_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %
@@ -34,7 +34,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
     for dcnt = 1:length(nr_dataset)
         % load parameter data
-        NRpars(dcnt) = calculate_NRpars(nr_dataset(dcnt), base_dir, 'none', feature_function);        
+        NRpars(dcnt) = calculate_NRpars(nr_dataset(dcnt), data_dir, 'none', feature_function);        
 
         % find subset of training clips for each dataset 
         yesno = [nr_dataset(dcnt).media(:).category2] == categorical({'train'});
@@ -53,7 +53,7 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
         
         % reorganize dataset information
         for dcnt = 1:length(nr_dataset)
-            dataset_names{dcnt} = nr_dataset(dcnt).test;
+            dataset_names{dcnt} = nr_dataset(dcnt).dataset_name;
             dataset_mos{dcnt} = [nr_dataset(dcnt).media(subset{dcnt}).mos];
             dataset_metrics{dcnt} = [NRpars(dcnt).data(pcnt,subset{dcnt})];
         end
@@ -73,3 +73,4 @@ function ci_NRpars(nr_dataset, base_dir, feature_function)
 end
 
     
+
