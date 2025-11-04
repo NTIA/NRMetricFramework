@@ -5,7 +5,7 @@
 addpath('.\reports\');
 
 % Variable points to a directory where features are stored.
-base_dir = '\\itsvideo\Gold\new_features';
+data_dir = '\\itsvideo\Gold\new_features';
 
 % load the Image Quality Analysis (IQA) datsets with camera impairments
 load iqa_camera.mat
@@ -31,7 +31,7 @@ load vqa_broadcast.mat;
 % with 'vqegHDcutspublic_dataset' and 'vqegHDpublic_dataset'
 % These variables contain videos that are only available to organizations 
 % who were involved in the VQEG HD tests. The extra videos cannot be distributed.
-vqa_bc_ds = [its4s_dataset and_dataset vqegHDcuts_dataset vqegHD_dataset youkuv1k_dataset];
+vqa_bc_ds = [its4s_dataset and_dataset vqegHD_dataset youkuv1k_dataset];
 
 % Load the simulated datasets. This is either the full VCRDCI dataset in 
 % variable vcrdci_all_dataset, or the VCRDCI dataset in three pieces

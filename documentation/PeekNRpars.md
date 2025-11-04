@@ -13,7 +13,7 @@ Given specific NR parameters and a corresponding range of values, this function 
 PEEK_NRPARS
   Visualize media detected by a particular range of NR parameter values.
 SYNTAX
-  peek_NRpars( nr_dataset, base_dir, feature_function, parnum, min_value, max_value)
+  peek_NRpars( nr_dataset, data_dir, feature_function, parnum, min_value, max_value)
 SEMANTICS
   Intended for debugging NR parameters that provide root cause analysis.
   Images or videos with a specific impairment should produce high or low
@@ -25,7 +25,7 @@ SEMANTICS
 
  Input Parameters:
   nr_dataset          Data structure. Each describes an entire dataset (name, file location, ...)
-  base_dir            Path to directory where NR features and NR parameters are stored.
+  data_dir            Path to directory where NR features and NR parameters are stored.
   feature_function    Pointer to a no-reference feature functions (NRFF) that must 
                       adhere to the interface specified in calculate_NRpars.
   parnum              Parameter number, within @feature_function.

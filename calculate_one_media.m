@@ -1,9 +1,9 @@
 function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
-    base_dir, parallel_tslices, feature_function)
+    data_dir, parallel_tslices, feature_function)
 % Run an NRFF on one media (image or video) 
 % SYNTAX
 %    par_data = calculate_one_media(nr_dataset, media_num, ...
-%       base_dir, parallel_tslices, feature_function)
+%       data_dir, parallel_tslices, feature_function)
 % SEMANTICS
 %  Run an NRFF on one media (image or video). This is an internal function, 
 %  used by calculate_NRpars. It can also be called directly, to debug a
@@ -13,7 +13,7 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
 %   nr_dataset = Data struction. Each describes an entire dataset (name, file location, ...)
 %   media_num   Number of the media to be examined, an offset in
 %               nr_dataset.media
-%   base_dir =  Path to directory where NR features and NR parameters are stored.
+%   data_dir =  Path to directory where NR features and NR parameters are stored.
 %
 %   parallel_tslices = true or false, indicating whether or not parallel
 %               processing is requested
@@ -29,10 +29,10 @@ function [par_data, success] = calculate_one_media(nr_dataset, media_num, ...
     success = true;
     
     % locate subdirectory for this NRFF  
-    if base_dir(length(base_dir)) ~= '\' && base_dir(length(base_dir)) ~= '/'
-        base_dir = fullfile(base_dir,'\');
+    if data_dir(length(data_dir)) ~= '\' && data_dir(length(data_dir)) ~= '/'
+        data_dir = fullfile(data_dir,'\');
     end
-    subdir = fullfile(base_dir, join(['group_', feature_function('group')]),'\');
+    subdir = fullfile(data_dir, join(['group_', feature_function('group')]),'\');
     
     % check dataset path has trailing backslash
     if nr_dataset.path(length(nr_dataset.path)) ~= '\' && nr_dataset.path(length(nr_dataset.path)) ~= '/'

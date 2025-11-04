@@ -1,9 +1,9 @@
-function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, feature_function) 
+function [NRpars] = calculate_NRpars(nr_dataset, data_dir, parallel_mode, feature_function) 
 % CALCULATE_NRPARS
 %   Support tool to calculate a NR feature on all videos or images in a dataset.
 % SYNTAX
 %   [NRpars] = calculate_NRpars(nr_dataset, ...
-%       base_dir, parallel_mode, feature_function); 
+%       data_dir, parallel_mode, feature_function); 
 % SEMANTICS
 %   This function provides all support tools needed to calculate 
 %   no-reference (NR) features and NR parameters. 
@@ -14,7 +14,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %
 % Input Parameters:
 %   nr_dataset = Data struction. Each describes an entire dataset (name, file location, ...)
-%   base_dir = Path to directory where NR features and NR parameters are stored.
+%   data_dir = Path to directory where NR features and NR parameters are stored.
 %
 %   parallel_model = 
 %       'none'      Linear calculation. Parallel processing toolbox avoided.
@@ -118,7 +118,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
 %   [feature_group]     = feature_function('group')
 %   [parameter_names]   = feature_function('parameter_names')
 %   [read_mode]         = feature_function('read_mode')
-%   [par_data]          = feature_function('compose', nr_dataset, base_dir);
+%   [par_data]          = feature_function('compose', nr_dataset, data_dir);
 % SEMANTICS
 %   Where NRFF takes as input images or videos and outputs NR features and  
 %   NR parameters, this NR metric takes as input NR parameters and outputs
@@ -148,7 +148,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
     % if given multiple datasets, process them one after another
     if length(nr_dataset) > 1
         for cnt=1:length(nr_dataset)
-            NRpars(cnt) = calculate_NRpars(nr_dataset(cnt), base_dir, parallel_mode, feature_function);
+            NRpars(cnt) = calculate_NRpars(nr_dataset(cnt), data_dir, parallel_mode, feature_function);
         end
         return;
     end
@@ -161,16 +161,16 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
     if strcmp(tslice_mode,'metric')
         % this is a metric instead of an NR parameter. Calculate as follows
         % and return
-        NRpars = feature_function('compose', nr_dataset, base_dir);
+        NRpars = feature_function('compose', nr_dataset, data_dir);
         return;
     end
 
 
     % calculate directory paths, NRpars file name
-    if base_dir(length(base_dir)) ~= '\'
-        base_dir = fullfile(base_dir,'\');
+    if data_dir(length(data_dir)) ~= '\'
+        data_dir = fullfile(data_dir,'\');
     end
-    subdir = fullfile(base_dir, join(['group_', feature_function('group')]),'\');
+    subdir = fullfile(data_dir, join(['group_', feature_function('group')]),'\');
     parfile = fullfile(subdir,join(['NRpars_', feature_function('group'),'_', nr_dataset.dataset_name, '.mat']));
     
     if ~exist(subdir)
@@ -211,8 +211,8 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
             if ~load_success
                 warning('NRpars inconsistency detected. Discarding NRpars and re-calculating NRpars. Features retained');
 
-                update_NRpars(base_dir, feature_function, 'update_pars');
-                calculate_NRpars(nr_dataset, base_dir, parallel_mode, feature_function); 
+                update_NRpars(data_dir, feature_function, 'update_pars');
+                calculate_NRpars(nr_dataset, data_dir, parallel_mode, feature_function); 
                 return;
             end
         catch
@@ -304,7 +304,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
             clip_num = clip_list(cnt);
             
             % calculate parameter for this clip
-            [values, success] = calculate_one_media(nr_dataset, clip_num, base_dir, ...
+            [values, success] = calculate_one_media(nr_dataset, clip_num, data_dir, ...
                 parallel_tslices, feature_function);
             if ~success
                 % Delete parameter file, which may be the source of this error
@@ -360,7 +360,18 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
             NRpars.version = 2;
 
             % Save NR parameters
-            save (parfile, 'NRpars'); 
+            try
+                save (parfile, 'NRpars');
+            catch
+                % repeat twice. Network problems may hinder file saves
+                pause(2);
+                try
+                    save (parfile, 'NRpars');
+                catch
+                    pause(2);
+                    save (parfile, 'NRpars');
+                end
+            end
             fprintf('\b-\n');
         end
 
@@ -386,7 +397,7 @@ function [NRpars] = calculate_NRpars(nr_dataset, base_dir, parallel_mode, featur
                     if ~computed(cnt)
                         % calculate parameter for this clip
                         data(cnt,:) = ...
-                            calculate_one_media(nr_dataset, cnt, base_dir, ...
+                            calculate_one_media(nr_dataset, cnt, data_dir, ...
                             parallel_tslices, feature_function);
                     end
                 catch

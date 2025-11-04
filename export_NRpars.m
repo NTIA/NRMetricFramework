@@ -1,12 +1,12 @@
 function [Mdata] = ...
-    export_NRpars(nr_dataset, base_dir, feature_function, pname, varargin)
+    export_NRpars(nr_dataset, data_dir, feature_function, pname, varargin)
 % EXPORT_NRPARS
 %   Write NR parameter values, MOSs, and (optionally) interim features to
 %   a spreadsheet for debugging, porting software to another language, or
 %   manipulating NR parameters and NR features with other tools. 
 %
 % SYNTAX
-% [Mdata] = export_NRpars(nr_dataset, base_dir, feature_function, path);
+% [Mdata] = export_NRpars(nr_dataset, data_dir, feature_function, path);
 %   export_NRpars(...,'option');       % append options to above function call
 %
 % SEMANTICS
@@ -16,7 +16,7 @@ function [Mdata] = ...
 %
 % Input Parameters:
 %   nr_dataset          Data structure. Must contain only one dataset.
-%   base_dir            Path to directory where NR features and NR parameters are stored.
+%   data_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_function    Pointer to a no-reference feature function (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %                       Must contain only one function. 
@@ -148,7 +148,7 @@ function [Mdata] = ...
     curr = 4;
 
     % load in this feature, for all datasets
-    NRpars = calculate_NRpars(nr_dataset, base_dir, 'none', feature_function);
+    NRpars = calculate_NRpars(nr_dataset, data_dir, 'none', feature_function);
     
     % consider each parameter in this feature, one at a time
     for cntP = 1:length(NRpars.par_name)            
@@ -204,7 +204,7 @@ function [Mdata] = ...
 
             % load this media's features into variable 'temp'
             name = sprintf('%s\\group_%s\\features\\%s\\%s.mat', ...
-                base_dir, feature_group, feature_name{Fcnt}, nr_dataset.media(Mcnt).name);
+                data_dir, feature_group, feature_name{Fcnt}, nr_dataset.media(Mcnt).name);
             load( name, 'data' );
 
             % figure out how big this feature variable is.

@@ -222,8 +222,13 @@ The its4s dataset contains a simplified adaptive streaming bitrate ladder. The f
     * Category 5 = scene (4 broad categories that describe scene lighting) 
     * Category 6 = system (original plus five compression bitrates)
 
-### vqegHDcuts Dataset
+### vqegHDcuts Dataset ==> Very Limited Value
 This faux dataset was created from the Video Quality Experts Group (VQEG) HDTV tests. To better match the optimal criteria at the top of this page, each sequence was cut whenever the content or camera motion changed. The MOS of the entire sequence was assigned to each segment, which adds error to the MOSs. Sequences containing transmission errors were omitted. 
+
+The vqegHD dataset is of limited value for NR metric research.
+The VQEG HD validation test occurred in 2009 to 2010. The coding impairments may not reflect modern compression artifacts.
+The technique used to map six VQEG HD datasets into a single dataset was developed on DMOSs and has not been properly tested on MOSs. 
+Also, as mentioned above, the technique used to create this dataset is unproven and may produce incorrect conclusions.
 
 Dataset variable `vqegHDcuts_dataset` includes media that are only available to people who participated in the original VQEG HD test. Dataset variable `vqegHDcutspublic_dataset` includes only media that are publicly available. 
 * [Publication #1 and #2](https://vqeg.org/projects/hdtv/)
@@ -236,8 +241,12 @@ Dataset variable `vqegHDcuts_dataset` includes media that are only available to 
     * Category 1 = camera capture vs compression
     * Category 3 = codec (mpeg2, avc, or unknown)
 
-### vqegHD Dataset
+### vqegHD Dataset ==> Limited Value
 This dataset contains the Video Quality Experts Group (VQEG) HDTV tests. Unlike vqegHDcuts, this dataset contains the full video as viewed and rated. Sequences containing transmission errors were omitted. Comparisons between vqegHD with vqegHDcuts can provide insights into temporal integration. 
+
+The vqegHD dataset is of limited value for NR metric research.
+The VQEG HD validation test occurred in 2009 to 2010. The coding impairments may not reflect modern compression artifacts.
+Also, the technique used to map six VQEG HD datasets into a single dataset was developed on DMOSs and has not been properly tested on MOSs. 
 
 Dataset variable `vqegHDcuts_dataset` includes media that are only available to people who participated in the original VQEG HD test. Dataset variable `vqegHDcutspublic_dataset` includes only media that are publicly available. 
 * [Publication #1 and #2](https://vqeg.org/projects/hdtv/)

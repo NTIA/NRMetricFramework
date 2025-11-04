@@ -30,10 +30,10 @@ Function `nrff_auto_enhancement.m` was initially provided by this repository, so
 
 ## Analysis
 
-These parameters are evaluated using three types of datasets:
-* Image quality datasets with camera impairments (BID, CCRIQ, CID2013, C&V, ITS4S2, and LIVE-Wild)
-* Video quality datasets with camera impairments (ITS4S3, ITS4S4, and KonViD-1K)
-* Video quality datasets with broadcast content and compression (ITS4S, AGh-NTIA-Dolby, and vqegHDcuts) 
+This analysis uses three types of datasets:
+* Image quality datasets with camera impairments (BID, CCRIQ, CID2013, C&V, ITS4S2, ITSnoise, and LIVE-Wild)
+* Video quality datasets with camera impairments (ITS4S3, ITS4S4, KonViD-1K, and KoNViD-150K-B)
+* Video quality datasets with broadcast content and compression (ITS4S, AGH-NTIA-Dolby, vqegHD, and YoukuV1K) 
 
 ### S-WhiteLevel
 
@@ -45,21 +45,24 @@ The low correlations are likewise appropriate for a sporadic impairment. The zer
 
 ```text
 1) S-WhiteLevel 
-bid              corr =  0.16  rmse =  1.00  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.83]
-ccriq            corr =  0.33  rmse =  0.96  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.95]
-cid2013          corr =  0.48  rmse =  0.79  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.89]
-C&V              corr =  0.32  rmse =  0.68  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.91]
-its4s2           corr =  0.20  rmse =  0.73  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.90]
-LIVE-Wild        corr =  0.18  rmse =  0.80  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.77]
-its4s3           corr =  0.31  rmse =  0.72  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.82]
-its4s4           corr =  0.02  rmse =  0.88  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.57]
-konvid1k         corr =  0.34  rmse =  0.60  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.86]
-its4s            corr =  0.00  rmse =  0.77  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.58]
-AGH-NTIA-Dolby   corr =  0.01  rmse =  1.13  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.45]
-vqegHDcuts       corr =  0.08  rmse =  0.89  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.61]
+bid              corr =  0.158  rmse =  1.00  false decisions =  54%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.83]
+ccriq            corr =  0.333  rmse =  0.96  false decisions =  58%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.95]
+cid2013          corr =  0.482  rmse =  0.79  false decisions =  81%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.89]
+C&V              corr =  0.316  rmse =  0.68  false decisions =  62%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.91]
+its4s2           corr =  0.199  rmse =  0.73  false decisions =  50%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.90]
+ITSnoise         corr =  0.398  rmse =  0.73  false decisions =  57%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.70]
+LIVE-Wild        corr =  0.183  rmse =  0.80  false decisions =  53%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.77]
+its4s3           corr =  0.311  rmse =  0.72  false decisions =  47%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.82]
+its4s4           corr =  0.022  rmse =  0.88  false decisions =  33%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.57]
+konvid1k         corr =  0.337  rmse =  0.60  false decisions =  54%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.86]
+KoNViD-150K-B    corr =  0.349  rmse =  0.57  false decisions =  62%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.90]
+its4s            corr =  0.003  rmse =  0.77  false decisions =  31%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.58]
+AGH-NTIA-Dolby   corr =  0.010  rmse =  1.13  false decisions =  32%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.45]
+vqegHD           corr =  0.146  rmse =  0.88  false decisions =  40%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.48]
+YoukuV1K         corr =  0.116  rmse =  0.90  false decisions =  54%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.65]
 
-average          corr =  0.20  rmse =  0.83
-pooled           corr =  0.22  rmse =  0.85  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.95]
+average          corr =  0.224  rmse =  0.81
+pooled           corr =  0.248  rmse =  0.81  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.95]
 ```
 ![](images/report_auto_enhancement_white_level.png)
 
@@ -69,21 +72,24 @@ pooled           corr =  0.22  rmse =  0.85  percentiles [ 0.00, 0.00, 0.00, 0.0
 The S-BlackLevel scatter plots show a lower triangle shape similar to what we saw with White Level. S-BlackLevel imbalances are fairly rare, so Black Level is equal to zero for most media and it is difficult to assess this metric. The correlation values are very low (0.07 to 0.11), but the fit lines are similar for the three datasets that contain this impairment (compare the red fit line for BID, CCRIQ, and LIVE-Wild). More training data would be needed to improve this parameter. 
 
 ```
-2) S-BlackLevel
-bid              corr =  0.11  rmse =  1.01  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.82]
-ccriq            corr =  0.10  rmse =  1.01  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.81]
-cid2013          corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-C&V              corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-its4s2           corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-LIVE-Wild        corr =  0.07  rmse =  0.82  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.54]
-its4s3           corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-its4s4           corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-konvid1k         corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-its4s            corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-AGH-NTIA-Dolby   corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
-vqegHDcuts       corr =   NaN  rmse =   Inf  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+2) S-BlackLevel 
+bid              corr =  0.105  rmse =  1.01  false decisions =  58%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.82]
+ccriq            corr =  0.097  rmse =  1.01  false decisions =  40%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.81]
+cid2013          corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+C&V              corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+its4s2           corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+ITSnoise         corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+LIVE-Wild        corr =  0.073  rmse =  0.82  false decisions =  40%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.54]
+its4s3           corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+its4s4           corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+konvid1k         corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+KoNViD-150K-B    corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+its4s            corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+AGH-NTIA-Dolby   corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+vqegHD           corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
+YoukuV1K         corr =    NaN  rmse =   Inf  false decisions = NaN%  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.00]
 
-average          corr =  0.09  rmse =   Inf
-pooled           corr =  0.06  rmse =  0.87  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.82]
+average          corr =  0.092  rmse =   Inf
+pooled           corr =  0.060  rmse =  0.83  percentiles [ 0.00, 0.00, 0.00, 0.00, 0.82]
 ```
 ![](images/report_auto_enhancement_black_level.png)

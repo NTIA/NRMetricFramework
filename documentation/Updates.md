@@ -5,6 +5,19 @@ This updates our download count, which helps us quantify the value of this repos
 
 This page has release notes and identifies updates that will change the code's behavior.
 
+## NR Metric Framework Version 6.0
+
+The sixth release of the NR Metric Framework includes the following changes:
+- Released Sawatch version 4 (`metric_sawatch.m` and `ReportSawatch.md`)
+- Added new RCA metrics to `nrff_fine_detail.m`
+- Added new function `run_sawatch.m`: a standalone function that runs NR metric Sawatch on a set of files
+- Fixed region of interest errors for pillarbox videos in ITS4S3 dataset  
+- Spun off `make_empty_dataset.m` into a separate function (this code was embedded in `import_dataset.m`)
+- Changed input variable name `base_dir` to `data_dir` for improved readability
+- Updated `read_avi.m` to read I420 format AVI files
+- Expanded the list of datasets typically used to analyze NR metrics and stopped using suspect dataset vqegHDcuts 
+- Updated the assessed accuracy of S-PanSpeed and S-Jiggle (`nrff_panIPS.m`) from :star: :star: to :star: :star: :star:, due to analyses on new datasets (especially KoNViD-150K-B and YoukuV1K)
+
 ## NR Metric Framework Version 5.0
 
 The fifth release of the NR Metric Framework included the following changes:

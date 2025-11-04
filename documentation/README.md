@@ -32,7 +32,8 @@ This repository does not contain images and videos. See the [subjective datasets
 - [compromise_NRpars.m](CompromiseNRpars.md)
 - [ci_NRpars.m and ci_calc.m](ConfidenceIntervals.md)
 - [peek_NRpars.m](PeekNRpars.md)
-- [residual_NRpars.m](ResidualNRpars.md) — new!
+- [residual_NRpars.m](ResidualNRpars.md)
+- [run_sawatch.m](RunSawatch.md) — new!
 
 ## Exporting Functions
 - [export_dataset.m](ExportDataset.md)
@@ -62,7 +63,7 @@ This repository does not contain images and videos. See the [subjective datasets
 ## NR Metrics and Reports 
 This repository includes (1) code for NR metrics developed by various organizations, and (2) reports that analyze their performance. 
 This [introduction](Report.md) defines the :star: :star: :star: :star: :star: scale used in the reports and tables below. 
-Generally, 1-star metrics are very innacurate, 
+Generally, 1-star metrics are very inaccurate, 
 2-star metrics are promising, 
 3-star metrics perform consistently across 10+ datasets,
 4-star metrics are as accurate as one person, and
@@ -74,7 +75,7 @@ The [Sawatch](ReportSawatch.md) NR metric was developed by NTIA using the NRMetr
 
 Metric Name|Goal|[Rating](Report.md)|Notes
 -----------|----|------|-----
-[Sawatch](ReportSawatch.md) version 3|MOS|:star: :star: :star:|NR metric training method demonstrated
+[Sawatch](ReportSawatch.md) version 4|MOS|:star: :star: :star:|Add noise, clipping, and texture RCA - new!
 
 Metric Name|Metric Group|Goal|[Rating](Report.md)
 -----------|------------|----|------
@@ -86,10 +87,12 @@ S-FineDetail|[Fine Detail](ReportFineDetail.md)|RCA|:star: :star: :star:
 S-ColorNoise|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
 S-SuperSaturated|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
 S-Pallid|[Peculiar Color](ReportPeculiarColor.md)|RCA|:star: :star:
-S-PanSpeed|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star:
-S-Jiggle|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star:
+S-PanSpeed|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star: :star:
+S-Jiggle|[Pan Speed](ReportPanIPS.md)|RCA|:star: :star: :star:
 S-dipIQ|[dipIQ](ReportdipIQ.md)|MOS|:star: :star:
-
+S-Noise|[Fine Detail](ReportFineDetail.md)|RCA|:star: :star:
+S-Clipped|[Fine Detail](ReportFineDetail.md)|RCA|:star: :star: :star:
+S-Texture|[Fine Detail](ReportFineDetail.md)|RCA|:star: :star: :star:
 
 ### Other NR Metrics
 

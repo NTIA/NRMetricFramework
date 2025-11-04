@@ -6,9 +6,6 @@ This page identifies functions that are desired but not yet implemented. See [De
 Our goal in creating the VCRDCI dataset was to provide training data for an NR metric that predicts the quality impact of compression, but ignores all other impairments. 
 It must be faster and more accurate than NR metric [dipIQ](ReportDipIQ.md).
 
-## Open source camera noise NR metric trained on the ITSnoise dataset
-Our goal in creating the ITSnoise dataset was to provide training data for an NR metric that predicts the quality impact of noise produced by camera capture in low light, but ignores all other impairments. 
-
 ## NR metric identifying the likelihood that H.264, H.265, and AV1 will yield signifantly different results
 While H.264, H.265, and AV1 are known to produce higher or lower quality at a given bitrate, the relationship among media is usually the same or similar.
 We are interested in a metric that would identify media that are likely to trigger atypical responses from one of these codecs.

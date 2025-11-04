@@ -36,9 +36,7 @@ elseif strcmp(mode, 'parameter_names')
     data{1} = 'S-WhiteLevel'; % 98% white level, clipped at 150 maximum, ignore black border.
     
     data{2} = 'S-BlackLevel'; % black level is too high; image whitewashed
-    
-    data{3} = 'WhiteClipping'; % Fraction of image that is clipped white
-    
+        
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % color space
 elseif strcmp(mode, 'luma_only')
@@ -178,19 +176,6 @@ elseif strcmp(mode, 'pars')
     % rescale to range [0..1] where 0 is no impairment
     data(2) = (20 - data(2)) / 20;
 
-    % Compute the fraction of clipped white pixels
-    % Ignore (set to zero) if the adjacent edge energy is too strong,
-    % because these are probably computer graphics with a background set to
-    % white. "Too strong" is set to 15, based on observations from the
-    % training datasets. 
-    white_clip_frac = nanmean(squeeze(feature_data{1}(:,1,2)));
-    edge = nanmean(squeeze(feature_data{1}(:,:,3)));
-    if isnan(edge) % no solid edges, leave as-is
-        data(3) = white_clip_frac;
-    else
-        data(3) = 0;
-    end
- 
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 else

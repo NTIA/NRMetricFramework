@@ -1,8 +1,8 @@
-function residual_NRpars(nr_dataset, base_dir, varargin)
+function residual_NRpars(nr_dataset, data_dir, varargin)
 % residual_NRpars
 %   Compare an NR metric with the residuals of a baseline NR metric.
 % SYNTAX
-%   residual_NRpars(nr_dataset, base_dir, feature_function1, feature_num1, ...
+%   residual_NRpars(nr_dataset, data_dir, feature_function1, feature_num1, ...
 %       feature_function2, feature_num2, ..., feature_functionN, feature_numN);
 % SEMANTICS
 %   The following analysis is performed for all combinations of a set of
@@ -17,7 +17,7 @@ function residual_NRpars(nr_dataset, base_dir, varargin)
 % Input Parameters:
 %   nr_dataset          Data structure. Each array element describes an 
 %                       entire dataset with fields "name", "file_location", etc.
-%   base_dir            Path to directory where NR features and NR parameters are stored.
+%   data_dir            Path to directory where NR features and NR parameters are stored.
 %   feature_functionX   The Xth pointer to a no-reference feature function (NRFF) that must 
 %                       adhere to the interface specified in calculate_NRpars.
 %   feature_numX        The Xth NR metric's parameter number (feature_functionX).
@@ -59,7 +59,7 @@ function residual_NRpars(nr_dataset, base_dir, varargin)
     % load the parameters. This will calculate them, if not yet computed. 
     fprintf('Loading NR parameters. This will be very slow, if not yet calculated\n');
     for cnt=1:total_NRpars
-        NRpars(cnt) = calculate_NRpars(nr_dataset, base_dir, 'none', feature_function{cnt});
+        NRpars(cnt) = calculate_NRpars(nr_dataset, data_dir, 'none', feature_function{cnt});
     end
     fprintf('NR parameters loaded\n\n');
 
