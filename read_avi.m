@@ -2044,7 +2044,7 @@ function [frame_list] = getaudFrames( file, index_auds )
         riff_offset = double(typecast(tmp, 'uint64')); % ...wow
         fpos = fpos + 3;
         
-        tmp = double(reshape(ix_data(fpos:size(ix_data)), 2, []));
+        tmp = double(reshape(ix_data(fpos:length(ix_data(:))), 2, []));
         tmp(1, :) = tmp(1, :) + riff_offset;
         % we cannot preallocate since we don't know the size
         frame_list = [frame_list, tmp]; %#ok<AGROW>

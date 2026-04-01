@@ -94,8 +94,8 @@ for cntF = 1:height(input_data)
     % initialize valid region
     nr_dataset{cntD}.media(media_num).valid_top = 1;
     nr_dataset{cntD}.media(media_num).valid_left = 1;
-    nr_dataset{cntD}.media(media_num).valid_bottom = 1080;
-    nr_dataset{cntD}.media(media_num).valid_right = 1920;
+    nr_dataset{cntD}.media(media_num).valid_bottom = display_rows;
+    nr_dataset{cntD}.media(media_num).valid_right = display_cols;
 
 end
 
