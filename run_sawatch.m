@@ -5,9 +5,11 @@ function [nr_dataset] = run_sawatch(input_file, output_file, data_dir, parallel_
 %    [nr_dataset] = run_sawatch(input_file, output_file, data_dir)
 %    [nr_dataset] = run_sawatch(input_file, output_file, data_dir, parallel_mode, dataset_name, display_rows, display_cols)
 % SEMANTICS
-%    Read the list of files in `input_file`, one file per line. Can include path names. 
-%    Write to `output_file`, one file per line, the file name (no path), Sawatch metric value, and parameter 
-%    values. 
+%    Read the list of files in `input_file`, one file per line. 
+%    The 'input_file' can list either files in the current directory or
+%        files with full path. 
+%    Write to `output_file`, one file per line, the file name (no path), 
+%        Sawatch metric value, and parameter values. 
 %    `data_dir` will be used to hold intermediate files. 
 %
 %    Optional input parameters (dataset_name, display_rows, display_cols) used to initiate returned variable 
@@ -34,7 +36,7 @@ if nargin == 3
 elseif nargin == 7
     % no error checking
 else
-    error('must have either 2 or 5 input arguments');
+    error('must have either 2 or 7 input arguments');
 end
 
 % Read list of files
@@ -66,7 +68,11 @@ for cntF = 1:height(input_data)
         num_dirs = num_dirs + 1;
         cntD = num_dirs;
         nr_dataset{cntD} = empty_dataset;
-        nr_dataset{cntD}.path = [ path{1} '\' ];
+        if isempty(path{1})
+            nr_dataset{cntD}.path = '.\';
+        else
+            nr_dataset{cntD}.path = [ path{1} '\' ];
+        end
         num_files{cntD} = 0;
     end
 

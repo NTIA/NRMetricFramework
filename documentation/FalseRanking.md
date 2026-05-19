@@ -1,4 +1,4 @@
-# MATLAB function `false_decisions.m`
+# MATLAB function `false_ranking.m`
 
 Calculate the likelihood that a metric will falsely rank media, when compared to subjective ratings (truth data).
 
@@ -6,7 +6,7 @@ Calculate the likelihood that a metric will falsely rank media, when compared to
 
 Calculate the likelihood that a metric will falsely rank media. Requires (1) a metric that detects the quality of videos and (2) a dataset of videos with 5-level ACR ratings in the range of [1..5].
 
-Function `false_decisions.m` is a variant of the false ranking statistic described in [[7]](Publications.md). 
+Function `false_ranking.m` is a variant of the false ranking statistic described in [[7]](Publications.md). 
 When the false ranking rate is less than 13\%, the metric performs equivalently to or better than one person. See [[7]](Publications.md) for details. 
 
 ## Details
@@ -21,19 +21,19 @@ The denominator is the incidence rate where the metric says that (A) and (B) hav
 Incidents where the metric concludes that (A) and (B) have the same quality are omitted from this calculation. 
 RCA metrics and inaccurate NR metrics often produce identical values. Including their data in the denominator would skew the statistic. 
 
-If given mean opinion scores (MOS), `false_decisions.m` will use the expected confidence interval for a well conducted subjective test from [[7]](Publications.md), which is 0.5. If given individual subject ratings, `false_decisions.m` will instead calculate, apply, and report the confidence interval of this dataset. 
+If given mean opinion scores (MOS), `false_ranking.m` will use the expected confidence interval for a well conducted subjective test from [[7]](Publications.md), which is 0.5. If given individual subject ratings, `false_ranking.m` will instead calculate, apply, and report the confidence interval of this dataset. 
 
 ```text
-false_decisions
+false_ranking
   Estimate the false decision rate of a video quality metric.
 SYNTAX
-  [rate threshold_level] = false_decisions(mos, metric)
-  [rate threshold_level] = false_decisions(ratings, metric)
+  [rate threshold_level] = false_ranking(mos, metric)
+  [rate threshold_level] = false_ranking(ratings, metric)
 SEMANTICS
   This function calculates the false decision rate of a metric, when
-  compared to a subjective test. Note that metric decisions are
+  compared to a subjective test. Note that metric rankings are
   deterministic (better, worse, or identical) while the subjective
-  test's decisions use confidence intervals to reach statistically
+  test's rankings use confidence intervals to reach statistically
   significant conclusions. The false decision rate is computed  
   as follows:
 
