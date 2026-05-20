@@ -1,15 +1,15 @@
-function [rate, threshold_level] = false_decisions(mos, metric)
-% false_decisions
-%   Estimate the false decision rate of a video quality metric.
+function [rate, threshold_level] = false_ranking(mos, metric)
+% false_ranking
+%   Estimate the false ranking rate of a video quality metric.
 % SYNTAX
-%   [rate threshold_level] = false_decisions(mos, metric)
-%   [rate threshold_level] = false_decisions(ratings, metric)
+%   [rate threshold_level] = false_ranking(mos, metric)
+%   [rate threshold_level] = false_ranking(ratings, metric)
 % SEMANTICS
-%   This function calculates the false decision rate of a metric, when
-%   compared to a subjective test. Note that metric decisions are
+%   This function calculates the false ranking rate of a metric, when
+%   compared to a subjective test. Note that metric rankings are
 %   deterministic (better, worse, or identical) while the subjective
-%   test's decisions use confidence intervals to reach statistically
-%   significant conclusions. The false decision rate is computed  
+%   test's rankings use confidence intervals to reach statistically
+%   significant conclusions. The false ranking rate is computed  
 %   as follows:
 %
 %   The numerator is the incidence rate where the metric will say
@@ -37,7 +37,7 @@ function [rate, threshold_level] = false_decisions(mos, metric)
 %           identical to input variable mos.
 %
 % Output Parameters:
-%   rate       False decision rate (expressed as a fraction)
+%   rate       False ranking rate (expressed as a fraction)
 %   threshold_level  Confidence interval threshold (calculated or default)
 %
 %   The theoretical underpinnings of this algorithm are published in
@@ -56,8 +56,8 @@ function [rate, threshold_level] = false_decisions(mos, metric)
         
     elseif ismatrix(mos)
         % Calculate the actual CI for this dataset
+        % Replace threshold_level with the dataset's actual confidence interval
         [threshold_level, mos] = compute_data_CI(mos);
-        fprintf('\nUsing the dataset''s actual confidence interval of %4.2f to compute false decision rate.\n\n', threshold_level);
     end
 
     % Metric has no range of values. False ranking rate is undefined.
@@ -74,7 +74,7 @@ function [rate, threshold_level] = false_decisions(mos, metric)
     for mcnt1 = 1:curr_len
         for mcnt2 = mcnt1+1:curr_len
 
-            % subj(curr) is decision whether #1 is better,
+            % subj(curr) inicates whether #1 is better,
             % equivalent, or worse than #2
             diff = mos(mcnt1) - mos(mcnt2);
             if diff > threshold_level

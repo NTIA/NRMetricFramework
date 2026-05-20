@@ -30,7 +30,7 @@ function analyze_NRpars(nr_dataset, data_dir, feature_function, varargin)
 %                   Category 2 cannot be selected, this analysis is
 %                   inherently part of the training process. 
 %                   nr_dataset must contain only one dataset.
-%   'false',        Print the estimated percent of false decisions            
+%   'false',        Print the estimated percent of false ranking            
 %   'info',         List category options for the dataset(s) but don't analyze.
 %   'outlier',      List the worst outliers
 %   'par', N,       Only analyze the Nth parameter (identified by number)
@@ -289,7 +289,7 @@ function analyze_NRpars(nr_dataset, data_dir, feature_function, varargin)
         fprintf('average          corr = %6.3f  rmse = %5.2f\n', mean(corr,'omitnan'), mean(rmse,'omitnan'));
         if length(nr_dataset) ~= 1
             do_subplot = false;
-            % Don't print false decisions even if requested. The statistic 
+            % Don't print false ranking even if requested. The statistic 
             % invalid for pooled datasets.
             analyze_par_dataset(all_datasets, NRpars_all, pcnt, do_print, do_plot, do_subplot, false, all_datasets, NRpars_all, 0, nan, preproc_message, false, do_mos, mos_min, mos_max);
             fprintf('\n\n');
@@ -440,8 +440,8 @@ function [corr, rmse] = analyze_par_dataset(one_dataset, one_NRpars, pcnt, do_pr
         fprintf('%-15s  ', test_name);
 
         if do_false
-            fr = false_decisions(ydata, xdata(:,2));
-            fprintf('corr = %6.3f  rmse = %5.2f  false decisions = %3d%%  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', ...
+            fr = ranking(ydata, xdata(:,2));
+            fprintf('corr = %6.3f  rmse = %5.2f  false ranking = %3d%%  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', ...
                 corr, rmse, round(fr * 100), values(1), values(2), values(3), values(4), values(5)); 
         else
             fprintf('corr = %6.3f  rmse = %5.2f  percentiles [%5.2f,%5.2f,%5.2f,%5.2f,%5.2f]\n', ...
